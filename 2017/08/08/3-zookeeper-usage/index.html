@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>3.zookeeper-使用 | Dennis&#39;Blog | 我不用讨人喜欢，只做一个迷人的混蛋</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="zookeeper,distributed">
+    <meta name="description" content="zookeeper特性1、 Zookeeper：一个leader，多个follower组成的集群 2、全局数据一致：每个server保存一份相同的数据副本，client无论连接到哪个server，数据都是一致的 3、分布式读写，更新请求转发，由leader实施 4、更新请求顺序进行，来自同一个client的更新请求按其发送顺序依次执行 5、数据更新原子性，一次数据更新要么成功，要么失败 6、实时性">
+<meta name="keywords" content="zookeeper,distributed">
+<meta property="og:type" content="article">
+<meta property="og:title" content="3.zookeeper-使用">
+<meta property="og:url" content="http://dennis.pathto.top/2017/08/08/3-zookeeper-usage/index.html">
+<meta property="og:site_name" content="Dennis&#39;Blog">
+<meta property="og:description" content="zookeeper特性1、 Zookeeper：一个leader，多个follower组成的集群 2、全局数据一致：每个server保存一份相同的数据副本，client无论连接到哪个server，数据都是一致的 3、分布式读写，更新请求转发，由leader实施 4、更新请求顺序进行，来自同一个client的更新请求按其发送顺序依次执行 5、数据更新原子性，一次数据更新要么成功，要么失败 6、实时性">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://oudkfzemb.bkt.clouddn.com/zk-struct.jpg">
+<meta property="og:image" content="http://oudkfzemb.bkt.clouddn.com/zk-cli.jpg">
+<meta property="og:image" content="http://oudkfzemb.bkt.clouddn.com/table.jpg">
+<meta property="og:image" content="http://oudkfzemb.bkt.clouddn.com/listener.jpg">
+<meta property="og:image" content="http://oudkfzemb.bkt.clouddn.com/ha.jpg">
+<meta property="og:updated_time" content="2017-08-08T17:07:06.563Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="3.zookeeper-使用">
+<meta name="twitter:description" content="zookeeper特性1、 Zookeeper：一个leader，多个follower组成的集群 2、全局数据一致：每个server保存一份相同的数据副本，client无论连接到哪个server，数据都是一致的 3、分布式读写，更新请求转发，由leader实施 4、更新请求顺序进行，来自同一个client的更新请求按其发送顺序依次执行 5、数据更新原子性，一次数据更新要么成功，要么失败 6、实时性">
+<meta name="twitter:image" content="http://oudkfzemb.bkt.clouddn.com/zk-struct.jpg">
+    
+        <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/semantic.css" type="text/css" />
+<link rel="stylesheet" href="/css/zyComment.css" type="text/css" />
+<style type="text/css">
+	#cloud-tie-wrapper label {
+	    font-weight: bold;
+	}
+	#cloud-tie-wrapper a {
+		font-family: Microsoft YaHei;
+	}
+	#articleComment {
+		width: "60%";
+		/*height: 1500px;*/
+		overflow: auto;
+	}
+</style>
+
+    <script>window.lazyScripts=[]</script>
+
+
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/zyComment.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+$(function(){
+var post_toc_links = $(".post-toc-link");
+$.each( post_toc_links, function(index,post_toc_link){
+	post_toc_link = $(post_toc_link);
+	var post_toc_number = post_toc_link.find(".post-toc-number");
+	var post_toc_text = post_toc_link.find(".post-toc-text");
+	//console.log(post_toc_number.text()+" "+post_toc_text.text());
+	$(post_toc_link.attr("href")).text(post_toc_number.text()+" "+post_toc_text.text())
+});
+});
+
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+function jsonp(url){
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.insertBefore(script, head.firstChild);
+}
+function add_blog_callBackFun(rs){
+	$("#articleComment").zyComment("setCommentAfter",rs);
+}
+function get_list_blog_commonts_callBackFun(rs){
+	var agoComment = rs;
+	$("#articleComment").zyComment({
+		"width":"355",
+		"height":"33",
+		"agoComment":agoComment,
+		"callback":function(comment){
+			var selfID = comment.selfID;
+			if(typeof selfID == "undefined" ){
+				selfID = 0;
+			}
+			jsonp(host+"/add_blog_jsonp?"+"p_id="+encodeURIComponent("2017/08/08/3-zookeeper-usage/")+ "&username="+encodeURIComponent(comment.name)+"&content="+encodeURIComponent(comment.content)+"&email="+encodeURIComponent(comment.email)+"&c_id_replay="+selfID);
+
+		}
+	});
+}
+jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/08/08/3-zookeeper-usage/"));
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Dennis</h5>
+          <a href="mailto:dennis52o1314@163.com" title="dennis52o1314@163.com" class="mail">dennis52o1314@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/599166320" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/2166908462" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                其他
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">3.zookeeper-使用</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">3.zookeeper-使用</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-08-08T15:38:13.000Z" itemprop="datePublished" class="page-time">
+  2017-08-08
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/zookeeper/">zookeeper</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#zookeeper特性"><span class="post-toc-number">1.</span> <span class="post-toc-text">zookeeper特性</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#zookeeper数据结构"><span class="post-toc-number">2.</span> <span class="post-toc-text">zookeeper数据结构</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#数据结构的图"><span class="post-toc-number">3.</span> <span class="post-toc-text">数据结构的图</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#节点类型"><span class="post-toc-number">4.</span> <span class="post-toc-text">节点类型</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#zookeeper命令行操作"><span class="post-toc-number">5.</span> <span class="post-toc-text">zookeeper命令行操作</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#zookeeper-api应用"><span class="post-toc-number">6.</span> <span class="post-toc-text">zookeeper-api应用</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#基本使用"><span class="post-toc-number">6.1.</span> <span class="post-toc-text">基本使用</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#demo增删改查"><span class="post-toc-number">6.2.</span> <span class="post-toc-text">demo增删改查</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Zookeeper的监听器工作机制"><span class="post-toc-number">6.3.</span> <span class="post-toc-text">Zookeeper的监听器工作机制</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#zookeeper应用案例"><span class="post-toc-number">6.4.</span> <span class="post-toc-text">zookeeper应用案例</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#实现分布式应用的-主节点HA-及客户端动态更新主节点状态"><span class="post-toc-number">6.4.1.</span> <span class="post-toc-text">实现分布式应用的(主节点HA)及客户端动态更新主节点状态</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#分布式共享锁的简单实现"><span class="post-toc-number">6.4.2.</span> <span class="post-toc-text">分布式共享锁的简单实现</span></a></li></ol></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-3-zookeeper-usage"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">3.zookeeper-使用</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-08-08 23:38:13" datetime="2017-08-08T15:38:13.000Z"  itemprop="datePublished">2017-08-08</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/zookeeper/">zookeeper</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="zookeeper特性"><a href="#zookeeper特性" class="headerlink" title="zookeeper特性"></a>zookeeper特性</h1><p>1、 Zookeeper：一个leader，多个follower组成的集群</p>
+<p>2、全局数据一致：每个server保存一份相同的数据副本，client无论连接到哪个server，数据都是一致的</p>
+<p>3、分布式读写，更新请求转发，由leader实施</p>
+<p>4、更新请求顺序进行，来自同一个client的更新请求按其发送顺序依次执行</p>
+<p>5、数据更新原子性，一次数据更新要么成功，要么失败</p>
+<p>6、实时性，在一定时间范围内，client能读到最新数据</p>
+<h1 id="zookeeper数据结构"><a href="#zookeeper数据结构" class="headerlink" title="zookeeper数据结构"></a>zookeeper数据结构</h1><p>1、层次化的目录结构，命名符合常规文件系统规范(见下图)</p>
+<p>2、每个节点在zookeeper中叫做znode,并且其有一个唯一的路径标识</p>
+<p>3、节点Znode可以包含数据和子节点（但是EPHEMERAL类型的节点不能有子节点，下一页详细讲解）</p>
+<p>4、客户端应用可以在节点上设置监视器（后续详细讲解）    </p>
+<h1 id="数据结构的图"><a href="#数据结构的图" class="headerlink" title="数据结构的图"></a>数据结构的图</h1><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://oudkfzemb.bkt.clouddn.com/zk-struct.jpg" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<h1 id="节点类型"><a href="#节点类型" class="headerlink" title="节点类型"></a>节点类型</h1><p>Znode有两种类型：</p>
+<ul>
+<li>短暂（ephemeral）（断开连接自己删除）</li>
+<li>持久（persistent）（断开连接不删除）</li>
+</ul>
+<p>2、Znode有四种形式的目录节点（默认是persistent ）</p>
+<ul>
+<li>PERSISTENT</li>
+<li>PERSISTENT_SEQUENTIAL（持久序列/test0000000019 ）</li>
+<li>EPHEMERAL</li>
+<li>EPHEMERAL_SEQUENTIAL</li>
+</ul>
+<p>3、创建znode时设置顺序标识，znode名称后会附加一个值，顺序号是一个单调递增的计数器，由父节点维护</p>
+<p>4、在分布式系统中，顺序号可以被用于为所有的事件进行全局排序，这样客户端可以通过顺序号推断事件的顺序</p>
+<h1 id="zookeeper命令行操作"><a href="#zookeeper命令行操作" class="headerlink" title="zookeeper命令行操作"></a>zookeeper命令行操作</h1><p>运行 zkCli.sh –server <ip>进入命令行工具</ip></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://oudkfzemb.bkt.clouddn.com/zk-cli.jpg" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>1、使用 ls 命令来查看当前 ZooKeeper 中所包含的内容：</p>
+<pre><code>[zk: study0:2181(CONNECTED) 1] ls /
+</code></pre><p>2、创建一个新的 znode ，使用 create /zk myData 。这个命令创建了一个新的 znode 节点“ zk ”以及与它关联的字符串：</p>
+<pre><code>[zk: study0:2181(CONNECTED) 2] create /zk &quot;myData&quot;
+</code></pre><p>3、我们运行 get 命令来确认 znode 是否包含我们所创建的字符串：</p>
+<pre><code>[zk: study0:2181(CONNECTED) 3] get /zk
+</code></pre><p>监听这个节点的变化,当另外一个客户端改变/zk时,它会打出下面的</p>
+<p>WATCHER::<br>WatchedEvent state:SyncConnected type:NodeDataChanged path:/zk</p>
+<pre><code>[zk: study0:2181(CONNECTED) 4] get /zk watch
+</code></pre><p>4、下面我们通过 set 命令来对 zk 所关联的字符串进行设置：</p>
+<pre><code>[zk: study0:2181(CONNECTED) 4] set /zk &quot;zsl&quot;
+</code></pre><p>5、下面我们将刚才创建的 znode 删除：</p>
+<pre><code>[zk: study0:2181(CONNECTED) 5] delete /zk
+</code></pre><p>6、删除节点：rmr</p>
+<pre><code>[zk: study0:2181(CONNECTED) 5] rmr /zk
+</code></pre><h1 id="zookeeper-api应用"><a href="#zookeeper-api应用" class="headerlink" title="zookeeper-api应用"></a>zookeeper-api应用</h1><h2 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h2><p>org.apache.zookeeper.Zookeeper是客户端入口主类，负责建立与server的会话<br>它提供了表 1 所示几类主要方法：<br><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://oudkfzemb.bkt.clouddn.com/table.jpg" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure></p>
+<blockquote>
+<p>表1：ZooKeeper API描述</p>
+</blockquote>
+<h2 id="demo增删改查"><a href="#demo增删改查" class="headerlink" title="demo增删改查"></a>demo增删改查</h2><pre><code>public class SimpleDemo {
+    // 会话超时时间，设置为与系统默认时间一致
+    private static final int SESSION_TIMEOUT = 30000;
+    // 创建 ZooKeeper 实例
+    ZooKeeper zk;
+    // 创建 Watcher 实例
+    Watcher wh = new Watcher() {
+        public void process(org.apache.zookeeper.WatchedEvent event)
+        {
+            System.out.println(event.toString());
+        }
+    };
+    // 初始化 ZooKeeper 实例
+    private void createZKInstance() throws IOException
+    {
+        zk = new ZooKeeper(&quot;weekend01:2181&quot;, SimpleDemo.SESSION_TIMEOUT, this.wh);
+    }
+    private void ZKOperations() throws IOException, InterruptedException, KeeperException
+    {
+        System.out.println(&quot;/n1. 创建 ZooKeeper 节点 (znode ： zoo2, 数据： myData2 ，权限： OPEN_ACL_UNSAFE ，节点类型： Persistent&quot;);
+        zk.create(&quot;/zoo2&quot;, &quot;myData2&quot;.getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+        System.out.println(&quot;/n2. 查看是否创建成功： &quot;);
+        System.out.println(new String(zk.getData(&quot;/zoo2&quot;, false, null)));
+        System.out.println(&quot;/n3. 修改节点数据 &quot;);
+        zk.setData(&quot;/zoo2&quot;, &quot;shenlan211314&quot;.getBytes(), -1);
+        System.out.println(&quot;/n4. 查看是否修改成功： &quot;);
+        System.out.println(new String(zk.getData(&quot;/zoo2&quot;, false, null)));
+        System.out.println(&quot;/n5. 删除节点 &quot;);
+        zk.delete(&quot;/zoo2&quot;, -1);
+        System.out.println(&quot;/n6. 查看节点是否被删除： &quot;);
+        System.out.println(&quot; 节点状态： [&quot; + zk.exists(&quot;/zoo2&quot;, false) + &quot;]&quot;);
+    }
+    private void ZKClose() throws InterruptedException
+    {
+        zk.close();
+    }
+    public static void main(String[] args) throws IOException, InterruptedException, KeeperException {
+        SimpleDemo dm = new SimpleDemo();
+        dm.createZKInstance();
+        dm.ZKOperations();
+        dm.ZKClose();
+    }
+}
+</code></pre><h2 id="Zookeeper的监听器工作机制"><a href="#Zookeeper的监听器工作机制" class="headerlink" title="Zookeeper的监听器工作机制"></a>Zookeeper的监听器工作机制</h2><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://oudkfzemb.bkt.clouddn.com/listener.jpg" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>监听器是一个接口，我们的代码中可以实现Wather这个接口，实现其中的process方法，方法中即我们自己的业务逻辑。</p>
+<p>监听器的注册是在获取数据的操作中实现： </p>
+<p>getData(path,watch)监听的事件是：节点数据变化事件</p>
+<p>getChildren(path,watch)监听的事件是：节点下的子节点增减变化事件</p>
+<h2 id="zookeeper应用案例"><a href="#zookeeper应用案例" class="headerlink" title="zookeeper应用案例"></a>zookeeper应用案例</h2><p>分布式应用HA||分布式锁</p>
+<h3 id="实现分布式应用的-主节点HA-及客户端动态更新主节点状态"><a href="#实现分布式应用的-主节点HA-及客户端动态更新主节点状态" class="headerlink" title="实现分布式应用的(主节点HA)及客户端动态更新主节点状态"></a>实现分布式应用的(主节点HA)及客户端动态更新主节点状态</h3><p>某分布式系统中，主节点可以有多台，可以动态上下线</p>
+<p>任意一台客户端都能实时感知到主节点服务器的上下线</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://oudkfzemb.bkt.clouddn.com/ha.jpg" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>客户端实现</p>
+<pre><code>public class AppClient {
+    private String groupNode = &quot;sgroup&quot;;
+    private ZooKeeper zk;
+    private Stat stat = new Stat();
+    private volatile List&lt;String&gt; serverList;
+
+    /**
+     * 连接zookeeper
+     */
+    public void connectZookeeper() throws Exception {
+        zk 
+= new ZooKeeper(&quot;localhost:4180,localhost:4181,localhost:4182&quot;, 5000, new Watcher() {
+            public void process(WatchedEvent event) {
+                // 如果发生了&quot;/sgroup&quot;节点下的子节点变化事件, 更新server列表, 并重新注册监听
+                if (event.getType() == EventType.NodeChildrenChanged 
+                    &amp;&amp; (&quot;/&quot; + groupNode).equals(event.getPath())) {
+                    try {
+                        updateServerList();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        updateServerList();
+    }
+
+    /**
+     * 更新server列表
+     */
+    private void updateServerList() throws Exception {
+        List&lt;String&gt; newServerList = new ArrayList&lt;String&gt;();
+
+        // 获取并监听groupNode的子节点变化
+        // watch参数为true, 表示监听子节点变化事件. 
+        // 每次都需要重新注册监听, 因为一次注册, 只能监听一次事件, 如果还想继续保持监听, 必须重新注册
+        List&lt;String&gt; subList = zk.getChildren(&quot;/&quot; + groupNode, true);
+        for (String subNode : subList) {
+            // 获取每个子节点下关联的server地址
+            byte[] data = zk.getData(&quot;/&quot; + groupNode + &quot;/&quot; + subNode, false, stat);
+            newServerList.add(new String(data, &quot;utf-8&quot;));
+        }
+
+        // 替换server列表
+        serverList = newServerList;
+
+        System.out.println(&quot;server list updated: &quot; + serverList);
+    }
+
+    /**
+     * client的工作逻辑写在这个方法中
+     * 此处不做任何处理, 只让client sleep
+     */
+    public void handle() throws InterruptedException {
+        Thread.sleep(Long.MAX_VALUE);
+    }
+
+    public static void main(String[] args) throws Exception {
+        AppClient ac = new AppClient();
+        ac.connectZookeeper();
+
+        ac.handle();
+    }
+}
+</code></pre><p>服务器端实现</p>
+<pre><code>public class AppServer {
+    private String groupNode = &quot;sgroup&quot;;
+    private String subNode = &quot;sub&quot;;
+
+    /**
+     * 连接zookeeper
+     * @param address server的地址
+     */
+    public void connectZookeeper(String address) throws Exception {
+        ZooKeeperzk = new ZooKeeper(
+&quot;localhost:4180,localhost:4181,localhost:4182&quot;, 
+5000, new Watcher() {
+            public void process(WatchedEvent event) {
+                // 不做处理
+            }
+        });
+        // 在&quot;/sgroup&quot;下创建子节点
+        // 子节点的类型设置为EPHEMERAL_SEQUENTIAL, 表明这是一个临时节点, 且在子节点的名称后面加上一串数字后缀
+        // 将server的地址数据关联到新创建的子节点上
+        String createdPath = zk.create(&quot;/&quot; + groupNode + &quot;/&quot; + subNode, address.getBytes(&quot;utf-8&quot;), 
+            Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+        System.out.println(&quot;create: &quot; + createdPath);
+    }
+
+    /**
+     * server的工作逻辑写在这个方法中
+     * 此处不做任何处理, 只让server sleep
+     */
+    public void handle() throws InterruptedException {
+        Thread.sleep(Long.MAX_VALUE);
+    }
+
+    public static void main(String[] args) throws Exception {
+        // 在参数中指定server的地址
+        if (args.length == 0) {
+            System.err.println(&quot;The first argument must be server address&quot;);
+            System.exit(1);
+        }
+
+        AppServer as = new AppServer();
+        as.connectZookeeper(args[0]);
+        as.handle();
+    }
+}
+</code></pre><h3 id="分布式共享锁的简单实现"><a href="#分布式共享锁的简单实现" class="headerlink" title="分布式共享锁的简单实现"></a>分布式共享锁的简单实现</h3><p>客户端A</p>
+<pre><code>public class DistributedClient {
+    // 超时时间
+    private static final int SESSION_TIMEOUT = 5000;
+    // zookeeper server列表
+    private String hosts = &quot;localhost:4180,localhost:4181,localhost:4182&quot;;
+    private String groupNode = &quot;locks&quot;;
+    private String subNode = &quot;sub&quot;;
+
+    private ZooKeeper zk;
+    // 当前client创建的子节点
+    private String thisPath;
+    // 当前client等待的子节点
+    private String waitPath;
+
+    private CountDownLatch latch = new CountDownLatch(1);
+
+    /**
+     * 连接zookeeper
+     */
+    public void connectZookeeper() throws Exception {
+        zk = new ZooKeeper(hosts, SESSION_TIMEOUT, new Watcher() {
+            public void process(WatchedEvent event) {
+                try {
+                    // 连接建立时, 打开latch, 唤醒wait在该latch上的线程
+                    if (event.getState() == KeeperState.SyncConnected) {
+                        latch.countDown();
+                    }
+
+                    // 发生了waitPath的删除事件
+                    if (event.getType() == EventType.NodeDeleted &amp;&amp; event.getPath().equals(waitPath)) {
+                        doSomething();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        // 等待连接建立
+        latch.await();
+
+        // 创建子节点
+        thisPath = zk.create(&quot;/&quot; + groupNode + &quot;/&quot; + subNode, null, Ids.OPEN_ACL_UNSAFE,
+                CreateMode.EPHEMERAL_SEQUENTIAL);
+
+        // wait一小会, 让结果更清晰一些
+        Thread.sleep(10);
+
+        // 注意, 没有必要监听&quot;/locks&quot;的子节点的变化情况
+        List&lt;String&gt; childrenNodes = zk.getChildren(&quot;/&quot; + groupNode, false);
+
+        // 列表中只有一个子节点, 那肯定就是thisPath, 说明client获得锁
+        if (childrenNodes.size() == 1) {
+            doSomething();
+        } else {
+            String thisNode = thisPath.substring((&quot;/&quot; + groupNode + &quot;/&quot;).length());
+            // 排序
+            Collections.sort(childrenNodes);
+            int index = childrenNodes.indexOf(thisNode);
+            if (index == -1) {
+                // never happened
+            } else if (index == 0) {
+                // inddx == 0, 说明thisNode在列表中最小, 当前client获得锁
+                doSomething();
+            } else {
+                // 获得排名比thisPath前1位的节点
+                this.waitPath = &quot;/&quot; + groupNode + &quot;/&quot; + childrenNodes.get(index - 1);
+                // 在waitPath上注册监听器, 当waitPath被删除时, zookeeper会回调监听器的process方法
+                zk.getData(waitPath, true, new Stat());
+            }
+        }
+    }
+
+    private void doSomething() throws Exception {
+        try {
+            System.out.println(&quot;gain lock: &quot; + thisPath);
+            Thread.sleep(2000);
+            // do something
+        } finally {
+            System.out.println(&quot;finished: &quot; + thisPath);
+            // 将thisPath删除, 监听thisPath的client将获得通知
+            // 相当于释放锁
+            zk.delete(this.thisPath, -1);
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        for (int i = 0; i &lt; 10; i++) {
+            new Thread() {
+                public void run() {
+                    try {
+                        DistributedClient dl = new DistributedClient();
+                        dl.connectZookeeper();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }
+
+        Thread.sleep(Long.MAX_VALUE);
+    }
+}
+</code></pre><p>分布式多进程模式实现</p>
+<pre><code>public class DistributedClientMy {
+
+
+    // 超时时间
+    private static final int SESSION_TIMEOUT = 5000;
+    // zookeeper server列表
+    private String hosts = &quot;spark01:2181,spark02:2181,spark03:2181&quot;;
+    private String groupNode = &quot;locks&quot;;
+    private String subNode = &quot;sub&quot;;
+    private boolean haveLock = false;
+
+    private ZooKeeper zk;
+    // 当前client创建的子节点
+    private volatile String thisPath;
+
+    /**
+     * 连接zookeeper
+     */
+    public void connectZookeeper() throws Exception {
+        zk = new ZooKeeper(&quot;spark01:2181&quot;, SESSION_TIMEOUT, new Watcher() {
+            public void process(WatchedEvent event) {
+                try {
+
+                    // 子节点发生变化
+                    if (event.getType() == EventType.NodeChildrenChanged &amp;&amp; event.getPath().equals(&quot;/&quot; + groupNode)) {
+                        // thisPath是否是列表中的最小节点
+                        List&lt;String&gt; childrenNodes = zk.getChildren(&quot;/&quot; + groupNode, true);
+                        String thisNode = thisPath.substring((&quot;/&quot; + groupNode + &quot;/&quot;).length());
+                        // 排序
+                        Collections.sort(childrenNodes);
+                        if (childrenNodes.indexOf(thisNode) == 0) {
+                            doSomething();
+                            thisPath = zk.create(&quot;/&quot; + groupNode + &quot;/&quot; + subNode, null, Ids.OPEN_ACL_UNSAFE,
+                                    CreateMode.EPHEMERAL_SEQUENTIAL);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        // 创建子节点
+        thisPath = zk.create(&quot;/&quot; + groupNode + &quot;/&quot; + subNode, null, Ids.OPEN_ACL_UNSAFE,
+                CreateMode.EPHEMERAL_SEQUENTIAL);
+
+        // wait一小会, 让结果更清晰一些
+        Thread.sleep(new Random().nextInt(1000));
+
+        // 监听子节点的变化
+        List&lt;String&gt; childrenNodes = zk.getChildren(&quot;/&quot; + groupNode, true);
+
+        // 列表中只有一个子节点, 那肯定就是thisPath, 说明client获得锁
+        if (childrenNodes.size() == 1) {
+            doSomething();
+            thisPath = zk.create(&quot;/&quot; + groupNode + &quot;/&quot; + subNode, null, Ids.OPEN_ACL_UNSAFE,
+                    CreateMode.EPHEMERAL_SEQUENTIAL);
+        }
+    }
+
+    /**
+     * 共享资源的访问逻辑写在这个方法中
+     */
+    private void doSomething() throws Exception {
+        try {
+            System.out.println(&quot;gain lock: &quot; + thisPath);
+            Thread.sleep(2000);
+            // do something
+        } finally {
+            System.out.println(&quot;finished: &quot; + thisPath);
+            // 将thisPath删除, 监听thisPath的client将获得通知
+            // 相当于释放锁
+            zk.delete(this.thisPath, -1);
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        DistributedClientMy dl = new DistributedClientMy();
+        dl.connectZookeeper();
+        Thread.sleep(Long.MAX_VALUE);
+    }
+
+
+}
+</code></pre>
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-08-08T17:07:06.563Z" itemprop="dateUpdated">2017-08-09 01:07:06</time>
+</span><br>
+
+
+        
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2017/08/08/3-zookeeper-usage/" target="_blank" rel="external">http://dennis.pathto.top/2017/08/08/3-zookeeper-usage/</a>
+        
+    </div>
+    <footer>
+        <a href="http://dennis.pathto.top">
+            <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
+            Dennis
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/distributed/">distributed</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/08/08/3-zookeeper-usage/&title=《3.zookeeper-使用》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/08/08/3-zookeeper-usage/&title=《3.zookeeper-使用》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/08/08/3-zookeeper-usage/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《3.zookeeper-使用》 — Dennis'Blog&url=http://dennis.pathto.top/2017/08/08/3-zookeeper-usage/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/08/08/3-zookeeper-usage/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2017/08/08/4-zookeeper-principle/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">4.zookeeper-原理</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/08/08/2-zookeeper-install/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">2.zookeeper-安装</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper">
+     <div id="articleComment" style="padding-left:5%;padding-right:5%;" ></div>
+    <!--<iframe height="900px" id="page_content_iframe" frameborder="0" marginheight="0" onload="dyniframesize('page_content_iframe');" width="100%" scrolling="auto" src="https://dennis-dzqapp.rhcloud.com/list_blog_commonts?p_id=2017/08/08/3-zookeeper-usage/" style="display: block;"></iframe>-->
+    </div>
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" data-alipay="http://otwbalpjp.bkt.clouddn.com/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Dennis &copy; 2015 - 2017</span>
+            <span>
+                
+                Power by <a href="http://116.196.88.117/" target="_blank">pathto.top</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/08/08/3-zookeeper-usage/&title=《3.zookeeper-使用》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/08/08/3-zookeeper-usage/&title=《3.zookeeper-使用》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/08/08/3-zookeeper-usage/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《3.zookeeper-使用》 — Dennis'Blog&url=http://dennis.pathto.top/2017/08/08/3-zookeeper-usage/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/08/08/3-zookeeper-usage/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACKklEQVR42u3a0W4CIRAFUP//p7dJn5q0rveCmC57eDKKLEeTCTPD4xGP43v8fJ2883uF3zOfrf9YMTAwMC7LOE7H+SbabeXPyudjYGDch5EE2STKJUG5ZZ/vDQMDAyPfbnI0bD/FwMDAmGck67QBGgMDA2Mmif1MAF2ei2NgYFyQMdYY+Mzr5f0NDAyMf884FozzlceOiS+eiIGBsTWjTVbPQ+HYBYuxRumLXBwDA2MjxkzxaybRbct20f+AgYGxKSP5Wl2gj3+mttBW5NkYGBjbMfL6VT6nbXnmmy5IGBgYGzHyovx8K3HmAFqX2zAwMDZiJMWyPECvOG4WPxwGBsZ2jJlwmRT3i+7E0EwMDIz7MNoWY77d9qiXrBPdGcHAwNiI8a6D4FjCmV/pSNJdDAyMXRljLcZkZlu8SwL0029hYGDcgLEimI4F1sH2AwYGxtaMNozmoXCsDDd2EQQDA2NvRvvI/PJEe3BMZg4msRgYGBsx8ofNXOSaSWKf7hMDA2NrRhL+3hVw2/R1LAHGwMDYjzEWFtsUd8W1DAwMjPswxi6PTrUbZ0r/SZEOAwNjO8ZRjpnAmrQ5k8T1j3UwMDC2ZrSNw5krFPN3JN4wMDAwLsvIg2zb7BwLwfkeigMiBgbGFow2QW0Pfx/KwjEwMDDKwNqW6opNY2BgYMStyvZI1xbXlgRcDAyMyzJmrke0Rf82oV2Si2NgYFyKMXPuWl1WexsAAwPjqowv1zFb0d+LNKMAAAAASUVORK5CYII=" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="/js/main.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '我消失了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '我回来了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

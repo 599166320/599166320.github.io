@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>3.spring-cloud-Ribbon负载均衡和故障转移 | Dennis&#39;Blog | 我不用讨人喜欢，只做一个迷人的混蛋</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="spring-boot,spring,java,spring-cloud">
+    <meta name="description" content="Ribbon可以实现客户端的负载均衡和故障转移，默认情况下，Ribbon使用到的负载均衡算法是轮询算法 下面是Ribbon实现客户端负载均衡的列子 使用到的项目有spring-cloud-eureka,spring-cloud-provider-01,spring-cloud-provider-02,spring-cloud-consumer-01 服务提供端spring-cloud-provid">
+<meta name="keywords" content="spring-boot,spring,java,spring-cloud">
+<meta property="og:type" content="article">
+<meta property="og:title" content="3.spring-cloud-Ribbon负载均衡和故障转移">
+<meta property="og:url" content="http://dennis.pathto.top/2017/08/24/spring-cloud-ribbon-load-balance-failover3/index.html">
+<meta property="og:site_name" content="Dennis&#39;Blog">
+<meta property="og:description" content="Ribbon可以实现客户端的负载均衡和故障转移，默认情况下，Ribbon使用到的负载均衡算法是轮询算法 下面是Ribbon实现客户端负载均衡的列子 使用到的项目有spring-cloud-eureka,spring-cloud-provider-01,spring-cloud-provider-02,spring-cloud-consumer-01 服务提供端spring-cloud-provid">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-08-24T14:06:34.590Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="3.spring-cloud-Ribbon负载均衡和故障转移">
+<meta name="twitter:description" content="Ribbon可以实现客户端的负载均衡和故障转移，默认情况下，Ribbon使用到的负载均衡算法是轮询算法 下面是Ribbon实现客户端负载均衡的列子 使用到的项目有spring-cloud-eureka,spring-cloud-provider-01,spring-cloud-provider-02,spring-cloud-consumer-01 服务提供端spring-cloud-provid">
+    
+        <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/semantic.css" type="text/css" />
+<link rel="stylesheet" href="/css/zyComment.css" type="text/css" />
+<style type="text/css">
+	#cloud-tie-wrapper label {
+	    font-weight: bold;
+	}
+	#cloud-tie-wrapper a {
+		font-family: Microsoft YaHei;
+	}
+	#articleComment {
+		width: "60%";
+		/*height: 1500px;*/
+		overflow: auto;
+	}
+</style>
+
+    <script>window.lazyScripts=[]</script>
+
+
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/zyComment.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+$(function(){
+var post_toc_links = $(".post-toc-link");
+$.each( post_toc_links, function(index,post_toc_link){
+	post_toc_link = $(post_toc_link);
+	var post_toc_number = post_toc_link.find(".post-toc-number");
+	var post_toc_text = post_toc_link.find(".post-toc-text");
+	//console.log(post_toc_number.text()+" "+post_toc_text.text());
+	$(post_toc_link.attr("href")).text(post_toc_number.text()+" "+post_toc_text.text())
+});
+});
+
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+function jsonp(url){
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.insertBefore(script, head.firstChild);
+}
+function add_blog_callBackFun(rs){
+	$("#articleComment").zyComment("setCommentAfter",rs);
+}
+function get_list_blog_commonts_callBackFun(rs){
+	var agoComment = rs;
+	$("#articleComment").zyComment({
+		"width":"355",
+		"height":"33",
+		"agoComment":agoComment,
+		"callback":function(comment){
+			var selfID = comment.selfID;
+			if(typeof selfID == "undefined" ){
+				selfID = 0;
+			}
+			jsonp(host+"/add_blog_jsonp?"+"p_id="+encodeURIComponent("2017/08/24/spring-cloud-ribbon-load-balance-failover3/")+ "&username="+encodeURIComponent(comment.name)+"&content="+encodeURIComponent(comment.content)+"&email="+encodeURIComponent(comment.email)+"&c_id_replay="+selfID);
+
+		}
+	});
+}
+jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/08/24/spring-cloud-ribbon-load-balance-failover3/"));
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Dennis</h5>
+          <a href="mailto:dennis52o1314@163.com" title="dennis52o1314@163.com" class="mail">dennis52o1314@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/599166320" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/2166908462" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                其他
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">3.spring-cloud-Ribbon负载均衡和故障转移</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">3.spring-cloud-Ribbon负载均衡和故障转移</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-08-24T13:13:10.000Z" itemprop="datePublished" class="page-time">
+  2017-08-24
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-cloud/">spring-cloud</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#服务提供端"><span class="post-toc-number">1.</span> <span class="post-toc-text">服务提供端</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#spring-cloud-provider-01"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">spring-cloud-provider-01</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#pom-xml"><span class="post-toc-number">1.1.1.</span> <span class="post-toc-text">pom.xml</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#application-yaml"><span class="post-toc-number">1.1.2.</span> <span class="post-toc-text">application.yaml</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#User-java"><span class="post-toc-number">1.1.3.</span> <span class="post-toc-text">User.java</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#UserController-java"><span class="post-toc-number">1.1.4.</span> <span class="post-toc-text">UserController.java</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#spring-cloud-provider-02"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">spring-cloud-provider-02</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#UserController-java-1"><span class="post-toc-number">1.2.1.</span> <span class="post-toc-text">UserController.java</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#服务消费端"><span class="post-toc-number">2.</span> <span class="post-toc-text">服务消费端</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#spring-cloud-consumer-01"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">spring-cloud-consumer-01</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#pom-xml-1"><span class="post-toc-number">2.1.1.</span> <span class="post-toc-text">pom.xml</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#application-yaml-1"><span class="post-toc-number">2.1.2.</span> <span class="post-toc-text">application.yaml</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#SpringCloudConsumer01Application-java"><span class="post-toc-number">2.1.3.</span> <span class="post-toc-text">SpringCloudConsumer01Application.java</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#CoreConfiguration-java"><span class="post-toc-number">2.1.4.</span> <span class="post-toc-text">CoreConfiguration.java</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#UserConstroller-java"><span class="post-toc-number">2.1.5.</span> <span class="post-toc-text">UserConstroller.java</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#User-java-1"><span class="post-toc-number">2.1.6.</span> <span class="post-toc-text">User.java</span></a></li></ol></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-spring-cloud-ribbon-load-balance-failover3"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">3.spring-cloud-Ribbon负载均衡和故障转移</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-08-24 21:13:10" datetime="2017-08-24T13:13:10.000Z"  itemprop="datePublished">2017-08-24</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-cloud/">spring-cloud</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>Ribbon可以实现客户端的负载均衡和故障转移，默认情况下，Ribbon使用到的负载均衡算法是轮询算法</p>
+<p>下面是Ribbon实现客户端负载均衡的列子</p>
+<p>使用到的项目有spring-cloud-eureka,spring-cloud-provider-01,spring-cloud-provider-02,spring-cloud-consumer-01</p>
+<h1 id="服务提供端"><a href="#服务提供端" class="headerlink" title="服务提供端"></a>服务提供端</h1><h2 id="spring-cloud-provider-01"><a href="#spring-cloud-provider-01" class="headerlink" title="spring-cloud-provider-01"></a>spring-cloud-provider-01</h2><h3 id="pom-xml"><a href="#pom-xml" class="headerlink" title="pom.xml"></a>pom.xml</h3><pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+    xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+    &lt;groupId&gt;com.example&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-provider-01&lt;/artifactId&gt;
+    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+    &lt;packaging&gt;jar&lt;/packaging&gt;
+    &lt;name&gt;spring-cloud-provider-01&lt;/name&gt;
+    &lt;description&gt;Demo project for Spring Boot&lt;/description&gt;
+    &lt;parent&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+        &lt;version&gt;1.4.7.RELEASE&lt;/version&gt;
+        &lt;relativePath/&gt; &lt;!-- lookup parent from repository --&gt;
+    &lt;/parent&gt;
+    &lt;properties&gt;
+        &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+        &lt;project.reporting.outputEncoding&gt;UTF-8&lt;/project.reporting.outputEncoding&gt;
+        &lt;java.version&gt;1.8&lt;/java.version&gt;
+        &lt;spring-cloud.version&gt;Camden.SR7&lt;/spring-cloud.version&gt;
+    &lt;/properties&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-starter-eureka&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
+            &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+    &lt;dependencyManagement&gt;
+        &lt;dependencies&gt;
+            &lt;dependency&gt;
+                &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;
+                &lt;version&gt;${spring-cloud.version}&lt;/version&gt;
+                &lt;type&gt;pom&lt;/type&gt;
+                &lt;scope&gt;import&lt;/scope&gt;
+            &lt;/dependency&gt;
+        &lt;/dependencies&gt;
+    &lt;/dependencyManagement&gt;
+    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+&lt;/project&gt;
+</code></pre><h3 id="application-yaml"><a href="#application-yaml" class="headerlink" title="application.yaml"></a>application.yaml</h3><pre><code>server:
+  port: 8080
+spring:
+  application:
+    name: spring-cloud-provider
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true
+</code></pre><h3 id="User-java"><a href="#User-java" class="headerlink" title="User.java"></a>User.java</h3><pre><code>package com.example.demo.model;
+import java.util.Date;
+public class User {
+    private String id;
+    private String userName;
+    private int age;
+    private Date birthday;
+    public String getId() {
+        return id;
+    }
+    public void setId(String id) {
+        this.id = id;
+    }
+    public String getUserName() {
+        return userName;
+    }
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+    public int getAge() {
+        return age;
+    }
+    public void setAge(int age) {
+        this.age = age;
+    }
+    public Date getBirthday() {
+        return birthday;
+    }
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+    public User(String id, String userName, int age, Date birthday) {
+        super();
+        this.id = id;
+        this.userName = userName;
+        this.age = age;
+        this.birthday = birthday;
+    }
+    public User(String id, String userName, int age) {
+        super();
+        this.id = id;
+        this.userName = userName;
+        this.age = age;
+    }
+}
+</code></pre><h3 id="UserController-java"><a href="#UserController-java" class="headerlink" title="UserController.java"></a>UserController.java</h3><pre><code>package com.example.demo.controller;
+import java.util.HashMap;
+import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.demo.model.User;
+
+@RestController
+@RequestMapping(value=&quot;/user&quot;)
+public class UserController {
+    private Map&lt;String, User&gt; umap = new HashMap();
+    public UserController(){
+        umap.put(&quot;1&quot;, new User(&quot;1&quot;, &quot;xiaoming1&quot;, 30));
+        umap.put(&quot;2&quot;, new User(&quot;2&quot;, &quot;xiaohong1&quot;, 20));
+        umap.put(&quot;3&quot;, new User(&quot;3&quot;, &quot;zhangsan1&quot;, 80));
+        umap.put(&quot;4&quot;, new User(&quot;4&quot;, &quot;lisi1&quot;, 10));
+        umap.put(&quot;5&quot;, new User(&quot;5&quot;, &quot;wangwu1&quot;, 22));
+    }
+    @GetMapping(value=&quot;/get&quot;)
+    @ResponseBody
+    public User get(String id){
+        return umap.get(id);
+    }
+}
+</code></pre><h2 id="spring-cloud-provider-02"><a href="#spring-cloud-provider-02" class="headerlink" title="spring-cloud-provider-02"></a>spring-cloud-provider-02</h2><p>spring-cloud-provider-01和spring-cloud-provider-02不同的地方是UserController<br>其他地方都是一样</p>
+<h3 id="UserController-java-1"><a href="#UserController-java-1" class="headerlink" title="UserController.java"></a>UserController.java</h3><pre><code>package com.example.demo.controller;
+import java.util.HashMap;
+import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.demo.model.User;
+
+@RestController
+@RequestMapping(value=&quot;/user&quot;)
+public class UserController {
+    private Map&lt;String, User&gt; umap = new HashMap();
+    public UserController(){
+        umap.put(&quot;1&quot;, new User(&quot;1&quot;, &quot;xiaoming&quot;, 30));
+        umap.put(&quot;2&quot;, new User(&quot;2&quot;, &quot;xiaohong&quot;, 20));
+        umap.put(&quot;3&quot;, new User(&quot;3&quot;, &quot;zhangsan&quot;, 80));
+        umap.put(&quot;4&quot;, new User(&quot;4&quot;, &quot;lisi&quot;, 10));
+        umap.put(&quot;5&quot;, new User(&quot;5&quot;, &quot;wangwu&quot;, 22));
+    }
+    @GetMapping(value=&quot;/get&quot;)
+    @ResponseBody
+    public User get(String id){
+        return umap.get(id);
+    }
+}
+</code></pre><h1 id="服务消费端"><a href="#服务消费端" class="headerlink" title="服务消费端"></a>服务消费端</h1><h2 id="spring-cloud-consumer-01"><a href="#spring-cloud-consumer-01" class="headerlink" title="spring-cloud-consumer-01"></a>spring-cloud-consumer-01</h2><h3 id="pom-xml-1"><a href="#pom-xml-1" class="headerlink" title="pom.xml"></a>pom.xml</h3><pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+    xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+    &lt;groupId&gt;com.example&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-consumer-01&lt;/artifactId&gt;
+    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+    &lt;packaging&gt;jar&lt;/packaging&gt;
+
+    &lt;name&gt;spring-cloud-consumer-01&lt;/name&gt;
+    &lt;description&gt;Demo project for Spring Boot&lt;/description&gt;
+
+    &lt;parent&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+        &lt;version&gt;1.4.7.RELEASE&lt;/version&gt;
+        &lt;relativePath/&gt; &lt;!-- lookup parent from repository --&gt;
+    &lt;/parent&gt;
+
+    &lt;properties&gt;
+        &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+        &lt;project.reporting.outputEncoding&gt;UTF-8&lt;/project.reporting.outputEncoding&gt;
+        &lt;java.version&gt;1.8&lt;/java.version&gt;
+        &lt;spring-cloud.version&gt;Camden.SR7&lt;/spring-cloud.version&gt;
+    &lt;/properties&gt;
+
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-starter-eureka&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-starter-ribbon&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
+            &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+
+    &lt;dependencyManagement&gt;
+        &lt;dependencies&gt;
+            &lt;dependency&gt;
+                &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;
+                &lt;version&gt;${spring-cloud.version}&lt;/version&gt;
+                &lt;type&gt;pom&lt;/type&gt;
+                &lt;scope&gt;import&lt;/scope&gt;
+            &lt;/dependency&gt;
+        &lt;/dependencies&gt;
+    &lt;/dependencyManagement&gt;
+
+    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+
+
+&lt;/project&gt;
+</code></pre><h3 id="application-yaml-1"><a href="#application-yaml-1" class="headerlink" title="application.yaml"></a>application.yaml</h3><pre><code>server:
+  port: 8082
+
+spring:
+  application:
+    name: spring-cloud-consumer
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true
+</code></pre><h3 id="SpringCloudConsumer01Application-java"><a href="#SpringCloudConsumer01Application-java" class="headerlink" title="SpringCloudConsumer01Application.java"></a>SpringCloudConsumer01Application.java</h3><pre><code>package com.example.demo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+@EnableEurekaClient
+@SpringBootApplication
+public class SpringCloudConsumer01Application {
+
+    public static void main(String[] args) {
+        SpringApplication.run(SpringCloudConsumer01Application.class, args);
+    }
+}
+</code></pre><h3 id="CoreConfiguration-java"><a href="#CoreConfiguration-java" class="headerlink" title="CoreConfiguration.java"></a>CoreConfiguration.java</h3><pre><code>package com.example.demo.config;
+
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.client.RestTemplate;
+
+@Controller
+public class CoreConfiguration {
+    @LoadBalanced
+    @Bean
+    public RestTemplate restTemplateBean(){
+        return new RestTemplate();
+    }
+
+}
+</code></pre><h3 id="UserConstroller-java"><a href="#UserConstroller-java" class="headerlink" title="UserConstroller.java"></a>UserConstroller.java</h3><pre><code>package com.example.demo.controller;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+import com.example.demo.model.User;
+@RestController
+@RequestMapping(value=&quot;/user&quot;)
+public class UserConstroller {
+    @Autowired
+    private RestTemplate restTemplate;
+    @ResponseBody
+    @GetMapping(&quot;/get&quot;)
+    public User get(String uid){
+        return restTemplate.getForObject(&quot;http://spring-cloud-provider/user/get?id=&quot;+uid, User.class);
+    }
+
+}
+</code></pre><h3 id="User-java-1"><a href="#User-java-1" class="headerlink" title="User.java"></a>User.java</h3><pre><code>package com.example.demo.model;
+
+import java.util.Date;
+
+public class User {
+
+    private String id;
+    private String userName;
+    private int age;
+    private Date birthday;
+    public String getId() {
+        return id;
+    }
+    public void setId(String id) {
+        this.id = id;
+    }
+    public String getUserName() {
+        return userName;
+    }
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+    public int getAge() {
+        return age;
+    }
+    public void setAge(int age) {
+        this.age = age;
+    }
+    public Date getBirthday() {
+        return birthday;
+    }
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+    public User(String id, String userName, int age, Date birthday) {
+        super();
+        this.id = id;
+        this.userName = userName;
+        this.age = age;
+        this.birthday = birthday;
+    }
+    public User(String id, String userName, int age) {
+        super();
+        this.id = id;
+        this.userName = userName;
+        this.age = age;
+    }
+    public User(){}
+}
+</code></pre><p>验证消费端</p>
+<p><a href="http://192.168.88.101:8082/user/get?uid=1" target="_blank" rel="external">http://192.168.88.101:8082/user/get?uid=1</a></p>
+<p>在浏览器中打开<a href="http://192.168.88.101:8082/user/get?uid=1，并且不停的刷新，页面中轮回显示下面的内容：" target="_blank" rel="external">http://192.168.88.101:8082/user/get?uid=1，并且不停的刷新，页面中轮回显示下面的内容：</a></p>
+<pre><code>{&quot;id&quot;:&quot;1&quot;,&quot;userName&quot;:&quot;xiaoming1&quot;,&quot;age&quot;:30,&quot;birthday&quot;:null}
+{&quot;id&quot;:&quot;1&quot;,&quot;userName&quot;:&quot;xiaoming&quot;,&quot;age&quot;:30,&quot;birthday&quot;:null}
+</code></pre><p>当服务提供端挂了一个的时候，可以实现故障转移</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-08-24T14:06:34.590Z" itemprop="dateUpdated">2017-08-24 22:06:34</time>
+</span><br>
+
+
+        
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2017/08/24/spring-cloud-ribbon-load-balance-failover3/" target="_blank" rel="external">http://dennis.pathto.top/2017/08/24/spring-cloud-ribbon-load-balance-failover3/</a>
+        
+    </div>
+    <footer>
+        <a href="http://dennis.pathto.top">
+            <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
+            Dennis
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/">spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-boot/">spring-boot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-cloud/">spring-cloud</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/08/24/spring-cloud-ribbon-load-balance-failover3/&title=《3.spring-cloud-Ribbon负载均衡和故障转移》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/08/24/spring-cloud-ribbon-load-balance-failover3/&title=《3.spring-cloud-Ribbon负载均衡和故障转移》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/08/24/spring-cloud-ribbon-load-balance-failover3/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《3.spring-cloud-Ribbon负载均衡和故障转移》 — Dennis'Blog&url=http://dennis.pathto.top/2017/08/24/spring-cloud-ribbon-load-balance-failover3/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/08/24/spring-cloud-ribbon-load-balance-failover3/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2017/08/24/spring-cloud-other-load-balance-4/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">4.spring-cloud-Ribbon其他负载均衡算法</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/08/24/spring-cloud-eureka-client-2/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">2.spring-cloud-eureka客户端的使用</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper">
+     <div id="articleComment" style="padding-left:5%;padding-right:5%;" ></div>
+    <!--<iframe height="900px" id="page_content_iframe" frameborder="0" marginheight="0" onload="dyniframesize('page_content_iframe');" width="100%" scrolling="auto" src="https://dennis-dzqapp.rhcloud.com/list_blog_commonts?p_id=2017/08/24/spring-cloud-ribbon-load-balance-failover3/" style="display: block;"></iframe>-->
+    </div>
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" data-alipay="http://otwbalpjp.bkt.clouddn.com/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Dennis &copy; 2015 - 2017</span>
+            <span>
+                
+                Power by <a href="http://116.196.88.117/" target="_blank">pathto.top</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/08/24/spring-cloud-ribbon-load-balance-failover3/&title=《3.spring-cloud-Ribbon负载均衡和故障转移》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/08/24/spring-cloud-ribbon-load-balance-failover3/&title=《3.spring-cloud-Ribbon负载均衡和故障转移》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/08/24/spring-cloud-ribbon-load-balance-failover3/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《3.spring-cloud-Ribbon负载均衡和故障转移》 — Dennis'Blog&url=http://dennis.pathto.top/2017/08/24/spring-cloud-ribbon-load-balance-failover3/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/08/24/spring-cloud-ribbon-load-balance-failover3/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACsklEQVR42u3aMW7DMBAEQP3/00mTIoXl7B5JQwFGlRFbNIcBePSeriu+vn5dd3/J703GvHv3OnHh4eHhLUz9/dDJu8l33b2+Gz///Is54OHh4R3j5VO5+4K8nKwsQT5nPDw8vGfy3lNndyWLiIeHh/ffebPQ4d8UBjw8PLyFMCLZ4vPjcj5aHo7g4eHhfYaXd5Ge8/pIfw8PDw9vuaveFokTjbHZPH9GwMPDwzvAa5tS7bE1D2eTeGL4gBceHh7eMV5SBpKgNo93k5ZYG1K8WFY8PDy8rbykrTWLblcOwfms/ogq8PDw8I7xVqaYRxLtkm24Cw8PD+8YLx86b03lS7BeEq5dK4eHh4dX8tqAYFfDrMUXj17h4eHhHeDlbaS8JCRhx3oQ3B7c8fDw8E7wkkhidsjON+71wlAk1nh4eHgjXl4AVo7C7V6dl4o/5oyHh4d3gLcrcp21vvJysu2ZMjw8PLytvDaMaCPUdhHzceoYAg8PD2+Z1x5nZ8vUTrddiGK2eHh4eFt5+SE42ZrzaGNWTpKDOB4eHt5eXnJbHjrMgte2tBSBCB4eHt5hXvuTPm+PzSY6a5hd7Yri4eHhjXj5Rp9PPR9n5V08PDy8J/B2lYp8usNNPyhReHh4eCd4eQAxm3Q7ubbFFRUwPDw8vI/wZltwHubmC5q3u6KeHh4eHt5WXtv+z6PYWZyRLES0QHh4eHgf4bVbcx7ptg9vtYEIHh4e3mneV3mtdJfyhwNmkceLJcPDw8M7wGu32nbQ2YG4PbKvFxI8PDy8lpcHASvberuIK222218MeHh4eFt5bYCbBBB50+vghYeHh/cAXo5PGLO2WRFS4OHh4T2At/5g1spC5MExHh4e3mleGwTMJl1HCeU/YynGxcPDw9vUVW+LR/vJ/NGEpQ4eHh4e3h7eN8Glc6iYV0I8AAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="/js/main.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '我消失了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '我回来了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

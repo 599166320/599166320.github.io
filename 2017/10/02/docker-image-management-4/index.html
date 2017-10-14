@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>4.镜像管理 | Dennis&#39;Blog | 我不用讨人喜欢，只做一个迷人的混蛋</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="docker,cloud">
+    <meta name="description" content="镜像的概念镜像是一个包含程序运行必要依赖环境和代码的只读文件，它采用分层的文件系统，将每一次改变以读写层的形式增加到原来的只读文件上。镜像是容器运行的基石。 下图展示的是Docker镜像的系统结构。其中，镜像的最底层必须是一个称为启动文件系统(bootfs)的镜像，用户不会与这一层直接打交道。bootfs的上层镜像就是我们熟知的根镜像。  镜像的本质是磁盘上一系列文件的集合。">
+<meta name="keywords" content="docker,cloud">
+<meta property="og:type" content="article">
+<meta property="og:title" content="4.镜像管理">
+<meta property="og:url" content="http://dennis.pathto.top/2017/10/02/docker-image-management-4/index.html">
+<meta property="og:site_name" content="Dennis&#39;Blog">
+<meta property="og:description" content="镜像的概念镜像是一个包含程序运行必要依赖环境和代码的只读文件，它采用分层的文件系统，将每一次改变以读写层的形式增加到原来的只读文件上。镜像是容器运行的基石。 下图展示的是Docker镜像的系统结构。其中，镜像的最底层必须是一个称为启动文件系统(bootfs)的镜像，用户不会与这一层直接打交道。bootfs的上层镜像就是我们熟知的根镜像。  镜像的本质是磁盘上一系列文件的集合。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://ox4lrc1z7.bkt.clouddn.com/4docker-image-struct-hierarchy%20.png">
+<meta property="og:image" content="http://ox4lrc1z7.bkt.clouddn.com/5docker-image-file-relationship.png">
+<meta property="og:image" content="http://ox4lrc1z7.bkt.clouddn.com/3docker-image-sruct.png">
+<meta property="og:image" content="http://ox4lrc1z7.bkt.clouddn.com/6docker-daocloud-main.png">
+<meta property="og:image" content="http://ox4lrc1z7.bkt.clouddn.com/7docker-get-image.png">
+<meta property="og:updated_time" content="2017-10-02T16:07:57.717Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="4.镜像管理">
+<meta name="twitter:description" content="镜像的概念镜像是一个包含程序运行必要依赖环境和代码的只读文件，它采用分层的文件系统，将每一次改变以读写层的形式增加到原来的只读文件上。镜像是容器运行的基石。 下图展示的是Docker镜像的系统结构。其中，镜像的最底层必须是一个称为启动文件系统(bootfs)的镜像，用户不会与这一层直接打交道。bootfs的上层镜像就是我们熟知的根镜像。  镜像的本质是磁盘上一系列文件的集合。">
+<meta name="twitter:image" content="http://ox4lrc1z7.bkt.clouddn.com/4docker-image-struct-hierarchy%20.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/semantic.css" type="text/css" />
+<link rel="stylesheet" href="/css/zyComment.css" type="text/css" />
+<style type="text/css">
+	#cloud-tie-wrapper label {
+	    font-weight: bold;
+	}
+	#cloud-tie-wrapper a {
+		font-family: Microsoft YaHei;
+	}
+	#articleComment {
+		width: "60%";
+		/*height: 1500px;*/
+		overflow: auto;
+	}
+</style>
+
+    <script>window.lazyScripts=[]</script>
+
+
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/zyComment.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+$(function(){
+var post_toc_links = $(".post-toc-link");
+$.each( post_toc_links, function(index,post_toc_link){
+	post_toc_link = $(post_toc_link);
+	var post_toc_number = post_toc_link.find(".post-toc-number");
+	var post_toc_text = post_toc_link.find(".post-toc-text");
+	//console.log(post_toc_number.text()+" "+post_toc_text.text());
+	$(post_toc_link.attr("href")).text(post_toc_number.text()+" "+post_toc_text.text())
+});
+});
+
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+function jsonp(url){
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.insertBefore(script, head.firstChild);
+}
+function add_blog_callBackFun(rs){
+	$("#articleComment").zyComment("setCommentAfter",rs);
+}
+function get_list_blog_commonts_callBackFun(rs){
+	var agoComment = rs;
+	$("#articleComment").zyComment({
+		"width":"355",
+		"height":"33",
+		"agoComment":agoComment,
+		"callback":function(comment){
+			var selfID = comment.selfID;
+			if(typeof selfID == "undefined" ){
+				selfID = 0;
+			}
+			jsonp(host+"/add_blog_jsonp?"+"p_id="+encodeURIComponent("2017/10/02/docker-image-management-4/")+ "&username="+encodeURIComponent(comment.name)+"&content="+encodeURIComponent(comment.content)+"&email="+encodeURIComponent(comment.email)+"&c_id_replay="+selfID);
+
+		}
+	});
+}
+jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/10/02/docker-image-management-4/"));
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Dennis</h5>
+          <a href="mailto:dennis52o1314@163.com" title="dennis52o1314@163.com" class="mail">dennis52o1314@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/599166320" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/2166908462" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                其他
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">4.镜像管理</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">4.镜像管理</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-10-02T15:06:26.000Z" itemprop="datePublished" class="page-time">
+  2017-10-02
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/docker/">docker</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#镜像的概念"><span class="post-toc-number">1.</span> <span class="post-toc-text">镜像的概念</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#通配符，找到符合条件的一系列镜像"><span class="post-toc-number">2.</span> <span class="post-toc-text">通配符，找到符合条件的一系列镜像</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#docker详细信息"><span class="post-toc-number">3.</span> <span class="post-toc-text">docker详细信息</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#在本地寻找镜像-下载-运行"><span class="post-toc-number">4.</span> <span class="post-toc-text">在本地寻找镜像/下载/运行</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#查找镜像"><span class="post-toc-number">5.</span> <span class="post-toc-text">查找镜像</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#拉取镜像到本地"><span class="post-toc-number">6.</span> <span class="post-toc-text">拉取镜像到本地</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#删除"><span class="post-toc-number">7.</span> <span class="post-toc-text">删除</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#列出所有容器的ID"><span class="post-toc-number">8.</span> <span class="post-toc-text">列出所有容器的ID</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#从dockerhub获取docker"><span class="post-toc-number">9.</span> <span class="post-toc-text">从dockerhub获取docker</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#浏览器打开网页"><span class="post-toc-number">9.1.</span> <span class="post-toc-text">浏览器打开网页</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#从daocluod的docker-hub中拉取镜像"><span class="post-toc-number">9.2.</span> <span class="post-toc-text">从daocluod的docker hub中拉取镜像</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#镜像命令"><span class="post-toc-number">10.</span> <span class="post-toc-text">镜像命令</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#添加标签"><span class="post-toc-number">10.1.</span> <span class="post-toc-text">添加标签</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#删除镜像"><span class="post-toc-number">11.</span> <span class="post-toc-text">删除镜像</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#强制删除运行中的容器"><span class="post-toc-number">12.</span> <span class="post-toc-text">强制删除运行中的容器</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#查看镜像的具体信息"><span class="post-toc-number">13.</span> <span class="post-toc-text">查看镜像的具体信息</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#运行一个容器"><span class="post-toc-number">14.</span> <span class="post-toc-text">运行一个容器</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#镜像的导入导出"><span class="post-toc-number">15.</span> <span class="post-toc-text">镜像的导入导出</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#导入"><span class="post-toc-number">16.</span> <span class="post-toc-text">导入</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#查看导入的image"><span class="post-toc-number">17.</span> <span class="post-toc-text">查看导入的image</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#运行导入的镜像"><span class="post-toc-number">18.</span> <span class="post-toc-text">运行导入的镜像</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#进入容器"><span class="post-toc-number">19.</span> <span class="post-toc-text">进入容器</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#创建一个已经存在的镜像ID然后用commit提交"><span class="post-toc-number">20.</span> <span class="post-toc-text">创建一个已经存在的镜像ID然后用commit提交</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#查看镜像的层级"><span class="post-toc-number">21.</span> <span class="post-toc-text">查看镜像的层级</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#本地文件"><span class="post-toc-number">22.</span> <span class="post-toc-text">本地文件</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-docker-image-management-4"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">4.镜像管理</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-10-02 23:06:26" datetime="2017-10-02T15:06:26.000Z"  itemprop="datePublished">2017-10-02</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/docker/">docker</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="镜像的概念"><a href="#镜像的概念" class="headerlink" title="镜像的概念"></a>镜像的概念</h1><p>镜像是一个包含程序运行必要依赖环境和代码的只读文件，它采用分层的文件系统，将每一次改变以读写层的形式增加到原来的只读文件上。镜像是容器运行的基石。</p>
+<p>下图展示的是Docker镜像的系统结构。其中，镜像的最底层必须是一个称为启动文件系统(bootfs)的镜像，用户不会与这一层直接打交道。bootfs的上层镜像就是我们熟知的根镜像。</p>
+<p><img src="http://ox4lrc1z7.bkt.clouddn.com/4docker-image-struct-hierarchy%20.png" alt="image"></p>
+<p>镜像的本质是磁盘上一系列文件的集合。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://ox4lrc1z7.bkt.clouddn.com/5docker-image-file-relationship.png" alt="image" title="">
+                </div>
+                <div class="image-caption">image</div>
+            </figure>
+<p>镜像管理</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://ox4lrc1z7.bkt.clouddn.com/3docker-image-sruct.png" alt="image" title="">
+                </div>
+                <div class="image-caption">image</div>
+            </figure>
+<p>查看本地所有镜像</p>
+<pre><code>[root@bogon ~]# docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+centos              centos6             5dedbd63518e        2 weeks ago         194MB
+</code></pre><ul>
+<li>REPOSITORY：仓库名称。 </li>
+<li><ul>
+<li>[namespace/centos]：由命名空间和实际的仓库名称组成。当你再Docker Hub上注册一个账户时，账户名自动成为你的命名空间，该命名空间是用来区分Docke Hub上注册的不同用户或者组织的。</li>
+</ul>
+</li>
+<li><ul>
+<li>[centos]：只有仓库名。属于顶级命名空间，只用于官方镜像。<br>[dl.dockerpool.com:5000\centos:7]：指定URL路径的方式。适用于自己搭建的Hub或者第三方Hub上获取镜像。</li>
+</ul>
+</li>
+<li>TAG：用于区分同一个仓库中的不同镜像。</li>
+<li>IMAGE ID：镜像的唯一标识：64位HashID。</li>
+<li>CREATED：镜像 的创建时间。</li>
+<li>SIZE：镜像所占用的虚拟大小，该大小包含了所有共享文件的大小。</li>
+</ul>
+<h1 id="通配符，找到符合条件的一系列镜像"><a href="#通配符，找到符合条件的一系列镜像" class="headerlink" title="通配符，找到符合条件的一系列镜像"></a>通配符，找到符合条件的一系列镜像</h1><pre><code>[root@bogon ~]# docker images ce*
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+centos              centos6             5dedbd63518e        2 weeks ago         194MB
+</code></pre><h1 id="docker详细信息"><a href="#docker详细信息" class="headerlink" title="docker详细信息"></a>docker详细信息</h1><p>docker inspect [NAME]/[CONTAINER ID]</p>
+<pre><code>[root@bogon ~]# docker inspect 5dedbd63518e
+[
+    {
+        &quot;Id&quot;: &quot;sha256:5dedbd63518eeb45b6c9740d9ea6dee99a4a4c3d0202eac25ebc5fd43809f0a0&quot;,
+        &quot;RepoTags&quot;: [
+            &quot;centos:centos6&quot;
+        ],
+        &quot;RepoDigests&quot;: [
+            &quot;centos@sha256:4a39ffcea665ed30a7ce6d1418b7d73a2aca05a97706b81b147a231d79e277e1&quot;
+        ],
+        &quot;Parent&quot;: &quot;&quot;,
+        &quot;Comment&quot;: &quot;&quot;,
+        &quot;Created&quot;: &quot;2017-09-13T14:43:07.389546878Z&quot;,
+        &quot;Container&quot;: &quot;4e78ba220ff46b22adabc6ddc29f023b2879e170fa42100bcb57cb8024c67117&quot;,
+        &quot;ContainerConfig&quot;: {
+            &quot;Hostname&quot;: &quot;4e78ba220ff4&quot;,
+            &quot;Domainname&quot;: &quot;&quot;,
+            &quot;User&quot;: &quot;&quot;,
+            &quot;AttachStdin&quot;: false,
+            &quot;AttachStdout&quot;: false,
+            &quot;AttachStderr&quot;: false,
+            &quot;Tty&quot;: false,
+            &quot;OpenStdin&quot;: false,
+            &quot;StdinOnce&quot;: false,
+            &quot;Env&quot;: [
+                &quot;PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&quot;
+            ],
+            &quot;Cmd&quot;: [
+                &quot;/bin/sh&quot;,
+                &quot;-c&quot;,
+                &quot;#(nop) &quot;,
+                &quot;CMD [\&quot;/bin/bash\&quot;]&quot;
+            ],
+            &quot;ArgsEscaped&quot;: true,
+            &quot;Image&quot;: &quot;sha256:c0ebbd2d0382b51e2ba9d70eaac0d11f36c1273028605f7ed9b9285acf461187&quot;,
+            &quot;Volumes&quot;: null,
+            &quot;WorkingDir&quot;: &quot;&quot;,
+            &quot;Entrypoint&quot;: null,
+            &quot;OnBuild&quot;: null,
+            &quot;Labels&quot;: {
+                &quot;build-date&quot;: &quot;20170801&quot;,
+                &quot;license&quot;: &quot;GPLv2&quot;,
+                &quot;name&quot;: &quot;CentOS Base Image&quot;,
+                &quot;vendor&quot;: &quot;CentOS&quot;
+            }
+        },
+        &quot;DockerVersion&quot;: &quot;17.06.2-ce&quot;,
+        &quot;Author&quot;: &quot;&quot;,
+        &quot;Config&quot;: {
+            &quot;Hostname&quot;: &quot;&quot;,
+            &quot;Domainname&quot;: &quot;&quot;,
+            &quot;User&quot;: &quot;&quot;,
+            &quot;AttachStdin&quot;: false,
+            &quot;AttachStdout&quot;: false,
+            &quot;AttachStderr&quot;: false,
+            &quot;Tty&quot;: false,
+            &quot;OpenStdin&quot;: false,
+            &quot;StdinOnce&quot;: false,
+            &quot;Env&quot;: [
+                &quot;PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&quot;
+            ],
+            &quot;Cmd&quot;: [
+                &quot;/bin/bash&quot;
+            ],
+            &quot;ArgsEscaped&quot;: true,
+            &quot;Image&quot;: &quot;sha256:c0ebbd2d0382b51e2ba9d70eaac0d11f36c1273028605f7ed9b9285acf461187&quot;,
+            &quot;Volumes&quot;: null,
+            &quot;WorkingDir&quot;: &quot;&quot;,
+            &quot;Entrypoint&quot;: null,
+            &quot;OnBuild&quot;: null,
+            &quot;Labels&quot;: {
+                &quot;build-date&quot;: &quot;20170801&quot;,
+                &quot;license&quot;: &quot;GPLv2&quot;,
+                &quot;name&quot;: &quot;CentOS Base Image&quot;,
+                &quot;vendor&quot;: &quot;CentOS&quot;
+            }
+        },
+        &quot;Architecture&quot;: &quot;amd64&quot;,
+        &quot;Os&quot;: &quot;linux&quot;,
+        &quot;Size&quot;: 194318701,
+        &quot;VirtualSize&quot;: 194318701,
+        &quot;GraphDriver&quot;: {
+            &quot;Data&quot;: {
+                &quot;RootDir&quot;: &quot;/var/lib/docker/overlay/bcd6ac9a7fa2e0c6a0e5e414ff97b8819021dbaac1c3648ad135edecb2d44818/root&quot;
+            },
+            &quot;Name&quot;: &quot;overlay&quot;
+        },
+        &quot;RootFS&quot;: {
+            &quot;Type&quot;: &quot;layers&quot;,
+            &quot;Layers&quot;: [
+                &quot;sha256:80716a2ba414a02bb63de844acff6578a25b8583b01cf0a4c2653da50a31e305&quot;
+            ]
+        },
+        &quot;Metadata&quot;: {
+            &quot;LastTagTime&quot;: &quot;0001-01-01T00:00:00Z&quot;
+        }
+    }
+]
+</code></pre><h1 id="在本地寻找镜像-下载-运行"><a href="#在本地寻找镜像-下载-运行" class="headerlink" title="在本地寻找镜像/下载/运行"></a>在本地寻找镜像/下载/运行</h1><p>docker run,命令运行时会在本地寻找镜像，找不到的时候就会去Docker Hub上面搜索并下载后运行。</p>
+<pre><code>[root@bogon ~]# docker run centos:centos6 uname -a
+Linux 15faceed6d66 3.10.0-514.el7.x86_64 #1 SMP Tue Nov 22 16:42:41 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
+</code></pre><h1 id="查找镜像"><a href="#查找镜像" class="headerlink" title="查找镜像"></a>查找镜像</h1><p>docker search [NAME]：下载之前可以通过search命令查找搜索符合的镜像</p>
+<pre><code>[root@bogon ~]# docker search nginx
+NAME                                                   DESCRIPTION                                     STARS               OFFICIAL            AUTOMATED
+nginx                                                  Official build of Nginx.                        6934                [OK]                
+jwilder/nginx-proxy                                    Automated Nginx reverse proxy for docker c...   1132                                    [OK]
+richarvey/nginx-php-fpm                                Container running Nginx + PHP-FPM capable ...   450                                     [OK]
+jrcs/letsencrypt-nginx-proxy-companion                 LetsEncrypt container to use with nginx as...   227                                     [OK]
+#省略......
+</code></pre><ul>
+<li>NAME：镜像名称。</li>
+<li>DESCRIPTION：镜像的简要描述。</li>
+<li>STARS：用户对镜像的评分。</li>
+<li>OFFICIAL：是否为官方镜像。</li>
+<li>AUTOMATED：是否使用了自动构建。</li>
+</ul>
+<h1 id="拉取镜像到本地"><a href="#拉取镜像到本地" class="headerlink" title="拉取镜像到本地"></a>拉取镜像到本地</h1><p>docker pull [NAME]：可以预先将镜像拉到本地。镜像名必须完整地包含命名空间和仓库名。如果一个仓库中存在多个镜像，还必须制定TAG，否则使用默认TAG：latest。</p>
+<pre><code>[root@bogon ~]# docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+centos              centos6             5dedbd63518e        2 weeks ago         194MB
+[root@bogon ~]# docker pull redis
+Using default tag: latest
+latest: Pulling from library/redis
+065132d9f705: Pull complete 
+be9835c27852: Pull complete 
+f4a0d1212c38: Pull complete 
+43be9e9f0fb9: Pull complete 
+a1bca8e532ec: Pull complete 
+382eae952932: Pull complete 
+Digest: sha256:ebb396dc3ac00e8eb4a64c1c022ef41ef16801f31ff98b16916a77fdc7252e67
+Status: Downloaded newer image for redis:latest
+[root@bogon ~]# docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+redis               latest              b6dddb991dfa        9 days ago          107MB
+centos              centos6             5dedbd63518e        2 weeks ago         194MB
+</code></pre><h1 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h1><pre><code>docker rmi [NAME]/[CONTAINER ID]
+</code></pre><p>对于不需要的镜像，可以使用rmi命令删除。与移除容器的命令rm相比，删除镜像的命令多了一个i，i即image的意思。</p>
+<ul>
+<li>删除多个:多个镜像之间使用空格隔开。</li>
+<li>-f：强制删除，大部分删不掉的情况可能是因为这个镜像被容器依赖了，可以选择先移除容器。</li>
+<li>docker rm $(docker ps -a -q)：如果本地有很多已经停止运行的容器，一个个删除很麻烦，可以使用下面的命令将这些容器一次性删除，这样就能减少无用容器对镜像的依赖。</li>
+</ul>
+<h1 id="列出所有容器的ID"><a href="#列出所有容器的ID" class="headerlink" title="列出所有容器的ID"></a>列出所有容器的ID</h1><pre><code>docker ps -a -q
+</code></pre><h1 id="从dockerhub获取docker"><a href="#从dockerhub获取docker" class="headerlink" title="从dockerhub获取docker"></a>从dockerhub获取docker</h1><h2 id="浏览器打开网页"><a href="#浏览器打开网页" class="headerlink" title="浏览器打开网页"></a>浏览器打开网页</h2><p><a href="http://hub.daocloud.io/" target="_blank" rel="external">http://hub.daocloud.io/</a></p>
+<p><img src="http://ox4lrc1z7.bkt.clouddn.com/6docker-daocloud-main.png" alt="image"></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://ox4lrc1z7.bkt.clouddn.com/7docker-get-image.png" alt="image" title="">
+                </div>
+                <div class="image-caption">image</div>
+            </figure>
+<h2 id="从daocluod的docker-hub中拉取镜像"><a href="#从daocluod的docker-hub中拉取镜像" class="headerlink" title="从daocluod的docker hub中拉取镜像"></a>从daocluod的docker hub中拉取镜像</h2><pre><code>docker pull daocloud.io/library/nginx:1.13.2
+</code></pre><h1 id="镜像命令"><a href="#镜像命令" class="headerlink" title="镜像命令"></a>镜像命令</h1><h2 id="添加标签"><a href="#添加标签" class="headerlink" title="添加标签"></a>添加标签</h2><pre><code>[root@bogon ~]# docker images
+REPOSITORY                  TAG                 IMAGE ID            CREATED             SIZE
+redis                       latest              b6dddb991dfa        9 days ago          107MB
+centos                      centos6             5dedbd63518e        2 weeks ago         194MB
+daocloud.io/library/nginx   1.13.2              2f7f7bce8929        2 months ago        107MB
+[root@bogon ~]# docker tag daocloud.io/library/nginx:1.13.2 nginx:1.13.2
+[root@bogon ~]# docker images
+REPOSITORY                  TAG                 IMAGE ID            CREATED             SIZE
+redis                       latest              b6dddb991dfa        9 days ago          107MB
+centos                      centos6             5dedbd63518e        2 weeks ago         194MB
+daocloud.io/library/nginx   1.13.2              2f7f7bce8929        2 months ago        107MB
+nginx                       1.13.2              2f7f7bce8929        2 months ago        107MB
+</code></pre><p>daocloud.io/library/nginx:1.13.2和nginx:1.13.2的存储都是同一个</p>
+<h1 id="删除镜像"><a href="#删除镜像" class="headerlink" title="删除镜像"></a>删除镜像</h1><pre><code>[root@bogon ~]# docker rmi nginx:1.13.2
+Untagged: nginx:1.13.2
+[root@bogon ~]# docker images
+REPOSITORY                  TAG                 IMAGE ID            CREATED             SIZE
+redis                       latest              b6dddb991dfa        9 days ago          107MB
+centos                      centos6             5dedbd63518e        2 weeks ago         194MB
+daocloud.io/library/nginx   1.13.2              2f7f7bce8929        2 months ago        107MB
+</code></pre><p>删除镜像的时候，删除全部tag之后，才会被删除，如果删除的时候使用img_id,会删除镜像;如果被其他镜像依赖，镜像不能被删除</p>
+<h1 id="强制删除运行中的容器"><a href="#强制删除运行中的容器" class="headerlink" title="强制删除运行中的容器"></a>强制删除运行中的容器</h1><pre><code>docker rm -f CONTAIN_ID
+</code></pre><h1 id="查看镜像的具体信息"><a href="#查看镜像的具体信息" class="headerlink" title="查看镜像的具体信息"></a>查看镜像的具体信息</h1><pre><code>docker inspect f3c5dcc79825
+</code></pre><h1 id="运行一个容器"><a href="#运行一个容器" class="headerlink" title="运行一个容器"></a>运行一个容器</h1><pre><code>Docker run –dit nginx
+</code></pre><ul>
+<li>name   ##容器名称</li>
+<li>link   ##连接某个镜像</li>
+<li>port   ##端口映射</li>
+<li>volum  ##持久化存储</li>
+</ul>
+<h1 id="镜像的导入导出"><a href="#镜像的导入导出" class="headerlink" title="镜像的导入导出"></a>镜像的导入导出</h1><p> docker save -o file.tar image_id</p>
+<pre><code>[root@bogon ~]# docker images
+REPOSITORY                  TAG                 IMAGE ID            CREATED             SIZE
+redis                       latest              b6dddb991dfa        9 days ago          107MB
+centos                      centos6             5dedbd63518e        2 weeks ago         194MB
+daocloud.io/library/nginx   1.13.2              2f7f7bce8929        2 months ago        107MB
+[root@bogon ~]# ls centos_late*
+centos_latest.tar
+</code></pre><h1 id="导入"><a href="#导入" class="headerlink" title="导入"></a>导入</h1><pre><code>[root@bogon ~]# docker load &lt;  centos_latest.tar
+32d75bc97c41: Loading layer [==========================================&gt;] 134.6 MB/134.6 MB
+87f743c24123: Loading layer [===========================================&gt;] 15.87 kB/15.87 kB
+bbe6cef52379: Loading layer [============================================&gt;] 11.78 kB/11.78 kB
+3d515508d4eb: Loading layer [==========================================&gt;] 4.608 kB/4.608 kB
+5972ebe5b524: Loading layer [==========================================&gt;] 3.072 kB/3.072 kB
+Loaded image ID: sha256:104bec311bcdfc882ea08fdd4f5417ecfb1976adea5a0c237e129c728cb7eada
+</code></pre><h1 id="查看导入的image"><a href="#查看导入的image" class="headerlink" title="查看导入的image"></a>查看导入的image</h1><pre><code>[root@bogon ~]#  docker load &lt;  centos_latest.tar
+80716a2ba414: Loading layer [==================================================&gt;]  202.4MB/202.4MB
+Loaded image ID: sha256:5dedbd63518eeb45b6c9740d9ea6dee99a4a4c3d0202eac25ebc5fd43809f0a0
+[root@bogon ~]# docker images
+REPOSITORY                  TAG                 IMAGE ID            CREATED             SIZE
+redis                       latest              b6dddb991dfa        9 days ago          107MB
+&lt;none&gt;                      &lt;none&gt;              5dedbd63518e        2 weeks ago         194MB
+daocloud.io/library/nginx   1.13.2              2f7f7bce8929        2 months ago        107MB
+</code></pre><blockquote>
+<p>特别注意：导入导出的时候，容易造成层级的都是，出现各种问题，为了安全，不使用这种方式来导入导出</p>
+</blockquote>
+<h1 id="运行导入的镜像"><a href="#运行导入的镜像" class="headerlink" title="运行导入的镜像"></a>运行导入的镜像</h1><pre><code>[root@bogon ~]# docker run -dit 5dedbd63518e
+174a93960feccdd77f560b014dd6328e15973505a382e629cd3959407b864b47
+</code></pre><h1 id="进入容器"><a href="#进入容器" class="headerlink" title="进入容器"></a>进入容器</h1><pre><code>[root@bogon ~]# docker ps
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+174a93960fec        5dedbd63518e        &quot;/bin/bash&quot;         5 seconds ago       Up 4 seconds                            suspicious_ptolemy
+[root@bogon ~]# docker exec -it 174a93960fec /bin/bash
+[root@174a93960fec /]# 
+
+[root@174a93960fec /]# echo &quot;hell&quot;&gt; test.txt
+[root@174a93960fec /]# ls
+bin  dev  etc  home  lib  lib64  lost+found  media  mnt  opt  proc  root  sbin  selinux  srv  sys  test.txt  tmp  usr  var
+
+[root@174a93960fec /]# cat test.txt 
+hello
+</code></pre><h1 id="创建一个已经存在的镜像ID然后用commit提交"><a href="#创建一个已经存在的镜像ID然后用commit提交" class="headerlink" title="创建一个已经存在的镜像ID然后用commit提交"></a>创建一个已经存在的镜像ID然后用commit提交</h1><p>用commit 提交相关镜像生成一个新镜像：<br>    [root@bogon ~]# docker commit -m “ADD test.txt” -a “test” 174a93960fec test<br>    sha256:b5e4ce650f0d40da24be8387879bbf58078236fdbc0c41bac7121627c9f7dc16</p>
+<ul>
+<li>-m:表示备注信息</li>
+<li>-a:作者相关信息。</li>
+<li>174a93960fec：就是刚刚我们创建的容器ID</li>
+<li><p>test: 表示生成的镜像名称</p>
+<p>  [root@bogon ~]# docker images<br>  REPOSITORY                  TAG                 IMAGE ID            CREATED             SIZE<br>  test                        latest              b5e4ce650f0d        41 seconds ago      194MB<br>  redis                       latest              b6dddb991dfa        9 days ago          107MB<br>  daocloud.io/library/nginx   1.13.2              2f7f7bce8929        2 months ago        107MB</p>
+<p>  [root@bogon ~]# docker run test cat test.txt<br>  hello</p>
+</li>
+</ul>
+<blockquote>
+<p>对镜像的修改，不推荐这种方式，应该使用Dockerfile来操作的</p>
+</blockquote>
+<h1 id="查看镜像的层级"><a href="#查看镜像的层级" class="headerlink" title="查看镜像的层级"></a>查看镜像的层级</h1><pre><code>[root@bogon ~]# docker history test
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+b5e4ce650f0d        3 minutes ago       /bin/bash                                       140B                ADD test.txt
+5dedbd63518e        2 weeks ago         /bin/sh -c #(nop)  CMD [&quot;/bin/bash&quot;]            0B                  
+&lt;missing&gt;           2 weeks ago         /bin/sh -c #(nop)  LABEL name=CentOS Base ...   0B                  
+&lt;missing&gt;           2 weeks ago         /bin/sh -c #(nop) ADD file:e253dfb8c4027c8...   194MB     
+</code></pre><h1 id="本地文件"><a href="#本地文件" class="headerlink" title="本地文件"></a>本地文件</h1><pre><code>[root@bogon ~]# ll cd /var/lib/docker/
+ls: 无法访问cd: 没有那个文件或目录
+/var/lib/docker/:
+总用量 4
+drwx------.  2 root root   24 10月  1 19:42 builder
+drwx------.  4 root root  150 10月  1 21:36 containers #容器运行相关信息
+drwx------.  3 root root   21 10月  1 19:42 image #各层相关信息
+drwxr-x---.  3 root root   19 10月  1 19:42 network
+drwx------. 17 root root 4096 10月  1 21:36 overlay
+drwx------.  4 root root   32 10月  1 19:42 plugins
+drwx------.  2 root root    6 10月  1 19:42 swarm
+drwx------.  2 root root    6 10月  1 21:23 tmp
+drwx------.  2 root root    6 10月  1 19:42 trust
+drwx------.  2 root root   25 10月  1 19:42 volumes #数据卷相关信息
+</code></pre><blockquote>
+<p>centos使用这个来做级联文件系统,ubuntu使用aofs来做级联联合文件系统</p>
+</blockquote>
+<pre><code>[root@bogon ~]# docker inspect test
+[
+        &quot;RootFS&quot;: {
+            &quot;Type&quot;: &quot;layers&quot;,
+            &quot;Layers&quot;: [
+                &quot;sha256:80716a2ba414a02bb63de844acff6578a25b8583b01cf0a4c2653da50a31e305&quot;,
+                &quot;sha256:2d113ac4862223fde011e2bf9604563f13f630e74fdf72f7d27ca6830a07ad5c&quot;
+            ]
+        },
+
+]
+</code></pre><p>我们通过层级ID可以看到rootfs的相关信息</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-10-02T16:07:57.717Z" itemprop="dateUpdated">2017-10-03 00:07:57</time>
+</span><br>
+
+
+        
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2017/10/02/docker-image-management-4/" target="_blank" rel="external">http://dennis.pathto.top/2017/10/02/docker-image-management-4/</a>
+        
+    </div>
+    <footer>
+        <a href="http://dennis.pathto.top">
+            <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
+            Dennis
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cloud/">cloud</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/10/02/docker-image-management-4/&title=《4.镜像管理》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/10/02/docker-image-management-4/&title=《4.镜像管理》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/10/02/docker-image-management-4/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《4.镜像管理》 — Dennis'Blog&url=http://dennis.pathto.top/2017/10/02/docker-image-management-4/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/10/02/docker-image-management-4/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2017/10/02/docker-container-5/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">5.docker容器</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/10/02/docker-management-cmd-3/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">3.docker常用的简单管理命令</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper">
+     <div id="articleComment" style="padding-left:5%;padding-right:5%;" ></div>
+    <!--<iframe height="900px" id="page_content_iframe" frameborder="0" marginheight="0" onload="dyniframesize('page_content_iframe');" width="100%" scrolling="auto" src="https://dennis-dzqapp.rhcloud.com/list_blog_commonts?p_id=2017/10/02/docker-image-management-4/" style="display: block;"></iframe>-->
+    </div>
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" data-alipay="http://otwbalpjp.bkt.clouddn.com/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Dennis &copy; 2015 - 2017</span>
+            <span>
+                
+                Power by <a href="http://116.196.88.117/" target="_blank">pathto.top</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/10/02/docker-image-management-4/&title=《4.镜像管理》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/10/02/docker-image-management-4/&title=《4.镜像管理》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/10/02/docker-image-management-4/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《4.镜像管理》 — Dennis'Blog&url=http://dennis.pathto.top/2017/10/02/docker-image-management-4/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/10/02/docker-image-management-4/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACMklEQVR42u3aS07EMBAFQO5/aZDYsUh4r22Q4lRWIzQTu7ww/fv4iJ/P7+fq7/lz9dtkrQ0PBgbGYxnJwvnnfNP3R5PvDQMD4z2M9nXJ1ZwcR/79X/aMgYGBEYSGs0PJL3QMDAyMXQsnB7H3zRgYGO9hJElsm+gmBbX2PRtycQwMjAcy2sbAf37+w/4GBgbGQxizBmR+HbfFu8/Rg4GBcTbj6oLLU8c8WMzLc7NWAQYGxqmMlUS05bVDZvejYxgYGG9j7Nr0SvksQV7CMDAwjma0KWW7WN68XGkkYGBgnM0oilllZb4dsIjGKWZjFhgYGEcwVsYp7rfVNgDaQbEf/Q0MDIyjGXvbAPllnR9K0YnFwMB4GaNNVtuprTY8vaRiYGC8gBGV3eMCXB7YJetiYGBgrIxKJJvOmwSzdumGiQ8MDIyHMNqi/CyAWynkzVoLGBgYZzBWRiLuA7uV8LH+N4CBgXE0IwngZq2CvOXQtlHrwQsMDIzjGG0Brm1PtmlqfkFjYGCcymivtjwbrgcmggt92CPFwMA4gtGW1fIAbiX1LUgYGBhHM2ZR5DC9XAgfMTAw3sxYuUzzVHYlrIxGNzAwMI5mzMpn94Fdsthso0XtEAMD4zjGrkLYrut7OJCBgYHxAkaSZK4MYbRV/TrpxcDAwAhCtCRYzEPJPHzEwMDAyC/fdvwi/07U5sTAwHgBI0li80L/bIwjD0/rRiYGBsbDGbPGQL7dWfjYHhwGBsahjC8agZ6cplpXYwAAAABJRU5ErkJggg==" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="/js/main.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '我消失了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '我回来了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

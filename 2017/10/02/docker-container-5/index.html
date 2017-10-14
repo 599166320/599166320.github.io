@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>5.docker容器 | Dennis&#39;Blog | 我不用讨人喜欢，只做一个迷人的混蛋</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="docker,cloud">
+    <meta name="description" content="创建nginx容器docker create nginx 查看全部容器，包括停止的容器docker ps -a 进入运行中的容器[root@bogon ~]# docker exec -it 174a93960fec /bin/bash 停止和启动容器docker stop/start CONTAIN_ID  运行容器docker run nginx  #ctrl+c之后会退出 docker ru">
+<meta name="keywords" content="docker,cloud">
+<meta property="og:type" content="article">
+<meta property="og:title" content="5.docker容器">
+<meta property="og:url" content="http://dennis.pathto.top/2017/10/02/docker-container-5/index.html">
+<meta property="og:site_name" content="Dennis&#39;Blog">
+<meta property="og:description" content="创建nginx容器docker create nginx 查看全部容器，包括停止的容器docker ps -a 进入运行中的容器[root@bogon ~]# docker exec -it 174a93960fec /bin/bash 停止和启动容器docker stop/start CONTAIN_ID  运行容器docker run nginx  #ctrl+c之后会退出 docker ru">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-10-02T16:07:57.717Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="5.docker容器">
+<meta name="twitter:description" content="创建nginx容器docker create nginx 查看全部容器，包括停止的容器docker ps -a 进入运行中的容器[root@bogon ~]# docker exec -it 174a93960fec /bin/bash 停止和启动容器docker stop/start CONTAIN_ID  运行容器docker run nginx  #ctrl+c之后会退出 docker ru">
+    
+        <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/semantic.css" type="text/css" />
+<link rel="stylesheet" href="/css/zyComment.css" type="text/css" />
+<style type="text/css">
+	#cloud-tie-wrapper label {
+	    font-weight: bold;
+	}
+	#cloud-tie-wrapper a {
+		font-family: Microsoft YaHei;
+	}
+	#articleComment {
+		width: "60%";
+		/*height: 1500px;*/
+		overflow: auto;
+	}
+</style>
+
+    <script>window.lazyScripts=[]</script>
+
+
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/zyComment.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+$(function(){
+var post_toc_links = $(".post-toc-link");
+$.each( post_toc_links, function(index,post_toc_link){
+	post_toc_link = $(post_toc_link);
+	var post_toc_number = post_toc_link.find(".post-toc-number");
+	var post_toc_text = post_toc_link.find(".post-toc-text");
+	//console.log(post_toc_number.text()+" "+post_toc_text.text());
+	$(post_toc_link.attr("href")).text(post_toc_number.text()+" "+post_toc_text.text())
+});
+});
+
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+function jsonp(url){
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.insertBefore(script, head.firstChild);
+}
+function add_blog_callBackFun(rs){
+	$("#articleComment").zyComment("setCommentAfter",rs);
+}
+function get_list_blog_commonts_callBackFun(rs){
+	var agoComment = rs;
+	$("#articleComment").zyComment({
+		"width":"355",
+		"height":"33",
+		"agoComment":agoComment,
+		"callback":function(comment){
+			var selfID = comment.selfID;
+			if(typeof selfID == "undefined" ){
+				selfID = 0;
+			}
+			jsonp(host+"/add_blog_jsonp?"+"p_id="+encodeURIComponent("2017/10/02/docker-container-5/")+ "&username="+encodeURIComponent(comment.name)+"&content="+encodeURIComponent(comment.content)+"&email="+encodeURIComponent(comment.email)+"&c_id_replay="+selfID);
+
+		}
+	});
+}
+jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/10/02/docker-container-5/"));
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Dennis</h5>
+          <a href="mailto:dennis52o1314@163.com" title="dennis52o1314@163.com" class="mail">dennis52o1314@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/599166320" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/2166908462" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                其他
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">5.docker容器</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">5.docker容器</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-10-02T15:06:31.000Z" itemprop="datePublished" class="page-time">
+  2017-10-02
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/docker/">docker</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#创建nginx容器"><span class="post-toc-number">1.</span> <span class="post-toc-text">创建nginx容器</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#查看全部容器，包括停止的容器"><span class="post-toc-number">2.</span> <span class="post-toc-text">查看全部容器，包括停止的容器</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#进入运行中的容器"><span class="post-toc-number">3.</span> <span class="post-toc-text">进入运行中的容器</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#停止和启动容器"><span class="post-toc-number">4.</span> <span class="post-toc-text">停止和启动容器</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#运行容器"><span class="post-toc-number">5.</span> <span class="post-toc-text">运行容器</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#起名"><span class="post-toc-number">6.</span> <span class="post-toc-text">起名</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#端口映射"><span class="post-toc-number">7.</span> <span class="post-toc-text">端口映射</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#查看容器的端口映射"><span class="post-toc-number">8.</span> <span class="post-toc-text">查看容器的端口映射</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#指定端口"><span class="post-toc-number">9.</span> <span class="post-toc-text">指定端口</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#查看端口映射情况"><span class="post-toc-number">10.</span> <span class="post-toc-text">查看端口映射情况</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-docker-container-5"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">5.docker容器</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-10-02 23:06:31" datetime="2017-10-02T15:06:31.000Z"  itemprop="datePublished">2017-10-02</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/docker/">docker</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="创建nginx容器"><a href="#创建nginx容器" class="headerlink" title="创建nginx容器"></a>创建nginx容器</h1><pre><code>docker create nginx
+</code></pre><h1 id="查看全部容器，包括停止的容器"><a href="#查看全部容器，包括停止的容器" class="headerlink" title="查看全部容器，包括停止的容器"></a>查看全部容器，包括停止的容器</h1><pre><code>docker ps -a
+</code></pre><h1 id="进入运行中的容器"><a href="#进入运行中的容器" class="headerlink" title="进入运行中的容器"></a>进入运行中的容器</h1><pre><code>[root@bogon ~]# docker exec -it 174a93960fec /bin/bash
+</code></pre><h1 id="停止和启动容器"><a href="#停止和启动容器" class="headerlink" title="停止和启动容器"></a>停止和启动容器</h1><pre><code>docker stop/start CONTAIN_ID 
+</code></pre><h1 id="运行容器"><a href="#运行容器" class="headerlink" title="运行容器"></a>运行容器</h1><pre><code>docker run nginx 
+#ctrl+c之后会退出
+docker run -it nginx /bin/bash
+#注意:exit会停止容器
+</code></pre><h1 id="起名"><a href="#起名" class="headerlink" title="起名"></a>起名</h1><pre><code>docker run -d --name web nginx
+</code></pre><h1 id="端口映射"><a href="#端口映射" class="headerlink" title="端口映射"></a>端口映射</h1><pre><code>docker run -d --name web -P nginx 
+</code></pre><blockquote>
+<p>-P  随机端口映射</p>
+</blockquote>
+<h1 id="查看容器的端口映射"><a href="#查看容器的端口映射" class="headerlink" title="查看容器的端口映射"></a>查看容器的端口映射</h1><pre><code>docker ps
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                                           NAMES
+47bce8f71a7f        nginx               &quot;nginx -g &apos;daemon off&quot;   3 seconds ago       Up 1 seconds        0.0.0.0:32769-&gt;80/tcp, 0.0.0.0:32768-&gt;443/tcp   web
+</code></pre><h1 id="指定端口"><a href="#指定端口" class="headerlink" title="指定端口"></a>指定端口</h1><pre><code>docker run -d --name web -p 80:80 nginx   
+</code></pre><h1 id="查看端口映射情况"><a href="#查看端口映射情况" class="headerlink" title="查看端口映射情况"></a>查看端口映射情况</h1><pre><code>docker inspect web
+</code></pre><p>随机端口映射的容器,给容器停止再启动，容器的IP和端口可能是改变的。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-10-02T16:07:57.717Z" itemprop="dateUpdated">2017-10-03 00:07:57</time>
+</span><br>
+
+
+        
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2017/10/02/docker-container-5/" target="_blank" rel="external">http://dennis.pathto.top/2017/10/02/docker-container-5/</a>
+        
+    </div>
+    <footer>
+        <a href="http://dennis.pathto.top">
+            <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
+            Dennis
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cloud/">cloud</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/10/02/docker-container-5/&title=《5.docker容器》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/10/02/docker-container-5/&title=《5.docker容器》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/10/02/docker-container-5/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《5.docker容器》 — Dennis'Blog&url=http://dennis.pathto.top/2017/10/02/docker-container-5/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/10/02/docker-container-5/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2017/10/02/docker-storagy-6/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">6.docker-存储</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/10/02/docker-image-management-4/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">4.镜像管理</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper">
+     <div id="articleComment" style="padding-left:5%;padding-right:5%;" ></div>
+    <!--<iframe height="900px" id="page_content_iframe" frameborder="0" marginheight="0" onload="dyniframesize('page_content_iframe');" width="100%" scrolling="auto" src="https://dennis-dzqapp.rhcloud.com/list_blog_commonts?p_id=2017/10/02/docker-container-5/" style="display: block;"></iframe>-->
+    </div>
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" data-alipay="http://otwbalpjp.bkt.clouddn.com/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Dennis &copy; 2015 - 2017</span>
+            <span>
+                
+                Power by <a href="http://116.196.88.117/" target="_blank">pathto.top</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/10/02/docker-container-5/&title=《5.docker容器》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/10/02/docker-container-5/&title=《5.docker容器》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/10/02/docker-container-5/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《5.docker容器》 — Dennis'Blog&url=http://dennis.pathto.top/2017/10/02/docker-container-5/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/10/02/docker-container-5/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACK0lEQVR42u3aS27DMAwFwNz/0inQVYvGziPpFrU0WgWxYWu8IPjR4xGv5+f6+vvon5/r5xOOnnN052ULAwPjtozeJs43dHR/ssXqB8LAwNiHUX1cNQZWA3f5c2BgYGDEQTDfxPnzMTAwMOYB93zr1wZlDAwMjOrmCoXlaaOtmj5eVotjYGDckNEbDPzN71+fb2BgYPx7xrO4ktFjNezOFwYGxtqMJHXrNeB65XH1aiEDxcDAWIgxJyUjz/z/QsmKgYGxNOM8Ucuv5glicsgsHyRgYGCszcgLy+qhrl6L7TwQY2Bg7MyoNtR6gbIXWJvHLDAwMBZi9MJo0gKrjhaqV1+8FwMDY1FGtUydFLq9MUP0dgwMjI0ZE0AOqx7yeEHFwMBYmpGMD6vBsXc4tfccDAyMnRnVFn9vPJm056otPwwMjFUZSQs+HxVcNaQsB1wMDIxFGb0m1yR1S8J6+VAsBgbGBox8JJlfnYwk8wHDt4CLgYGxKGOSnCVb7B3/ykcO5bkoBgbGDRlXFZaTO+ctPAwMjB0YSWv+qrKzWjaXa3EMDIzlGL1R4jwdnIwz3ySIGBgYyzGexTU52xAd6uolrBgYGEsz8jXZdBI6e2NRDAyMfRhJkJ2/Mm+f9QarGBgYOzCqwbQ6mJyvN58VAwMDIz7I1TuWUf1kGBgYGNXGVp5E9orbqFTGwMDYgJEfjEgSxNGGevdjYGAszZgUkDkjSSLzMWoTg4GBcT/GBwJfN/WfXMgtAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="/js/main.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '我消失了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '我回来了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

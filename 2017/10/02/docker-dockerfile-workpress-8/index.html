@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>8.使用Dockerfile搭建自己的博客 | Dennis&#39;Blog | 我不用讨人喜欢，只做一个迷人的混蛋</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="docker,cloud">
+    <meta name="description" content="Dockerfile 目录结构[root@docker01 file]# tree -L 2 --charset ASCII . |-- mysql |   |-- Dockerfile |   |-- epel-6.repo |   |-- my.cnf |   `-- startup.sh |-- nginx |   |-- Dockerfile |   |-- nginx-1.11.10 |">
+<meta name="keywords" content="docker,cloud">
+<meta property="og:type" content="article">
+<meta property="og:title" content="8.使用Dockerfile搭建自己的博客">
+<meta property="og:url" content="http://dennis.pathto.top/2017/10/02/docker-dockerfile-workpress-8/index.html">
+<meta property="og:site_name" content="Dennis&#39;Blog">
+<meta property="og:description" content="Dockerfile 目录结构[root@docker01 file]# tree -L 2 --charset ASCII . |-- mysql |   |-- Dockerfile |   |-- epel-6.repo |   |-- my.cnf |   `-- startup.sh |-- nginx |   |-- Dockerfile |   |-- nginx-1.11.10 |">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-10-02T16:07:57.733Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="8.使用Dockerfile搭建自己的博客">
+<meta name="twitter:description" content="Dockerfile 目录结构[root@docker01 file]# tree -L 2 --charset ASCII . |-- mysql |   |-- Dockerfile |   |-- epel-6.repo |   |-- my.cnf |   `-- startup.sh |-- nginx |   |-- Dockerfile |   |-- nginx-1.11.10 |">
+    
+        <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/semantic.css" type="text/css" />
+<link rel="stylesheet" href="/css/zyComment.css" type="text/css" />
+<style type="text/css">
+	#cloud-tie-wrapper label {
+	    font-weight: bold;
+	}
+	#cloud-tie-wrapper a {
+		font-family: Microsoft YaHei;
+	}
+	#articleComment {
+		width: "60%";
+		/*height: 1500px;*/
+		overflow: auto;
+	}
+</style>
+
+    <script>window.lazyScripts=[]</script>
+
+
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/zyComment.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+$(function(){
+var post_toc_links = $(".post-toc-link");
+$.each( post_toc_links, function(index,post_toc_link){
+	post_toc_link = $(post_toc_link);
+	var post_toc_number = post_toc_link.find(".post-toc-number");
+	var post_toc_text = post_toc_link.find(".post-toc-text");
+	//console.log(post_toc_number.text()+" "+post_toc_text.text());
+	$(post_toc_link.attr("href")).text(post_toc_number.text()+" "+post_toc_text.text())
+});
+});
+
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+function jsonp(url){
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.insertBefore(script, head.firstChild);
+}
+function add_blog_callBackFun(rs){
+	$("#articleComment").zyComment("setCommentAfter",rs);
+}
+function get_list_blog_commonts_callBackFun(rs){
+	var agoComment = rs;
+	$("#articleComment").zyComment({
+		"width":"355",
+		"height":"33",
+		"agoComment":agoComment,
+		"callback":function(comment){
+			var selfID = comment.selfID;
+			if(typeof selfID == "undefined" ){
+				selfID = 0;
+			}
+			jsonp(host+"/add_blog_jsonp?"+"p_id="+encodeURIComponent("2017/10/02/docker-dockerfile-workpress-8/")+ "&username="+encodeURIComponent(comment.name)+"&content="+encodeURIComponent(comment.content)+"&email="+encodeURIComponent(comment.email)+"&c_id_replay="+selfID);
+
+		}
+	});
+}
+jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/10/02/docker-dockerfile-workpress-8/"));
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Dennis</h5>
+          <a href="mailto:dennis52o1314@163.com" title="dennis52o1314@163.com" class="mail">dennis52o1314@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/599166320" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/2166908462" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                其他
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">8.使用Dockerfile搭建自己的博客</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">8.使用Dockerfile搭建自己的博客</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-10-02T15:06:46.000Z" itemprop="datePublished" class="page-time">
+  2017-10-02
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/docker/">docker</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Dockerfile-目录结构"><span class="post-toc-number">1.</span> <span class="post-toc-text">Dockerfile 目录结构</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#mysql-nginx-php的yum源"><span class="post-toc-number">2.</span> <span class="post-toc-text">mysql,nginx,php的yum源</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Centos-6-repo"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">Centos-6.repo</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#epel-6-repo"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">epel-6.repo</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#构建nginx镜像"><span class="post-toc-number">3.</span> <span class="post-toc-text">构建nginx镜像</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Dockerfile"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">Dockerfile</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#nginx-conf"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">nginx.conf</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#nginx相关php配置nginx-default-conf"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">nginx相关php配置nginx_default.conf</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#php"><span class="post-toc-number">4.</span> <span class="post-toc-text">php</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Dockerfile-1"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">Dockerfile</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#构建php镜像"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">构建php镜像</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#mysql"><span class="post-toc-number">5.</span> <span class="post-toc-text">mysql</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Dockerfile-2"><span class="post-toc-number">5.1.</span> <span class="post-toc-text">Dockerfile</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#my-cnf"><span class="post-toc-number">5.2.</span> <span class="post-toc-text">my.cnf</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#startup-sh"><span class="post-toc-number">5.3.</span> <span class="post-toc-text">startup.sh</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#构建mysql镜像"><span class="post-toc-number">5.4.</span> <span class="post-toc-text">构建mysql镜像</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#启动博客系统"><span class="post-toc-number">6.</span> <span class="post-toc-text">启动博客系统</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-docker-dockerfile-workpress-8"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">8.使用Dockerfile搭建自己的博客</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-10-02 23:06:46" datetime="2017-10-02T15:06:46.000Z"  itemprop="datePublished">2017-10-02</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/docker/">docker</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="Dockerfile-目录结构"><a href="#Dockerfile-目录结构" class="headerlink" title="Dockerfile 目录结构"></a>Dockerfile 目录结构</h1><pre><code>[root@docker01 file]# tree -L 2 --charset ASCII
+.
+|-- mysql
+|   |-- Dockerfile
+|   |-- epel-6.repo
+|   |-- my.cnf
+|   `-- startup.sh
+|-- nginx
+|   |-- Dockerfile
+|   |-- nginx-1.11.10
+|   |-- nginx-1.11.10.tar.gz
+|   |-- nginx.conf
+|   `-- nginx_default.conf
+|
+`-- php-fpm
+    |-- Centos-6.repo
+    |-- Dockerfile
+    |-- epel-6.repo
+    |-- php-5.6.31
+    `-- php-5.6.31.tar.gz
+</code></pre><h1 id="mysql-nginx-php的yum源"><a href="#mysql-nginx-php的yum源" class="headerlink" title="mysql,nginx,php的yum源"></a>mysql,nginx,php的yum源</h1><h2 id="Centos-6-repo"><a href="#Centos-6-repo" class="headerlink" title="Centos-6.repo"></a>Centos-6.repo</h2><pre><code>[root@docker01 php-fpm]# cat Centos-6.repo 
+# CentOS-Base.repo
+[base]
+name=CentOS-$releasever - Base - mirrors.aliyun.com
+failovermethod=priority
+baseurl=http://mirrors.aliyun.com/centos/$releasever/os/$basearch/
+        http://mirrors.aliyuncs.com/centos/$releasever/os/$basearch/
+#mirrorlist=http://mirrorlist.centos.org/?release=$releasever&amp;arch=$basearch&amp;repo=os
+gpgcheck=1
+gpgkey=http://mirrors.aliyun.com/centos/RPM-GPG-KEY-CentOS-6
+
+#released updates 
+[updates]
+name=CentOS-$releasever - Updates - mirrors.aliyun.com
+failovermethod=priority
+baseurl=http://mirrors.aliyun.com/centos/$releasever/updates/$basearch/
+        http://mirrors.aliyuncs.com/centos/$releasever/updates/$basearch/
+#mirrorlist=http://mirrorlist.centos.org/?release=$releasever&amp;arch=$basearch&amp;repo=updates
+gpgcheck=1
+gpgkey=http://mirrors.aliyun.com/centos/RPM-GPG-KEY-CentOS-6
+
+#additional packages that may be useful
+[extras]
+name=CentOS-$releasever - Extras - mirrors.aliyun.com
+failovermethod=priority
+baseurl=http://mirrors.aliyun.com/centos/$releasever/extras/$basearch/
+        http://mirrors.aliyuncs.com/centos/$releasever/extras/$basearch/
+#mirrorlist=http://mirrorlist.centos.org/?release=$releasever&amp;arch=$basearch&amp;repo=extras
+gpgcheck=1
+gpgkey=http://mirrors.aliyun.com/centos/RPM-GPG-KEY-CentOS-6
+
+#additional packages that extend functionality of existing packages
+[centosplus]
+name=CentOS-$releasever - Plus - mirrors.aliyun.com
+failovermethod=priority
+baseurl=http://mirrors.aliyun.com/centos/$releasever/centosplus/$basearch/
+        http://mirrors.aliyuncs.com/centos/$releasever/centosplus/$basearch/
+#mirrorlist=http://mirrorlist.centos.org/?release=$releasever&amp;arch=$basearch&amp;repo=centosplus
+gpgcheck=1
+enabled=0
+gpgkey=http://mirrors.aliyun.com/centos/RPM-GPG-KEY-CentOS-6
+
+#contrib - packages by Centos Users
+[contrib]
+name=CentOS-$releasever - Contrib - mirrors.aliyun.com
+failovermethod=priority
+baseurl=http://mirrors.aliyun.com/centos/$releasever/contrib/$basearch/
+        http://mirrors.aliyuncs.com/centos/$releasever/contrib/$basearch/
+#mirrorlist=http://mirrorlist.centos.org/?release=$releasever&amp;arch=$basearch&amp;repo=contrib
+gpgcheck=1
+enabled=0
+gpgkey=http://mirrors.aliyun.com/centos/RPM-GPG-KEY-CentOS-6[root@docker01 php-fpm]# 
+[root@docker01 php-fpm]# cat Centos-6.repo 
+# CentOS-Base.repo
+#
+# The mirror system uses the connecting IP address of the client and the
+# update status of each mirror to pick mirrors that are updated to and
+# geographically close to the client.  You should use this for CentOS updates
+# unless you are manually picking other mirrors.
+#
+# If the mirrorlist= does not work for you, as a fall back you can try the 
+# remarked out baseurl= line instead.
+#
+#
+
+[base]
+name=CentOS-$releasever - Base - mirrors.aliyun.com
+failovermethod=priority
+baseurl=http://mirrors.aliyun.com/centos/$releasever/os/$basearch/
+        http://mirrors.aliyuncs.com/centos/$releasever/os/$basearch/
+#mirrorlist=http://mirrorlist.centos.org/?release=$releasever&amp;arch=$basearch&amp;repo=os
+gpgcheck=1
+gpgkey=http://mirrors.aliyun.com/centos/RPM-GPG-KEY-CentOS-6
+
+#released updates 
+[updates]
+name=CentOS-$releasever - Updates - mirrors.aliyun.com
+failovermethod=priority
+baseurl=http://mirrors.aliyun.com/centos/$releasever/updates/$basearch/
+        http://mirrors.aliyuncs.com/centos/$releasever/updates/$basearch/
+#mirrorlist=http://mirrorlist.centos.org/?release=$releasever&amp;arch=$basearch&amp;repo=updates
+gpgcheck=1
+gpgkey=http://mirrors.aliyun.com/centos/RPM-GPG-KEY-CentOS-6
+
+#additional packages that may be useful
+[extras]
+name=CentOS-$releasever - Extras - mirrors.aliyun.com
+failovermethod=priority
+baseurl=http://mirrors.aliyun.com/centos/$releasever/extras/$basearch/
+        http://mirrors.aliyuncs.com/centos/$releasever/extras/$basearch/
+#mirrorlist=http://mirrorlist.centos.org/?release=$releasever&amp;arch=$basearch&amp;repo=extras
+gpgcheck=1
+gpgkey=http://mirrors.aliyun.com/centos/RPM-GPG-KEY-CentOS-6
+
+#additional packages that extend functionality of existing packages
+[centosplus]
+name=CentOS-$releasever - Plus - mirrors.aliyun.com
+failovermethod=priority
+baseurl=http://mirrors.aliyun.com/centos/$releasever/centosplus/$basearch/
+        http://mirrors.aliyuncs.com/centos/$releasever/centosplus/$basearch/
+#mirrorlist=http://mirrorlist.centos.org/?release=$releasever&amp;arch=$basearch&amp;repo=centosplus
+gpgcheck=1
+enabled=0
+gpgkey=http://mirrors.aliyun.com/centos/RPM-GPG-KEY-CentOS-6
+
+#contrib - packages by Centos Users
+[contrib]
+name=CentOS-$releasever - Contrib - mirrors.aliyun.com
+failovermethod=priority
+baseurl=http://mirrors.aliyun.com/centos/$releasever/contrib/$basearch/
+        http://mirrors.aliyuncs.com/centos/$releasever/contrib/$basearch/
+#mirrorlist=http://mirrorlist.centos.org/?release=$releasever&amp;arch=$basearch&amp;repo=contrib
+gpgcheck=1
+enabled=0
+gpgkey=http://mirrors.aliyun.com/centos/RPM-GPG-KEY-CentOS-6
+</code></pre><h2 id="epel-6-repo"><a href="#epel-6-repo" class="headerlink" title="epel-6.repo"></a>epel-6.repo</h2><pre><code>[root@docker01 php-fpm]# cat epel-6.repo 
+[epel]
+name=Extra Packages for Enterprise Linux 6 - $basearch
+baseurl=http://mirrors.aliyun.com/epel/6/$basearch
+        http://mirrors.aliyuncs.com/epel/6/$basearch
+#mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-6&amp;arch=$basearch
+failovermethod=priority
+enabled=1
+gpgcheck=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6
+
+[epel-debuginfo]
+name=Extra Packages for Enterprise Linux 6 - $basearch - Debug
+baseurl=http://mirrors.aliyun.com/epel/6/$basearch/debug
+        http://mirrors.aliyuncs.com/epel/6/$basearch/debug
+#mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-debug-6&amp;arch=$basearch
+failovermethod=priority
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6
+gpgcheck=0
+
+[epel-source]
+name=Extra Packages for Enterprise Linux 6 - $basearch - Source
+baseurl=http://mirrors.aliyun.com/epel/6/SRPMS
+        http://mirrors.aliyuncs.com/epel/6/SRPMS
+#mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-source-6&amp;arch=$basearch
+failovermethod=priority
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6
+gpgcheck=0
+</code></pre><h1 id="构建nginx镜像"><a href="#构建nginx镜像" class="headerlink" title="构建nginx镜像"></a>构建nginx镜像</h1><h2 id="Dockerfile"><a href="#Dockerfile" class="headerlink" title="Dockerfile"></a>Dockerfile</h2><pre><code>[root@docker01 nginx]# cat Dockerfile 
+#lnmp centos 6.0
+from centos:centos6
+MAINTAINER dennis52o1314@163.com
+ENV APP_DIR /web
+add nginx-1.11.10 /nginx-1.11.10
+RUN yum -y groupinstall &quot;Development Tools&quot; &quot;Server Platform Deveopment&quot;
+RUN yum -y install openssl-devel pcre-devel
+RUN useradd nginx -s /sbin/nologin
+RUN cd /nginx-1.11.10 &amp;&amp; ./configure --prefix=/usr/local/nginx --user=nginx --group=nginx --with-http_ssl_module --with-http_flv_module --with-http_stub_status_module --with-http_gzip_static_module  --with-pcre &amp;&amp; make &amp;&amp; make install
+RUN mkdir /usr/local/nginx/conf/vhosts
+RUN mkdir /var/log/nginx
+ADD nginx.conf /usr/local/nginx/conf/nginx.conf
+ADD nginx_default.conf /usr/local/nginx/conf/vhosts/default.conf
+EXPOSE 80
+CMD [&quot;/usr/local/nginx/sbin/nginx&quot;]
+</code></pre><h2 id="nginx-conf"><a href="#nginx-conf" class="headerlink" title="nginx.conf"></a>nginx.conf</h2><pre><code>[root@docker01 nginx]# cat nginx.conf 
+user  nginx;
+worker_processes  1;
+daemon  off;
+
+error_log  /var/log/nginx/error.log warn;
+pid        /var/run/nginx.pid;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    default_type  application/octet-stream;
+
+    log_format  main  &apos;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &apos;
+                      &apos;$status $body_bytes_sent &quot;$http_referer&quot; &apos;
+                      &apos;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&apos;;
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile       on;
+    tcp_nopush     on;
+    tcp_nodelay    on;
+    keepalive_timeout  65;
+    types_hash_max_size 2048;
+
+    gzip  on;
+    gzip_disable  &quot;msie6&quot;;
+    gzip_vary  on;
+    gzip_proxied  any;
+    gzip_comp_level  6;
+    gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+
+    include /usr/local/nginx/conf/vhosts/*.conf;
+}
+</code></pre><h2 id="nginx相关php配置nginx-default-conf"><a href="#nginx相关php配置nginx-default-conf" class="headerlink" title="nginx相关php配置nginx_default.conf"></a>nginx相关php配置nginx_default.conf</h2><pre><code>[root@docker01 nginx]# cat nginx_default.conf 
+server {
+    listen       80 default_server;
+    server_name  localhost;
+
+    #charset koi8-r;
+
+    location / {
+        root   /web;
+        index  index.php index.html index.htm;
+    }
+
+    # redirect server error pages to the static page /50x.html
+    #
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   APP_DIR;
+    }
+
+    # Disable nginx log write favicon.ico
+    location = /favicon.ico {
+    log_not_found off;
+    access_log off;
+    }
+
+    # pass the PHP scripts to FastCGI server listening on port 9000
+    #
+    location ~ \.php$ {
+        root           /web;
+        fastcgi_pass   php:9000;
+        #fastcgi_pass  unix:/tmp/php-fpm.sock;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        include        fastcgi_params;
+    }
+}
+</code></pre><p>构建nginx镜像</p>
+<pre><code>[root@docker01 nginx]#  docker build -t workpress/nginx:1.0 .
+</code></pre><p>查看workpress/nginx镜像</p>
+<pre><code>[root@docker01 nginx]# docker images
+REPOSITORY                       TAG                 IMAGE ID            CREATED             SIZE
+workpress/nginx                  1.0                 2fbed074486c        7 weeks ago         652MB
+composemultipleworkpress_nginx   latest              85bccc12873c        7 weeks ago         652MB
+&lt;none&gt;                           &lt;none&gt;              47bbd62f8b03        7 weeks ago         652MB
+workpress/mysql                  1.0                 6549c4af7357        7 weeks ago         359MB
+workpress/php                    1.0                 44e9179f7098        7 weeks ago         1.2GB
+&lt;none&gt;                           &lt;none&gt;              8e3e252129d5        7 weeks ago         626MB
+centos                           centos6             7ea307891843        8 weeks ago         194MB
+centos                           latest              328edcd84f1b        8 weeks ago         193MB
+daocloud.io/library/nginx        latest              b8efb18f159b        2 months ago        107MB
+</code></pre><h1 id="php"><a href="#php" class="headerlink" title="php"></a>php</h1><h2 id="Dockerfile-1"><a href="#Dockerfile-1" class="headerlink" title="Dockerfile"></a>Dockerfile</h2><pre><code>[root@docker01 php-fpm]# cat Dockerfile 
+from centos:centos6
+ADD Centos-6.repo /etc/yum.repos.d/CentOS-Base.repo
+ADD epel-6.repo /etc/yum.repos.d/epel.repo
+add php-5.6.31 /php-5.6.31
+run yum -y groupinstall  &quot;Desktop Platform Development&quot; 
+run yum -y install libmcrypt-devel bzip2-devel gcc openssl-devel php-mcrypt libmcrypt
+run cd /php-5.6.31 &amp;&amp; ./configure --prefix=/usr/local/php --with-mysql=mysqlnd --with-pdo-mysql=mysqlnd --with-mysqli=mysqlnd --with-openssl --enable-mbstring --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-libxml-dir=/usr --enable-xml --enable-sockets --with-mcrypt  --with-bz2 --enable-fpm --with-gd &amp;&amp; make &amp;&amp; make install
+run cp /php-5.6.31/php.ini-production  /usr/local/php/etc/php.ini
+run mv /usr/local/php/etc/php-fpm.conf.default /usr/local/php/etc/php-fpm.conf
+run useradd -M -s /sbin/nologin php
+run sed -i -e &apos;s\;pid = run/php-fpm.pid\pid = run/php-fpm.pid\g&apos; -e &apos;s\nobody\php\g&apos; -e &apos;s\listen = 127.0.0.1:9000\listen = 0.0.0.0:9000\g&apos; /usr/local/php/etc/php-fpm.conf
+run sed -i &apos;s\;daemonize = yes\daemonize = no\g&apos; /usr/local/php/etc/php-fpm.conf
+EXPOSE 9000
+CMD [&quot;/usr/local/php/sbin/php-fpm&quot;]
+</code></pre><h2 id="构建php镜像"><a href="#构建php镜像" class="headerlink" title="构建php镜像"></a>构建php镜像</h2><pre><code>docker build -t workpress/php:1.0 .
+</code></pre><h1 id="mysql"><a href="#mysql" class="headerlink" title="mysql"></a>mysql</h1><h2 id="Dockerfile-2"><a href="#Dockerfile-2" class="headerlink" title="Dockerfile"></a>Dockerfile</h2><pre><code>[root@docker01 mysql]# cat Dockerfile 
+FROM centos:centos6  
+MAINTAINER dennis52o1314@163.com 
+RUN yum install -y mysql-server mysql  
+ADD ./startup.sh /opt/startup.sh
+RUN chmod +x /opt/startup.sh
+EXPOSE 3306
+CMD [&quot;/bin/bash&quot;,&quot;/opt/startup.sh&quot;]  
+</code></pre><h2 id="my-cnf"><a href="#my-cnf" class="headerlink" title="my.cnf"></a>my.cnf</h2><pre><code>[root@docker01 mysql]# cat my.cnf 
+[mysqld]
+datadir=/var/lib/mysql
+socket=/var/lib/mysql/mysql.sock
+user=mysql
+# Disabling symbolic-links is recommended to prevent assorted security risks
+symbolic-links=0
+
+[mysqld_safe]
+log-error=/var/log/mysqld.log
+pid-file=/var/lib/mysql/mysqld.pid
+</code></pre><h2 id="startup-sh"><a href="#startup-sh" class="headerlink" title="startup.sh"></a>startup.sh</h2><pre><code>[root@docker01 mysql]# cat startup.sh 
+#!/bin/bash
+if [ ! -f /var/lib/mysql/ibdata1 ]; then
+
+    mysql_install_db
+
+    /usr/bin/mysqld_safe &amp;
+    sleep 10s
+    mysql -e &quot;grant all privileges on *.* to &apos;root&apos;@&apos;%&apos; identified by &apos;123456&apos;; FLUSH PRIVILEGES;&quot;
+    killall mysqld
+    sleep 10s
+fi
+
+/usr/bin/mysqld_safe
+</code></pre><h2 id="构建mysql镜像"><a href="#构建mysql镜像" class="headerlink" title="构建mysql镜像"></a>构建mysql镜像</h2><pre><code>docker build -t workpress/mysql:1.0 .
+</code></pre><h1 id="启动博客系统"><a href="#启动博客系统" class="headerlink" title="启动博客系统"></a>启动博客系统</h1><pre><code>docker run -dit --name php -v /web:/web workpress/php:1.0
+docker run -dit --name web -p 80:80 -v /web:/web --link php:php workpress/nginx:1.0
+docker run -dit --name mysql -p 3306:3306 -v /opt/data:/var/lib/mysql workpress/mysql:1.0
+</code></pre>
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-10-02T16:07:57.733Z" itemprop="dateUpdated">2017-10-03 00:07:57</time>
+</span><br>
+
+
+        
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2017/10/02/docker-dockerfile-workpress-8/" target="_blank" rel="external">http://dennis.pathto.top/2017/10/02/docker-dockerfile-workpress-8/</a>
+        
+    </div>
+    <footer>
+        <a href="http://dennis.pathto.top">
+            <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
+            Dennis
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cloud/">cloud</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/10/02/docker-dockerfile-workpress-8/&title=《8.使用Dockerfile搭建自己的博客》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/10/02/docker-dockerfile-workpress-8/&title=《8.使用Dockerfile搭建自己的博客》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/10/02/docker-dockerfile-workpress-8/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《8.使用Dockerfile搭建自己的博客》 — Dennis'Blog&url=http://dennis.pathto.top/2017/10/02/docker-dockerfile-workpress-8/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/10/02/docker-dockerfile-workpress-8/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2017/10/02/docker-local-dockerhub-9/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">9.docker本地仓库</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/10/02/docker-dockerfile-7/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">7.dockerfile</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper">
+     <div id="articleComment" style="padding-left:5%;padding-right:5%;" ></div>
+    <!--<iframe height="900px" id="page_content_iframe" frameborder="0" marginheight="0" onload="dyniframesize('page_content_iframe');" width="100%" scrolling="auto" src="https://dennis-dzqapp.rhcloud.com/list_blog_commonts?p_id=2017/10/02/docker-dockerfile-workpress-8/" style="display: block;"></iframe>-->
+    </div>
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" data-alipay="http://otwbalpjp.bkt.clouddn.com/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Dennis &copy; 2015 - 2017</span>
+            <span>
+                
+                Power by <a href="http://116.196.88.117/" target="_blank">pathto.top</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/10/02/docker-dockerfile-workpress-8/&title=《8.使用Dockerfile搭建自己的博客》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/10/02/docker-dockerfile-workpress-8/&title=《8.使用Dockerfile搭建自己的博客》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/10/02/docker-dockerfile-workpress-8/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《8.使用Dockerfile搭建自己的博客》 — Dennis'Blog&url=http://dennis.pathto.top/2017/10/02/docker-dockerfile-workpress-8/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/10/02/docker-dockerfile-workpress-8/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACwElEQVR42u3aQW7jQAwEwPz/01lgr17J3aQm8QKlkyEIo6k5iDTJr6/4+v57vd65uv/6zOuT98/cr/zwhYeHhzfa+tU1eyY5mvZY2/3g4eHhneYlS88+8UkAuGfc/35jwcPDw/tVXhsA8qQ5T9Dx8PDw/l/eLI1Otpgk4nh4eHifwEsKDfvU+f6NbVB5uNaCh4eHF/P25dSf/32wv4eHh4e36KrnTf18tU2xuN4tHh4e3gFeO/aUbyvZdJsu51FgONWFh4eHF/DyttP+Y92WdPMyx+XR4+Hh4R3gvYkY5f/9WRE2amLdHkqRUuPh4eE9xNt/6NtC8Kwkkaf+eHh4eOd4z76yHeTajBREIQ0PDw/vAC8fDmgHpJKVZ8edl0Xw8PDwTvDytHVWttgUDvIQcrlDPDw8vGO8PP9cNaLigkI+8vUmFOHh4eEd4CWbmC26CTDtoFVdP8bDw8Nb8PJRp7xJNlunHR24P+7LuIeHh4e35uUpcvuxvg8qbaF2k4Lj4eHhneO1m9uk3fmnf99yw8PDw3uWN8PM0ug8VCQr3z+Jh4eHd5q3af8X1eIYNmuJXQ5d4eHh4T3K2/TN8rGDWTFiM6yAh4eHd45XDzCVowPtEFVb/sDDw8P7BN5sMGs2YvU9uorghIeHh3eA1wK+4msGnu0nCh54eHh4D/GSxvxscKr+cJdJfFGlxsPDwzvGaweh2hCS33/qjXh4eHgneO3HNz+gpMHfFnw3oQgPDw/vKd6shNqOXm2KxY8VI/Dw8PAe4rVl2XaGKw8V7cBWPnCAh4eHd4I3CwYzcFsmTgJS3YvDw8PDe4i3f31yELPC8arWgoeHh/ervCSEJCnvfQjZlDnw8PDwPpk3a57NSq756MA/1sTDw8M7xstT4dmL85GCWQp+eQcPDw/vAK+theajA+3Y1j4dH154eHh4Ke8PjMC7YMHsLVQAAAAASUVORK5CYII=" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="/js/main.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '我消失了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '我回来了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

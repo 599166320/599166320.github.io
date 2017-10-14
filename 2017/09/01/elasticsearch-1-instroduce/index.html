@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>1.elasticsearch介绍 | Dennis&#39;Blog | 我不用讨人喜欢，只做一个迷人的混蛋</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="elasticsearch">
+    <meta name="description" content="lucene全文检索与数据库查询的区别性能上数据库:比如我要查找某个商品，根据商品名，比如: select * from product where doctname like %keywords% 这样查询的话对于数据量少是可以的，可是一旦你的数据量巨大几万几十万的时候，你的性能将会极大的减弱。 lucene(全文检索):建立一个索引库，一次建立多次使用。在索引库里面会把所有的商品名根据分词器建">
+<meta name="keywords" content="elasticsearch">
+<meta property="og:type" content="article">
+<meta property="og:title" content="1.elasticsearch介绍">
+<meta property="og:url" content="http://dennis.pathto.top/2017/09/01/elasticsearch-1-instroduce/index.html">
+<meta property="og:site_name" content="Dennis&#39;Blog">
+<meta property="og:description" content="lucene全文检索与数据库查询的区别性能上数据库:比如我要查找某个商品，根据商品名，比如: select * from product where doctname like %keywords% 这样查询的话对于数据量少是可以的，可是一旦你的数据量巨大几万几十万的时候，你的性能将会极大的减弱。 lucene(全文检索):建立一个索引库，一次建立多次使用。在索引库里面会把所有的商品名根据分词器建">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-09-10T16:07:04.631Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="1.elasticsearch介绍">
+<meta name="twitter:description" content="lucene全文检索与数据库查询的区别性能上数据库:比如我要查找某个商品，根据商品名，比如: select * from product where doctname like %keywords% 这样查询的话对于数据量少是可以的，可是一旦你的数据量巨大几万几十万的时候，你的性能将会极大的减弱。 lucene(全文检索):建立一个索引库，一次建立多次使用。在索引库里面会把所有的商品名根据分词器建">
+    
+        <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/semantic.css" type="text/css" />
+<link rel="stylesheet" href="/css/zyComment.css" type="text/css" />
+<style type="text/css">
+	#cloud-tie-wrapper label {
+	    font-weight: bold;
+	}
+	#cloud-tie-wrapper a {
+		font-family: Microsoft YaHei;
+	}
+	#articleComment {
+		width: "60%";
+		/*height: 1500px;*/
+		overflow: auto;
+	}
+</style>
+
+    <script>window.lazyScripts=[]</script>
+
+
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/zyComment.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+$(function(){
+var post_toc_links = $(".post-toc-link");
+$.each( post_toc_links, function(index,post_toc_link){
+	post_toc_link = $(post_toc_link);
+	var post_toc_number = post_toc_link.find(".post-toc-number");
+	var post_toc_text = post_toc_link.find(".post-toc-text");
+	//console.log(post_toc_number.text()+" "+post_toc_text.text());
+	$(post_toc_link.attr("href")).text(post_toc_number.text()+" "+post_toc_text.text())
+});
+});
+
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+function jsonp(url){
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.insertBefore(script, head.firstChild);
+}
+function add_blog_callBackFun(rs){
+	$("#articleComment").zyComment("setCommentAfter",rs);
+}
+function get_list_blog_commonts_callBackFun(rs){
+	var agoComment = rs;
+	$("#articleComment").zyComment({
+		"width":"355",
+		"height":"33",
+		"agoComment":agoComment,
+		"callback":function(comment){
+			var selfID = comment.selfID;
+			if(typeof selfID == "undefined" ){
+				selfID = 0;
+			}
+			jsonp(host+"/add_blog_jsonp?"+"p_id="+encodeURIComponent("2017/09/01/elasticsearch-1-instroduce/")+ "&username="+encodeURIComponent(comment.name)+"&content="+encodeURIComponent(comment.content)+"&email="+encodeURIComponent(comment.email)+"&c_id_replay="+selfID);
+
+		}
+	});
+}
+jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/09/01/elasticsearch-1-instroduce/"));
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Dennis</h5>
+          <a href="mailto:dennis52o1314@163.com" title="dennis52o1314@163.com" class="mail">dennis52o1314@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/599166320" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/2166908462" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                其他
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">1.elasticsearch介绍</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">1.elasticsearch介绍</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-09-01T13:25:29.000Z" itemprop="datePublished" class="page-time">
+  2017-09-01
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/elasticsearch/">elasticsearch</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#lucene全文检索与数据库查询的区别"><span class="post-toc-number">1.</span> <span class="post-toc-text">lucene全文检索与数据库查询的区别</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#性能上"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">性能上</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#相关度排序"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">相关度排序</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#准确性"><span class="post-toc-number">1.2.1.</span> <span class="post-toc-text">准确性</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#lucene和elasticsearch的关系"><span class="post-toc-number">2.</span> <span class="post-toc-text">lucene和elasticsearch的关系</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Elasticsearch的特点"><span class="post-toc-number">3.</span> <span class="post-toc-text">Elasticsearch的特点</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#相关概念"><span class="post-toc-number">4.</span> <span class="post-toc-text">相关概念</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-elasticsearch-1-instroduce"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">1.elasticsearch介绍</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-09-01 21:25:29" datetime="2017-09-01T13:25:29.000Z"  itemprop="datePublished">2017-09-01</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/elasticsearch/">elasticsearch</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="lucene全文检索与数据库查询的区别"><a href="#lucene全文检索与数据库查询的区别" class="headerlink" title="lucene全文检索与数据库查询的区别"></a>lucene全文检索与数据库查询的区别</h1><h2 id="性能上"><a href="#性能上" class="headerlink" title="性能上"></a>性能上</h2><p>数据库:比如我要查找某个商品，根据商品名，比如:</p>
+<pre><code>select * from product where doctname like %keywords%
+</code></pre><p>这样查询的话对于数据量少是可以的，可是一旦你的数据量巨大几万几十万的时候，你的性能将会极大的减弱。</p>
+<p>lucene(全文检索):建立一个索引库，一次建立多次使用。在索引库里面会把所有的商品名根据分词器建立索引，就好比新华字典，索引对应document，比如输入衬衫，那么就会根据索引迅速的翻到衬衫对应的商品名，时间迅速，性能很好。</p>
+<h2 id="相关度排序"><a href="#相关度排序" class="headerlink" title="相关度排序"></a>相关度排序</h2><p>数据库：数据库要实现该功能也是可以的，可是需要改变表的结构，添加一个字段，然后该字段用于排名，最后查询的时候order by 一下.</p>
+<p>lucene:查询出来的document都有一个算法（得分），根据算法可以计算得分，得分越高的排名越靠前，比如百度搜索一个东西，一般排名靠前的得分越高，得分通过算法，可以人工控制，比如百度推广，企业给的钱多得分自然高，因此排名靠前</p>
+<h3 id="准确性"><a href="#准确性" class="headerlink" title="准确性"></a>准确性</h3><p>数据库：</p>
+<pre><code>select * from product where doctname like %ant%
+</code></pre><p>搜索出来的可以是plant,aplant,planting等等，准确性不高</p>
+<p>lucene：它是通过索引查询的，就好像你查字典一样，准确性比数据库的模糊查询高许多</p>
+<h1 id="lucene和elasticsearch的关系"><a href="#lucene和elasticsearch的关系" class="headerlink" title="lucene和elasticsearch的关系"></a>lucene和elasticsearch的关系</h1><p>elasticsearch是基于lucene实现的分布式全文检索系统，解决了lucene存储可伸缩问题，高可用问题，读写负载均衡问.提供了更多高级功能如：复杂的<br>搜索功能，聚合分析功能，基于地理位置搜索，rest api,多种语言客户端开发的api等</p>
+<h1 id="Elasticsearch的特点"><a href="#Elasticsearch的特点" class="headerlink" title="Elasticsearch的特点"></a>Elasticsearch的特点</h1><p>（1）可以作为一个大型分布式集群（数百台服务器）技术，处理PB级数据，服务大公司；也可以运行在单机上，服务小公司</p>
+<p>（2）Elasticsearch是将全文检索、数据分析以及分布式技术，合并在了一起，才形成数据分析软件，分布式数据库</p>
+<p>（3）elasticsearch，基于lucene，隐藏复杂性，提供简单易用的restful api接口、java api接口,对用户而言，简单易用，数据量不大，操作不是太复杂</p>
+<p>（4）Elasticsearch作为传统数据库的一个补充，提供了数据库所不不能提供的很多功能,如全文检索，同义词处理，相关度排名，复杂数据分析，支持PB级数据,海量数据的近实时处理；</p>
+<h1 id="相关概念"><a href="#相关概念" class="headerlink" title="相关概念"></a>相关概念</h1><p>（1）Near Realtime（NRT）：近实时，从写入数据到数据可以被搜索到有一个小延迟（大概1秒）；基于es执行搜索和分析可以达到秒级</p>
+<p>（2）Cluster：集群，包含多个节点，每个节点属于哪个集群是通过一个配置（集群名称，默认是elasticsearch）来决定的,也可以只有一个节点</p>
+<p>（3）Node：节点，集群中的一个节点，节点也有一个名称,默认是随机分配的，在执行运维管理操作的时候，节点名称很重要，默认节点会去加入一个名称为“elasticsearch”的集群，如果直接启动一堆节点，那么它们会自动组成一个elasticsearch集群，一个节点也可以组成一个elasticsearch集群</p>
+<p>（4）Document和field：文档，es中的最小数据单元，一个document相当于数据库的一行数据，用JSON数据结构表示;每个index下的type中，都可以去存储多个document。一个document里面有多个field，每个field就是一个数据字段。</p>
+<p>（5）Index：相当于数据库中的数据库实例。</p>
+<p>（6）Type：类型，相当于数据库中的表。</p>
+<p>（7）shard：单台机器无法存储大量数据，es可以将一个索引中的数据切分为多个分片shard，分布在多台服务器上存储。有了shard就可以横向扩展，存储更多数据，让搜索和分析等操作分布到多台服务器上去执行，提升读写性能。每个shard都是一个lucene index。</p>
+<p>（8）replica：任何一个服务器随时可能故障或宕机，此时shard可能就会丢失，因此可以为每个shard创建多个replica副本。replica可以在shard故障时提供备用服务，保证数据不丢失，多个replica还可以提升搜索操作的吞吐量和性能。默认每个索引10个shard，5个primary shard，5个replica shard，最小的高可用配置，是2台服务器。</p>
+<hr>
+<p>3、elasticsearch核心概念 vs. 数据库核心概念</p>
+<table>
+<thead>
+<tr>
+<th>Elasticsearch</th>
+<th>数据库</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Document</td>
+<td>行</td>
+</tr>
+<tr>
+<td>Type</td>
+<td>表</td>
+</tr>
+<tr>
+<td>Index</td>
+<td>库</td>
+</tr>
+</tbody>
+</table>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-09-10T16:07:04.631Z" itemprop="dateUpdated">2017-09-11 00:07:04</time>
+</span><br>
+
+
+        
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2017/09/01/elasticsearch-1-instroduce/" target="_blank" rel="external">http://dennis.pathto.top/2017/09/01/elasticsearch-1-instroduce/</a>
+        
+    </div>
+    <footer>
+        <a href="http://dennis.pathto.top">
+            <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
+            Dennis
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/09/01/elasticsearch-1-instroduce/&title=《1.elasticsearch介绍》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/09/01/elasticsearch-1-instroduce/&title=《1.elasticsearch介绍》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/09/01/elasticsearch-1-instroduce/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《1.elasticsearch介绍》 — Dennis'Blog&url=http://dennis.pathto.top/2017/09/01/elasticsearch-1-instroduce/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/09/01/elasticsearch-1-instroduce/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2017/09/02/elasticsearch-2-installation/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">2.elasticsearch安装</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/08/24/spring-cloud-zuul-configuration-14/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">14.spring-cloud-zuul配置</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper">
+     <div id="articleComment" style="padding-left:5%;padding-right:5%;" ></div>
+    <!--<iframe height="900px" id="page_content_iframe" frameborder="0" marginheight="0" onload="dyniframesize('page_content_iframe');" width="100%" scrolling="auto" src="https://dennis-dzqapp.rhcloud.com/list_blog_commonts?p_id=2017/09/01/elasticsearch-1-instroduce/" style="display: block;"></iframe>-->
+    </div>
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" data-alipay="http://otwbalpjp.bkt.clouddn.com/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Dennis &copy; 2015 - 2017</span>
+            <span>
+                
+                Power by <a href="http://116.196.88.117/" target="_blank">pathto.top</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/09/01/elasticsearch-1-instroduce/&title=《1.elasticsearch介绍》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/09/01/elasticsearch-1-instroduce/&title=《1.elasticsearch介绍》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/09/01/elasticsearch-1-instroduce/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《1.elasticsearch介绍》 — Dennis'Blog&url=http://dennis.pathto.top/2017/09/01/elasticsearch-1-instroduce/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/09/01/elasticsearch-1-instroduce/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACq0lEQVR42u3aQW7CQAwFUO5/abpFQoRve1yyeFmhikzmBcnj2n484uv5dlXvev1L8vn63sMXHh4e3njrn5ZOHpDcdb3+9V35nvHw8PC2eclGkwDdC+i9w+N6HTw8PLy78fJ0eZKmV9NrPDw8vHvyevfmCfqPDwY8PDy8mJcUI3rHxjxdzosXeHh4eP/Dy7tI9/m80t/Dw8PDG3fVk2bYJGTnzbZn68LDw8Pb4PVKrhtDWtWmWuGbeHh4eAu8ahF2fgBMihe90gkeHh7eBq/aXspDebLd60OiOljw6G0dDw8PL+D1RqnyY+Bs6C8fS3h4eHhrvF4CXY3AVeqkeIGHh4e3x5sUIybDT9XVDo9e4eHh4Y151UQ2bztNysGTqkLzF8DDw8Nr8U5Ne/Za+5PVPt6Fh4eHd5RXzrWDNlhe2O2tVtgPHh4e3gKvF5p7LyIfSjjVSMPDw8Pb4OUNsPIMVxy+q2l63mzDw8PD2+NVw/GkoXVqfCF6Ch4eHt4Cr9em6g0NlLcVp+Zf9o+Hh4d3lJdsJS9PVEu9e/UVPDw8vG3ednDvjUxVy8dfai14eHh4R3mTg+HUwNY1uzlAgIeHh7fAS4qqvVGq/Dv5cFVejCgMXeHh4eENeHl6nW86LyhUD4lyow4PDw/vKO9sIptvNy9DjAa/8PDw8NZ4k2bVJKBPShjRQYWHh4e3xqsm0/NxgWpq3itV4OHh4Z3l9QJxb9Aq7+k3qynvrwwPDw9vgVcNtfkDqq21pKG1cYTg4eHh9Xj5P/y9gkXvJSZl4uhZeHh4eGu8aucob19VX9bkZPs4OoCHh4f3U94kWFdf04FSCB4eHt4NeIWgXGx9VcetohYaHh4e3hpvMjh1qh2VrFw9QvDw8PA2ePmDqw/oJeL5Sz/c38PDw8P7fv0BIzK7YIAtRssAAAAASUVORK5CYII=" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="/js/main.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '我消失了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '我回来了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

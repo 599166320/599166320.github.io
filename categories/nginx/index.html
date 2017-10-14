@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Categories: nginx | Dennis&#39;Blog | 我不用讨人喜欢，只做一个迷人的混蛋</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="undefined">
+    <meta name="description" content="我不用讨人喜欢，只做一个迷人的混蛋">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Dennis&#39;Blog">
+<meta property="og:url" content="http://dennis.pathto.top/categories/nginx/index.html">
+<meta property="og:site_name" content="Dennis&#39;Blog">
+<meta property="og:description" content="我不用讨人喜欢，只做一个迷人的混蛋">
+<meta property="og:locale" content="zh-CN">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Dennis&#39;Blog">
+<meta name="twitter:description" content="我不用讨人喜欢，只做一个迷人的混蛋">
+    
+        <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/semantic.css" type="text/css" />
+<link rel="stylesheet" href="/css/zyComment.css" type="text/css" />
+<style type="text/css">
+	#cloud-tie-wrapper label {
+	    font-weight: bold;
+	}
+	#cloud-tie-wrapper a {
+		font-family: Microsoft YaHei;
+	}
+	#articleComment {
+		width: "60%";
+		/*height: 1500px;*/
+		overflow: auto;
+	}
+</style>
+
+    <script>window.lazyScripts=[]</script>
+
+
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/zyComment.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+$(function(){
+var post_toc_links = $(".post-toc-link");
+$.each( post_toc_links, function(index,post_toc_link){
+	post_toc_link = $(post_toc_link);
+	var post_toc_number = post_toc_link.find(".post-toc-number");
+	var post_toc_text = post_toc_link.find(".post-toc-text");
+	//console.log(post_toc_number.text()+" "+post_toc_text.text());
+	$(post_toc_link.attr("href")).text(post_toc_number.text()+" "+post_toc_text.text())
+});
+});
+
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+function jsonp(url){
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.insertBefore(script, head.firstChild);
+}
+function add_blog_callBackFun(rs){
+	$("#articleComment").zyComment("setCommentAfter",rs);
+}
+function get_list_blog_commonts_callBackFun(rs){
+	var agoComment = rs;
+	$("#articleComment").zyComment({
+		"width":"355",
+		"height":"33",
+		"agoComment":agoComment,
+		"callback":function(comment){
+			var selfID = comment.selfID;
+			if(typeof selfID == "undefined" ){
+				selfID = 0;
+			}
+			jsonp(host+"/add_blog_jsonp?"+"p_id="+encodeURIComponent("categories/nginx/index.html")+ "&username="+encodeURIComponent(comment.name)+"&content="+encodeURIComponent(comment.content)+"&email="+encodeURIComponent(comment.email)+"&c_id_replay="+selfID);
+
+		}
+	});
+}
+jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("categories/nginx/index.html"));
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Dennis</h5>
+          <a href="mailto:dennis52o1314@163.com" title="dennis52o1314@163.com" class="mail">dennis52o1314@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect active">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/599166320" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/2166908462" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                其他
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Categories: nginx</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header categories-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Categories: nginx</h1>
+        <h5 class="subtitle">
+            
+        </h5>
+    </div>
+
+    
+<div class="tabs-bar container">
+    <nav class="tags-list">
+        <a href="/categories" style="-webkit-order:-1;order:-1" class="tags-list-item waves-effect waves-button waves-light
+            ">全部</a>
+        
+
+            <a href="/categories/zookeeper/" style="-webkit-order:10;order:10" class="tags-list-item waves-effect waves-button waves-light">zookeeper</a>
+
+        
+
+            <a href="/categories/aboutMe/" style="-webkit-order:11;order:11" class="tags-list-item waves-effect waves-button waves-light">aboutMe</a>
+
+        
+
+            <a href="/categories/docker/" style="-webkit-order:12;order:12" class="tags-list-item waves-effect waves-button waves-light">docker</a>
+
+        
+
+            <a href="/categories/elasticsearch/" style="-webkit-order:13;order:13" class="tags-list-item waves-effect waves-button waves-light">elasticsearch</a>
+
+        
+
+            <a href="/categories/git/" style="-webkit-order:14;order:14" class="tags-list-item waves-effect waves-button waves-light">git</a>
+
+        
+
+            <a href="/categories/Tiled-Map-Editor/" style="-webkit-order:15;order:15" class="tags-list-item waves-effect waves-button waves-light">Tiled Map Editor</a>
+
+        
+
+            <a href="/categories/interview/" style="-webkit-order:16;order:16" class="tags-list-item waves-effect waves-button waves-light">interview</a>
+
+        
+
+            <a href="/categories/mybatis/" style="-webkit-order:17;order:17" class="tags-list-item waves-effect waves-button waves-light">mybatis</a>
+
+        
+
+            <a href="/categories/linux/" style="-webkit-order:18;order:18" class="tags-list-item waves-effect waves-button waves-light">linux</a>
+
+        
+
+            <a href="/categories/life/" style="-webkit-order:19;order:19" class="tags-list-item waves-effect waves-button waves-light">life</a>
+
+        
+
+            <a href="/categories/openstack/" style="-webkit-order:0;order:0" class="tags-list-item waves-effect waves-button waves-light">openstack</a>
+
+        
+
+            <a href="/categories/nginx/" style="-webkit-order:1;order:1" class="tags-list-item waves-effect waves-button waves-light active">nginx</a>
+
+        
+
+            <a href="/categories/kubernetes/" style="-webkit-order:2;order:2" class="tags-list-item waves-effect waves-button waves-light">kubernetes</a>
+
+        
+
+            <a href="/categories/jboss/" style="-webkit-order:3;order:3" class="tags-list-item waves-effect waves-button waves-light">jboss</a>
+
+        
+
+            <a href="/categories/redis/" style="-webkit-order:4;order:4" class="tags-list-item waves-effect waves-button waves-light">redis</a>
+
+        
+
+            <a href="/categories/spring-boot/" style="-webkit-order:5;order:5" class="tags-list-item waves-effect waves-button waves-light">spring-boot</a>
+
+        
+
+            <a href="/categories/nodejs/" style="-webkit-order:6;order:6" class="tags-list-item waves-effect waves-button waves-light">nodejs</a>
+
+        
+
+            <a href="/categories/spring-cloud/" style="-webkit-order:7;order:7" class="tags-list-item waves-effect waves-button waves-light">spring-cloud</a>
+
+        
+
+            <a href="/categories/svn/" style="-webkit-order:8;order:8" class="tags-list-item waves-effect waves-button waves-light">svn</a>
+
+        
+
+            <a href="/categories/tools/" style="-webkit-order:9;order:9" class="tags-list-item waves-effect waves-button waves-light">tools</a>
+
+        
+    </nav>
+    <!-- PC show more-->
+    <div class="tags-list-more">
+        <a href="javascript:;" onclick="BLOG.tabBar(this)" class="action tags-list-item waves-effect waves-circle waves-light"><i class="icon icon-ellipsis-h"></i></a>
+    </div>
+</div>
+
+
+
+</header>
+
+<div class="container body-wrap fade">
+    
+            <div class="waterfall">
+          
+
+            <div class="waterfall-item">
+  <article class="article-card archive-article">
+    <div class="post-meta">
+      <time class="post-time" title="2017-08-17 20:36:55" datetime="2017-08-17T12:36:55.000Z"  itemprop="datePublished">2017-08-17</time>
+
+      
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/nginx/">nginx</a></li></ul>
+
+
+
+    </div>
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/08/17/nginx-Traffic-distribution-2/">2.nginx-根据查询参数实现后端流量分发</a>
+    </h3>
+  
+
+
+
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/openrestry/">openrestry</a></li></ul>
+
+    </div>
+    
+  </article>
+</div>
+
+        
+
+            <div class="waterfall-item">
+  <article class="article-card archive-article">
+    <div class="post-meta">
+      <time class="post-time" title="2017-08-17 20:35:45" datetime="2017-08-17T12:35:45.000Z"  itemprop="datePublished">2017-08-17</time>
+
+      
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/nginx/">nginx</a></li></ul>
+
+
+
+    </div>
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/08/17/nginx-openrestry-install-1/">1.安装nginx+openrestry</a>
+    </h3>
+  
+
+
+
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/openrestry/">openrestry</a></li></ul>
+
+    </div>
+    
+  </article>
+</div>
+
+        
+            </div>
+        
+    
+</div>
+
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Dennis &copy; 2015 - 2017</span>
+            <span>
+                
+                Power by <a href="http://116.196.88.117/" target="_blank">pathto.top</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/categories/nginx/&title=Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/categories/nginx/&title=Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/categories/nginx/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=Dennis'Blog&url=http://dennis.pathto.top/categories/nginx/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/categories/nginx/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK4AAACuCAAAAACKZ2kyAAABtUlEQVR42u3aS4rDMBAFQN//0p7twJDkPcmSnaG0CsG0ypumPz6O+Jx/zu//Xz2ZxDxWHFxc3Gnu+fa0iPaW3ICLi7uf+z7R5KETyvv4H2y4uLiP5CZBk1SIi4v7n7htgfKqWMHFxX0+NylT5scfW3s1XFzcCW4+1Fj3e8l8FxcXd4h7lmdmdHLB7bi4uFu4eUJpC6A8Wv0kLi7uYu5YumkHoy33QwrDxcVdzE0uzq/MEfkaJprl4OLiXspN1ht5cTMDjW7BxcXdwk0SyszQM4+Ql1C4uLiruUliKj6MGCqV8pfExcW9lzuW1Mb2pPn/uLi4e7h58ZEnnbylaV8GFxd3Dzf/6KHtpZII9b24uLhbuPkHUnm70g5S28i4uLg7ufMfVLXJa3C+i4uLexN3rIE5y5OvVXBxce/itmPTFQVN9CQuLu5i7ljqaces7fqk2MPg4uIu4I4tR69qmfL0V78MLi7uNHdFi9JS8nIKFxd3JzdvaS5bl870ari4uI/kXpUEoyEpLi7ul3PnG6d684OLi7uMmxcoSaOSFzf1egYXF3cLd2bxmaSkNv2NtUy4uLgXcX8AZ0LiMcOKTTQAAAAASUVORK5CYII=" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '我消失了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '我回来了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

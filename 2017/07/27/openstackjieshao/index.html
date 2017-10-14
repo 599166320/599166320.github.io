@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>openstack介绍 | Dennis&#39;Blog | 我不用讨人喜欢，只做一个迷人的混蛋</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="openstack">
+    <meta name="description" content="经常有朋友让我介绍Openstack，我就干脆写一篇Openstack的组件介绍，也算是总结一下。马上2012年就要结束了，也是到该总结的时候。去年现在的Openstack，其实官方的Keystone和Horizon还没法很好的一起工作。 我个人的理解：下面的组件全部工作良好，那么基本的一个IAAS就算比较完整，这些功能都是目前Rackspace和linode都有的。  目前官方认同的孵化项目，">
+<meta name="keywords" content="openstack">
+<meta property="og:type" content="article">
+<meta property="og:title" content="openstack介绍">
+<meta property="og:url" content="http://dennis.pathto.top/2017/07/27/openstackjieshao/index.html">
+<meta property="og:site_name" content="Dennis&#39;Blog">
+<meta property="og:description" content="经常有朋友让我介绍Openstack，我就干脆写一篇Openstack的组件介绍，也算是总结一下。马上2012年就要结束了，也是到该总结的时候。去年现在的Openstack，其实官方的Keystone和Horizon还没法很好的一起工作。 我个人的理解：下面的组件全部工作良好，那么基本的一个IAAS就算比较完整，这些功能都是目前Rackspace和linode都有的。  目前官方认同的孵化项目，">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-07-27T16:46:58.523Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="openstack介绍">
+<meta name="twitter:description" content="经常有朋友让我介绍Openstack，我就干脆写一篇Openstack的组件介绍，也算是总结一下。马上2012年就要结束了，也是到该总结的时候。去年现在的Openstack，其实官方的Keystone和Horizon还没法很好的一起工作。 我个人的理解：下面的组件全部工作良好，那么基本的一个IAAS就算比较完整，这些功能都是目前Rackspace和linode都有的。  目前官方认同的孵化项目，">
+    
+        <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/semantic.css" type="text/css" />
+<link rel="stylesheet" href="/css/zyComment.css" type="text/css" />
+<style type="text/css">
+	#cloud-tie-wrapper label {
+	    font-weight: bold;
+	}
+	#cloud-tie-wrapper a {
+		font-family: Microsoft YaHei;
+	}
+	#articleComment {
+		width: "60%";
+		/*height: 1500px;*/
+		overflow: auto;
+	}
+</style>
+
+    <script>window.lazyScripts=[]</script>
+
+
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/zyComment.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+$(function(){
+var post_toc_links = $(".post-toc-link");
+$.each( post_toc_links, function(index,post_toc_link){
+	post_toc_link = $(post_toc_link);
+	var post_toc_number = post_toc_link.find(".post-toc-number");
+	var post_toc_text = post_toc_link.find(".post-toc-text");
+	//console.log(post_toc_number.text()+" "+post_toc_text.text());
+	$(post_toc_link.attr("href")).text(post_toc_number.text()+" "+post_toc_text.text())
+});
+});
+
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+function jsonp(url){
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.insertBefore(script, head.firstChild);
+}
+function add_blog_callBackFun(rs){
+	$("#articleComment").zyComment("setCommentAfter",rs);
+}
+function get_list_blog_commonts_callBackFun(rs){
+	var agoComment = rs;
+	$("#articleComment").zyComment({
+		"width":"355",
+		"height":"33",
+		"agoComment":agoComment,
+		"callback":function(comment){
+			var selfID = comment.selfID;
+			if(typeof selfID == "undefined" ){
+				selfID = 0;
+			}
+			jsonp(host+"/add_blog_jsonp?"+"p_id="+encodeURIComponent("2017/07/27/openstackjieshao/")+ "&username="+encodeURIComponent(comment.name)+"&content="+encodeURIComponent(comment.content)+"&email="+encodeURIComponent(comment.email)+"&c_id_replay="+selfID);
+
+		}
+	});
+}
+jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/07/27/openstackjieshao/"));
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Dennis</h5>
+          <a href="mailto:dennis52o1314@163.com" title="dennis52o1314@163.com" class="mail">dennis52o1314@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/599166320" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/2166908462" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                其他
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">openstack介绍</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">openstack介绍</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-07-27T10:44:06.000Z" itemprop="datePublished" class="page-time">
+  2017-07-27
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/openstack/">openstack</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Nova"><span class="post-toc-number">1.</span> <span class="post-toc-text">Nova</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#keystone"><span class="post-toc-number">2.</span> <span class="post-toc-text">keystone</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Glance"><span class="post-toc-number">3.</span> <span class="post-toc-text">Glance</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Quantum"><span class="post-toc-number">4.</span> <span class="post-toc-text">Quantum</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Cinder"><span class="post-toc-number">5.</span> <span class="post-toc-text">Cinder</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Lbaas"><span class="post-toc-number">6.</span> <span class="post-toc-text">Lbaas</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Horizon"><span class="post-toc-number">7.</span> <span class="post-toc-text">Horizon</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Swift"><span class="post-toc-number">8.</span> <span class="post-toc-text">Swift</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#oslo"><span class="post-toc-number">9.</span> <span class="post-toc-text">oslo</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Ceilometer"><span class="post-toc-number">10.</span> <span class="post-toc-text">Ceilometer</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Heat"><span class="post-toc-number">11.</span> <span class="post-toc-text">Heat</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Moniker"><span class="post-toc-number">12.</span> <span class="post-toc-text">Moniker</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-openstackjieshao"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">openstack介绍</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-07-27 18:44:06" datetime="2017-07-27T10:44:06.000Z"  itemprop="datePublished">2017-07-27</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/openstack/">openstack</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <blockquote>
+<p>经常有朋友让我介绍Openstack，我就干脆写一篇Openstack的组件介绍，也算是总结一下。马上2012年就要结束了，也是到该总结的时候。去年现在的Openstack，其实官方的Keystone和Horizon还没法很好的一起工作。</p>
+<p>我个人的理解：下面的组件全部工作良好，那么基本的一个IAAS就算比较完整，这些功能都是目前Rackspace和linode都有的。</p>
+</blockquote>
+<p>目前官方认同的孵化项目，都会放到 <a href="https://github.com/stackforge" target="_blank" rel="external">https://github.com/stackforge</a></p>
+<p>大家可以通过wiki的变化，了解项目目前的情况：<a href="http://wiki.openstack.org/RecentChanges" target="_blank" rel="external">http://wiki.openstack.org/RecentChanges</a></p>
+<p>如果大家希望详细了解项目进度，可以阅读他们每次开会的纪要，包括各种问题的讨论，非常有意思：<a href="http://eavesdrop.openstack.org/meetings/" target="_blank" rel="external">http://eavesdrop.openstack.org/meetings/</a></p>
+<p>如果希望快速了解，可以直接看这个<a href="http://eavesdrop.openstack.org/meetings/project/" target="_blank" rel="external">http://eavesdrop.openstack.org/meetings/project/</a> 所有的项目大概进度都会在这里讨论。</p>
+<h1 id="Nova"><a href="#Nova" class="headerlink" title="Nova"></a>Nova</h1><p>这个是最核心的，Nova最开始的时候，可以说是一套虚拟化管理程序，还可以管理网络和存储。不过从Essex版本后，Nova开始做减法，和网络相关的内容，包括安全组，交给Quantum负责，存储相关的交给Cinder负责。调度有关的内容，会交给新的项目Marconi。</p>
+<p>以前还有一个nova common，这其实是各个组件都使用相同的东西，现在也专门成立一个项目：oslo，已经是核心项目。</p>
+<p>未来Nova对各种Hyperv的支持是有差异的，KVM和XEN，基本是最好的。微软的Hyper-V算是很不错，微软投入再研发。刚才朋友还专门提到一点：就是未来计算节点，不直接查询数据库，而是通过rpc的方式，据说这是一大进步。</p>
+<p>Nova的稳定性，其实取决于libvirt，qemu，希望未来可以能更加稳定。功能现在其实已经不是大问题。</p>
+<h1 id="keystone"><a href="#keystone" class="headerlink" title="keystone"></a>keystone</h1><p>这是提供身份认证和授权的组件。任何系统，身份认证和授权，其实都比较复杂。尤其Openstack 那么庞大的项目，每个组件都需要使用统一认证和授权。</p>
+<p>目前keystone 要做的东西其实还是很多。没法基于角色的授权，web管理用户等。当然你如果希望实现使用动态令牌认证，多因素认证，LDAP集成，这都是未来版本需要实现的功能，这些功能都已经在计划中。</p>
+<p>目前好像要实现keystone的高可用，还是比较困难，这个就让社区慢慢解决吧。大规模部署，这也会是瓶颈。</p>
+<h1 id="Glance"><a href="#Glance" class="headerlink" title="Glance"></a>Glance</h1><p>这是镜像管理。功能其实相对比较简单。不过Glance后端的存储的支持，其实一直到Folsom的版本，Glance对swift的支持，才算是比较完善。</p>
+<p>目前Glance的镜像存储，支持本地存储，NFS，swift，sheepdog和Ceph，基本是够用了。</p>
+<p>目前Glance的最大需求就是多个数据中心的镜像管理，如何复制，不过这个功能已经基本实现。还有就是租户私有的image管理，这些目前功能都已经实现。</p>
+<p>个人感觉：Glance后续基本就是一个bug修复，稳定的阶段。</p>
+<h1 id="Quantum"><a href="#Quantum" class="headerlink" title="Quantum"></a>Quantum</h1><p>这是网络管理的组件，也是重头戏，Openstack的未来，基本都要靠quantum。上面介绍nova的时候，说过网络相关的内容，都会交给Quantum。不过Quantum的开发进度不是太如人意。Flosom规划实现功能，到Grizzly才实现。未来nova network的代码清理，估计到H版本都不见得可以实现。</p>
+<p>Quantum 后端可以是商业产品或者开源。开源产品支持Openvswitch，和linux bridge。网络设备厂商都在积极参与，让他们的产品支持Quantum，目前思科，锐捷已经实现支持。</p>
+<p>比较悲观的估计：quantum要完全满足生产的需求，例如带宽限制，mutilhost等功能，很可能需要等到2014年的I版本，真的考验耐心。</p>
+<p>如果你关注Quantum的话，就会发现目前还是在起步阶段，无论是bug还是功能，都是非常多。</p>
+<h1 id="Cinder"><a href="#Cinder" class="headerlink" title="Cinder"></a>Cinder</h1><p>这是存储管理的组件。一直以来，很多人都很纠结AWS的EBS的实现。Openstack也终于推出了自己的存储管理组件。</p>
+<p>Cinder存储管理主要是指虚拟机的存储管理。目前支持开源和商业化产品。开源的sheepdog，Ceph等。商业存储的支持，目前ＩＢＭ是最积极的。未来如果商业存储厂商都支持Cinder，对Openstack的商业化还是非常有利的。</p>
+<p>对于企业来说，使用分布式作为虚拟机的存储，并不能真正节省成本，维护一套分布式存储，成本还是很高的。目前虚拟机的各种高可用，备份的问题，其实都可以把问题交给商业存储厂商来解决。</p>
+<h1 id="Lbaas"><a href="#Lbaas" class="headerlink" title="Lbaas"></a>Lbaas</h1><p>这是实现负载均衡的项目。现在linode，Rackspace，都提供了负载均衡的服务，有了这个服务，你才有可能实现所谓的弹性扩展。这个组件是Mirantis公司和思科合作开发的。目前这个项目集成在Quantum里，不过基本算是一个独立的组件。</p>
+<p>Lbaas后端可以是各种商业产品和开源产品。F5，Ngnix，Haproxy，LVS</p>
+<p>为了发布的Grizzly，你应该有机会在Dashboard里设置虚拟机的负载均衡。</p>
+<h1 id="Horizon"><a href="#Horizon" class="headerlink" title="Horizon"></a>Horizon</h1><p>严格意义来说，Horizon不会为Openstack 增加一个功能，他更多的是一个演示，demo。不过对于很多用户来说，了解Openstack基本都是从Horizon，dashboard开始。从这个角度来看，他在Openstack各个项目里，显得非常重要。</p>
+<p>Horizon的开发者，应该是最累的。需要和各个项目打角度。每个项目的功能很多都是需要通过Dashboard来展现。</p>
+<p>大家需要注意的是：Horizon只是使用了Openstack部分API功能，很多功能，你可以根据你的需求去实现。</p>
+<h1 id="Swift"><a href="#Swift" class="headerlink" title="Swift"></a>Swift</h1><p>这是对象存储的组件。对于大部分用户来说，swift不是必须的。你只有存储数量到一定级别，而且是非结构化数据才有这样的需求。很多人都问一个相同的问题：是否可以把虚拟机的存储放在swift上。简单回答：不行。你需要搞明白对象存储是干啥，擅长那些地方，那些是不行的。</p>
+<p>swift是Openstack所有组件了最成熟的,可以在线升级版本,各种版本可以混合在一起,也就是说,1.75版本的swift可以和1.48的在一个群集里.这个是很难得的.</p>
+<h1 id="oslo"><a href="#oslo" class="headerlink" title="oslo"></a>oslo</h1><p>这个项目其实就是把所有组件需要用到相同的东西，集中起来，以前叫nova common，估计感觉不贴切，现在单独成立一个项目。日后大家开发新的组件，估计都需要用到oslo。</p>
+<h1 id="Ceilometer"><a href="#Ceilometer" class="headerlink" title="Ceilometer"></a>Ceilometer</h1><p>这是实现监控和计量的组件。这应该算是Grizzly的孵化项目。对他的了解其实很少。在Grizzly版本里，你应该可以在Dashboard里看到这个组件。</p>
+<p>监控和计费一直是一个难题，尤其用户希望知道cpu和内存的使用情况。看看他如何解决这个问题。到时候看看同事如何调用api来解决监控和计量的问题。解决计量，计费就简单的。</p>
+<p><a href="http://wiki.openstack.org/Ceilometer" target="_blank" rel="external">http://wiki.openstack.org/Ceilometer</a></p>
+<h1 id="Heat"><a href="#Heat" class="headerlink" title="Heat"></a>Heat</h1><p>这个项目是要解决虚拟机的软件部署的问题。你的虚拟机创建好，os准备好，你还需要做很多配置才能使用，如何能实现把所有繁琐的操作简化呢？亚马逊上有一个专门的工具：AWS cloudformation。目前Openstack上，希望通过Heat来实现类似的功能。</p>
+<p>关于这个项目，还是有很多争议。不过这个项目是Redhat发起。他们的功力是不容置疑，等Openstack成熟后，这个项目的重要性就会体现出来。</p>
+<p><a href="http://wiki.openstack.org/Heat" target="_blank" rel="external">http://wiki.openstack.org/Heat</a> </p>
+<p>真的要实现弹性扩展，自动部署，都是需要指望这个。目前Heat已经成为孵化项目</p>
+<p>下面的项目，基本都还是在讨论阶段，不过成为孵化项目的可能性很大。</p>
+<h1 id="Moniker"><a href="#Moniker" class="headerlink" title="Moniker"></a>Moniker</h1><p>这是实现dns功能的组件。其实如果你用过AWS，你就知道这个功能是必不可少。新浪目前的已经加上了这个功能，每个虚拟机，都会自动有一个dns记录。</p>
+<p><a href="https://github.com/stackforge/moniker" target="_blank" rel="external">https://github.com/stackforge/moniker</a></p>
+<p>估计集成到Dashboard里，还是需要等待一段时间啊。目前该项目开发还是非常积极。</p>
+<p>marconi<br>此项目用于解决openstack 消息队列的扩展问题。据说这是Rackspce推出的项目，就是为了解决他们生产中遇到消息队列的问题。</p>
+<p>Marconi – Message Bus for OpenStack</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-07-27T16:46:58.523Z" itemprop="dateUpdated">2017-07-28 00:46:58</time>
+</span><br>
+
+
+        
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2017/07/27/openstackjieshao/" target="_blank" rel="external">http://dennis.pathto.top/2017/07/27/openstackjieshao/</a>
+        
+    </div>
+    <footer>
+        <a href="http://dennis.pathto.top">
+            <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
+            Dennis
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/openstack/">openstack</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/07/27/openstackjieshao/&title=《openstack介绍》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/07/27/openstackjieshao/&title=《openstack介绍》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/07/27/openstackjieshao/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《openstack介绍》 — Dennis'Blog&url=http://dennis.pathto.top/2017/07/27/openstackjieshao/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/07/27/openstackjieshao/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2017/07/27/openstack-swift-yuanlijiagou/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">openstack之swift原理和架构</h4>
+      </a>
+    </div>
+  
+
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper">
+     <div id="articleComment" style="padding-left:5%;padding-right:5%;" ></div>
+    <!--<iframe height="900px" id="page_content_iframe" frameborder="0" marginheight="0" onload="dyniframesize('page_content_iframe');" width="100%" scrolling="auto" src="https://dennis-dzqapp.rhcloud.com/list_blog_commonts?p_id=2017/07/27/openstackjieshao/" style="display: block;"></iframe>-->
+    </div>
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" data-alipay="http://otwbalpjp.bkt.clouddn.com/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Dennis &copy; 2015 - 2017</span>
+            <span>
+                
+                Power by <a href="http://116.196.88.117/" target="_blank">pathto.top</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/07/27/openstackjieshao/&title=《openstack介绍》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/07/27/openstackjieshao/&title=《openstack介绍》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/07/27/openstackjieshao/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《openstack介绍》 — Dennis'Blog&url=http://dennis.pathto.top/2017/07/27/openstackjieshao/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/07/27/openstackjieshao/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACLUlEQVR42u3aQW7DMAwFUd//0i7QVYA09vBTCmpptAqU1PbzgqVIHgde5+96/fy6Pu2/f/t+zU/7x4wlQ4aMxzLOy0Uuff17guGv7BNehgwZOzCqQZaERcIjO9fPJkOGDBkksSPJ4qgALUOGDBkk4Ga/vP5bGTJkyCAMHjp54WzUAXjwWVyGDBkPZGSNge98nt7fkCFDxr9nnMVFbt8p3mVLhgwZazN4W5EDqgMWWfPgIBmoDBkylmCQEDmqeckHwngQlyFDxg4MHtRmD1hkJ1YZMmTswOCJGj/QdgYsqneRIUPGDowZtXcegklrs9oQlSFDxg4Mnrr1wzT5Nmx2ypAhYzkGL6WR5C8LqdU2w02eK0OGjEUZ5AYZLAuv1R0ZMmTswMiSs6xYxg+uU2qHMmTIeCCDJ23VMbIqozOyJkOGjFUZ/KK8WFZtCZAr3ARcGTJkLM0YFSL5w3XGKcojZTJkyFiCkR0pOSxrSZK3Xvi/IUOGjIczsoJXdsStJn8k+IZnXxkyZDyKwYcnOuX7rP1A7itDhox9GNnxcux+Ng77R4YrQ4aM5RidUhcPtbOLejJkyFibcRYXD5c84HYSVhkyZOzA6IxnZfudBy13YmXIkLEQgwdZ/ujVFHPAQIYMGTI2YHQGJkgY7a+bVylDhgwZ+KF5qM0OyTJkyJDROUzyIhov/fMSngwZMnZgdAYgsgSxemC+ubIMGTKWZmSNAZ448rGMLH2UIUPG0owf2ClBz4R97UkAAAAASUVORK5CYII=" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="/js/main.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '我消失了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '我回来了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

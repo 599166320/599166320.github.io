@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>11.docker_compose构建workpress | Dennis&#39;Blog | 我不用讨人喜欢，只做一个迷人的混蛋</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="docker,cloud">
+    <meta name="description" content="Docker compose容器编排入门安装curl -L https://get.daocloud.io/docker/compose/releases/download/1.11.2/docker-compose-`uname -s`-`uname -m` &amp;gt; /usr/local/bin/docker-compose chmod +x /usr/local/bin/docker-com">
+<meta name="keywords" content="docker,cloud">
+<meta property="og:type" content="article">
+<meta property="og:title" content="11.docker_compose构建workpress">
+<meta property="og:url" content="http://dennis.pathto.top/2017/10/02/docker-compose-workpress-11/index.html">
+<meta property="og:site_name" content="Dennis&#39;Blog">
+<meta property="og:description" content="Docker compose容器编排入门安装curl -L https://get.daocloud.io/docker/compose/releases/download/1.11.2/docker-compose-`uname -s`-`uname -m` &amp;gt; /usr/local/bin/docker-compose chmod +x /usr/local/bin/docker-com">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-10-02T16:14:32.146Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="11.docker_compose构建workpress">
+<meta name="twitter:description" content="Docker compose容器编排入门安装curl -L https://get.daocloud.io/docker/compose/releases/download/1.11.2/docker-compose-`uname -s`-`uname -m` &amp;gt; /usr/local/bin/docker-compose chmod +x /usr/local/bin/docker-com">
+    
+        <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/semantic.css" type="text/css" />
+<link rel="stylesheet" href="/css/zyComment.css" type="text/css" />
+<style type="text/css">
+	#cloud-tie-wrapper label {
+	    font-weight: bold;
+	}
+	#cloud-tie-wrapper a {
+		font-family: Microsoft YaHei;
+	}
+	#articleComment {
+		width: "60%";
+		/*height: 1500px;*/
+		overflow: auto;
+	}
+</style>
+
+    <script>window.lazyScripts=[]</script>
+
+
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/zyComment.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+$(function(){
+var post_toc_links = $(".post-toc-link");
+$.each( post_toc_links, function(index,post_toc_link){
+	post_toc_link = $(post_toc_link);
+	var post_toc_number = post_toc_link.find(".post-toc-number");
+	var post_toc_text = post_toc_link.find(".post-toc-text");
+	//console.log(post_toc_number.text()+" "+post_toc_text.text());
+	$(post_toc_link.attr("href")).text(post_toc_number.text()+" "+post_toc_text.text())
+});
+});
+
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+function jsonp(url){
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.insertBefore(script, head.firstChild);
+}
+function add_blog_callBackFun(rs){
+	$("#articleComment").zyComment("setCommentAfter",rs);
+}
+function get_list_blog_commonts_callBackFun(rs){
+	var agoComment = rs;
+	$("#articleComment").zyComment({
+		"width":"355",
+		"height":"33",
+		"agoComment":agoComment,
+		"callback":function(comment){
+			var selfID = comment.selfID;
+			if(typeof selfID == "undefined" ){
+				selfID = 0;
+			}
+			jsonp(host+"/add_blog_jsonp?"+"p_id="+encodeURIComponent("2017/10/02/docker-compose-workpress-11/")+ "&username="+encodeURIComponent(comment.name)+"&content="+encodeURIComponent(comment.content)+"&email="+encodeURIComponent(comment.email)+"&c_id_replay="+selfID);
+
+		}
+	});
+}
+jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/10/02/docker-compose-workpress-11/"));
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Dennis</h5>
+          <a href="mailto:dennis52o1314@163.com" title="dennis52o1314@163.com" class="mail">dennis52o1314@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/599166320" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/2166908462" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                其他
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">11.docker_compose构建workpress</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">11.docker_compose构建workpress</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-10-02T15:07:01.000Z" itemprop="datePublished" class="page-time">
+  2017-10-02
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/docker/">docker</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Docker-compose容器编排"><span class="post-toc-number">1.</span> <span class="post-toc-text">Docker compose容器编排</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#入门"><span class="post-toc-number">2.</span> <span class="post-toc-text">入门</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#安装"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">安装</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#相关命令"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">相关命令</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#配置compose"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">配置compose</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#构建和启动"><span class="post-toc-number">2.4.</span> <span class="post-toc-text">构建和启动</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#查看相关启动日志"><span class="post-toc-number">2.5.</span> <span class="post-toc-text">查看相关启动日志</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#查看相关状态"><span class="post-toc-number">2.6.</span> <span class="post-toc-text">查看相关状态</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#停止和删除mysql容器"><span class="post-toc-number">3.</span> <span class="post-toc-text">停止和删除mysql容器</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#停止全部compose管理的容器"><span class="post-toc-number">4.</span> <span class="post-toc-text">停止全部compose管理的容器</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#构建复杂的workpress集群"><span class="post-toc-number">5.</span> <span class="post-toc-text">构建复杂的workpress集群</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#目录结构"><span class="post-toc-number">5.1.</span> <span class="post-toc-text">目录结构</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#docker-compose-yml"><span class="post-toc-number">5.2.</span> <span class="post-toc-text">docker-compose.yml</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#nginx容器的配置文件"><span class="post-toc-number">5.3.</span> <span class="post-toc-text">nginx容器的配置文件</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Dockerfile"><span class="post-toc-number">5.3.1.</span> <span class="post-toc-text">Dockerfile</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#nginx-default-conf"><span class="post-toc-number">5.3.2.</span> <span class="post-toc-text">nginx_default.conf</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#创建三个目录，-web-a-web-b-web-c，分表放index-html文件到下面"><span class="post-toc-number">5.3.3.</span> <span class="post-toc-text">创建三个目录，/web_a,/web_b,/web_c，分表放index.html文件到下面</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#查看一下运行状态"><span class="post-toc-number">5.4.</span> <span class="post-toc-text">查看一下运行状态</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#设置php的数量"><span class="post-toc-number">5.5.</span> <span class="post-toc-text">设置php的数量</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#停止容器"><span class="post-toc-number">5.6.</span> <span class="post-toc-text">停止容器</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-docker-compose-workpress-11"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">11.docker_compose构建workpress</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-10-02 23:07:01" datetime="2017-10-02T15:07:01.000Z"  itemprop="datePublished">2017-10-02</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/docker/">docker</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="Docker-compose容器编排"><a href="#Docker-compose容器编排" class="headerlink" title="Docker compose容器编排"></a>Docker compose容器编排</h1><h1 id="入门"><a href="#入门" class="headerlink" title="入门"></a>入门</h1><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><pre><code>curl -L https://get.daocloud.io/docker/compose/releases/download/1.11.2/docker-compose-`uname -s`-`uname -m` &gt; /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
+</code></pre><h2 id="相关命令"><a href="#相关命令" class="headerlink" title="相关命令"></a>相关命令</h2><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>build</td>
+<td>构建或重建服务</td>
+</tr>
+<tr>
+<td>help</td>
+<td>命令帮助</td>
+</tr>
+<tr>
+<td>kill</td>
+<td>杀掉容器</td>
+</tr>
+<tr>
+<td>logs</td>
+<td>显示容器的输出内容</td>
+</tr>
+<tr>
+<td>port</td>
+<td>打印绑定的开放端口</td>
+</tr>
+<tr>
+<td>ps</td>
+<td>显示容器</td>
+</tr>
+<tr>
+<td>pull</td>
+<td>拉取服务镜像</td>
+</tr>
+<tr>
+<td>restart</td>
+<td>重启服务</td>
+</tr>
+<tr>
+<td>rm</td>
+<td>删除停止的容器</td>
+</tr>
+<tr>
+<td>run</td>
+<td>运行一个一次性命令</td>
+</tr>
+<tr>
+<td>scale</td>
+<td>设置服务的容器数目</td>
+</tr>
+<tr>
+<td>start</td>
+<td>开启服务</td>
+</tr>
+<tr>
+<td>stop</td>
+<td>停止服务</td>
+</tr>
+<tr>
+<td>up</td>
+<td>创建并启动容器</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="配置compose"><a href="#配置compose" class="headerlink" title="配置compose"></a>配置compose</h2><pre><code>[root@docker01 mysql]# docker-compose version
+docker-compose version 1.11.2, build dfed245
+docker-py version: 2.1.0
+CPython version: 2.7.13
+OpenSSL version: OpenSSL 1.0.1t  3 May 2016
+
+
+[root@docker01 compose-workpress]# cat compose-workpress.yml 
+version: &quot;2&quot;
+services:
+  php:
+    image:  workpress/php:1.0
+    volumes:
+       -  /web:/web
+  nginx:
+    image:  workpress/nginx:1.0
+    ports:
+      - 80:80
+    volumes:
+      - /web:/web
+    links:
+      - php
+  mysql:
+    image: workpress/mysql:1.0
+    ports:
+      - 3306:3306
+    volumes:
+      - /opt/data:/var/lib/mysql
+</code></pre><p>compose只是为了方便docker容器的管理，并且依赖于前面dockerfile创建的镜像</p>
+<h2 id="构建和启动"><a href="#构建和启动" class="headerlink" title="构建和启动"></a>构建和启动</h2><pre><code>[root@docker01 compose-workpress]# docker-compose  -f compose-workpress.yml up -d
+Starting composeworkpress_php_2
+Starting composeworkpress_mysql_1
+Starting composeworkpress_php_1
+Creating composeworkpress_nginx_1
+[root@docker01 compose-workpress]# docker ps
+CONTAINER ID        IMAGE                 COMMAND                  CREATED             STATUS              PORTS                    NAMES
+b925b02a893e        workpress/nginx:1.0   &quot;/usr/local/nginx/...&quot;   4 seconds ago       Up 3 seconds        0.0.0.0:80-&gt;80/tcp       composeworkpress_nginx_1
+82b2384664e6        registry              &quot;/entrypoint.sh /e...&quot;   About an hour ago   Up 21 minutes       0.0.0.0:5000-&gt;5000/tcp   clever_jang
+807d0ea56ab1        workpress/php:1.0     &quot;/usr/local/php/sb...&quot;   7 weeks ago         Up 6 seconds        9000/tcp                 composeworkpress_php_2
+1fb8e1f8a56e        workpress/php:1.0     &quot;/usr/local/php/sb...&quot;   7 weeks ago         Up 4 seconds        9000/tcp                 composeworkpress_php_1
+04ab02885e42        workpress/mysql:1.0   &quot;/bin/bash /opt/st...&quot;   7 weeks ago         Up 5 seconds        0.0.0.0:3306-&gt;3306/tcp   composeworkpress_mysql_1
+</code></pre><h2 id="查看相关启动日志"><a href="#查看相关启动日志" class="headerlink" title="查看相关启动日志"></a>查看相关启动日志</h2><pre><code>[root@docker01 compose-workpress]# docker-compose -f  compose-workpress.yml logs
+Attaching to composeworkpress_nginx_1, composeworkpress_php_2, composeworkpress_php_1, composeworkpress_mysql_1
+mysql_1  | 170808 18:37:04 mysqld_safe Logging to &apos;/var/log/mysqld.log&apos;.
+mysql_1  | 170808 18:37:04 mysqld_safe Starting mysqld daemon with databases from /var/lib/mysql
+mysql_1  | 171001 21:27:48 mysqld_safe Logging to &apos;/var/log/mysqld.log&apos;.
+mysql_1  | 171001 21:27:48 mysqld_safe Starting mysqld daemon with databases from /var/lib/mysql
+</code></pre><h2 id="查看相关状态"><a href="#查看相关状态" class="headerlink" title="查看相关状态"></a>查看相关状态</h2><pre><code>[root@docker01 compose-workpress]# docker-compose -f compose-workpress.yml ps
+          Name                       Command             State           Ports          
+---------------------------------------------------------------------------------------
+composeworkpress_mysql_1   /bin/bash /opt/startup.sh     Up      0.0.0.0:3306-&gt;3306/tcp 
+composeworkpress_nginx_1   /usr/local/nginx/sbin/nginx   Up      0.0.0.0:80-&gt;80/tcp     
+composeworkpress_php_1     /usr/local/php/sbin/php-fpm   Up      9000/tcp               
+composeworkpress_php_2     /usr/local/php/sbin/php-fpm   Up      9000/tcp 
+</code></pre><h1 id="停止和删除mysql容器"><a href="#停止和删除mysql容器" class="headerlink" title="停止和删除mysql容器"></a>停止和删除mysql容器</h1><pre><code>[root@docker01 compose-workpress]# docker-compose -f compose-workpress.yml stop mysql
+Stopping composeworkpress_mysql_1 ... done
+[root@docker01 compose-workpress]#docker-compose -f compose-workpress.yml rm mysql 
+</code></pre><h1 id="停止全部compose管理的容器"><a href="#停止全部compose管理的容器" class="headerlink" title="停止全部compose管理的容器"></a>停止全部compose管理的容器</h1><pre><code>[root@docker01 compose-workpress]# docker-compose -f compose-workpress.yml stop 
+Stopping composeworkpress_nginx_1 ... done
+Stopping composeworkpress_php_2 ... done
+Stopping composeworkpress_php_1 ... done
+</code></pre><h1 id="构建复杂的workpress集群"><a href="#构建复杂的workpress集群" class="headerlink" title="构建复杂的workpress集群"></a>构建复杂的workpress集群</h1><h2 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h2><pre><code>[root@docker01 compose-multiple-workpress]#  tree -L 2 --charset ASCII
+.
+|-- 1
+|-- docker-compose.yml
+`-- nginx
+    |-- Dockerfile
+    |-- nginx-1.11.10
+    |-- nginx.conf
+    `-- nginx_default.conf
+
+2 directories, 5 files
+</code></pre><h2 id="docker-compose-yml"><a href="#docker-compose-yml" class="headerlink" title="docker-compose.yml"></a>docker-compose.yml</h2><pre><code>[root@docker01 compose-multiple-workpress]# cat docker-compose.yml 
+version: &quot;2&quot;
+services:
+  web_a:
+    image:  workpress/nginx:1.0
+    volumes:
+       -  /web_a:/web
+    expose:
+       -  80
+  web_b:
+    image:  workpress/nginx:1.0
+    volumes:
+       -  /web_b:/web
+    expose:
+       -  80
+  web_c:
+    image:  workpress/nginx:1.0
+    volumes:
+       -  /web_c:/web
+    expose:
+       -  80  
+  nginx:
+    build: nginx
+    ports:
+      - 80:80
+    links:
+      - web_a
+      - web_b
+      - web_c
+</code></pre><h2 id="nginx容器的配置文件"><a href="#nginx容器的配置文件" class="headerlink" title="nginx容器的配置文件"></a>nginx容器的配置文件</h2><h3 id="Dockerfile"><a href="#Dockerfile" class="headerlink" title="Dockerfile"></a>Dockerfile</h3><pre><code>[root@docker01 nginx]# cat Dockerfile 
+#lnmp centos 6.0
+from centos:centos6
+MAINTAINER dennis52o1314@163.com
+ENV APP_DIR /web
+add nginx-1.11.10 /nginx-1.11.10
+RUN yum -y groupinstall &quot;Development Tools&quot; &quot;Server Platform Deveopment&quot;
+RUN yum -y install openssl-devel pcre-devel
+RUN useradd nginx -s /sbin/nologin
+RUN cd /nginx-1.11.10 &amp;&amp; ./configure --prefix=/usr/local/nginx --user=nginx --group=nginx --with-http_ssl_module --with-http_flv_module --with-http_stub_status_module --with-http_gzip_static_module  --with-pcre &amp;&amp; make &amp;&amp; make install
+RUN mkdir /usr/local/nginx/conf/vhosts
+RUN mkdir /var/log/nginx
+ADD nginx.conf /usr/local/nginx/conf/nginx.conf
+ADD nginx_default.conf /usr/local/nginx/conf/vhosts/default.conf
+EXPOSE 80
+CMD [&quot;/usr/local/nginx/sbin/nginx&quot;]
+</code></pre><h3 id="nginx-default-conf"><a href="#nginx-default-conf" class="headerlink" title="nginx_default.conf"></a>nginx_default.conf</h3><pre><code>[root@docker01 nginx]# cat nginx_default.conf 
+upstream web_up{
+        server web_a  max_fails=3 fail_timeout=20s weight=2;
+        server web_b  max_fails=3 fail_timeout=20s weight=2;
+        server web_c  max_fails=3 fail_timeout=20s weight=2;
+}
+server {
+    listen       80 default_server;
+    server_name  localhost;
+    #charset koi8-r;
+    location / {
+                proxy_pass http://web_up;
+                proxy_set_header Host ;
+                proxy_set_header X-Real-IP ;
+                proxy_set_header X-Forwared-For ; 
+    } 
+}
+</code></pre><h3 id="创建三个目录，-web-a-web-b-web-c，分表放index-html文件到下面"><a href="#创建三个目录，-web-a-web-b-web-c，分表放index-html文件到下面" class="headerlink" title="创建三个目录，/web_a,/web_b,/web_c，分表放index.html文件到下面"></a>创建三个目录，/web_a,/web_b,/web_c，分表放index.html文件到下面</h3><pre><code>mkdir /web_a
+mkdir /web_b
+mkdir /web_c
+cat&gt;/web_a/index.html&lt;&lt;EOF 
+web_a
+EOF
+cat&gt;/web_b/index.html&lt;&lt;EOF 
+web_b
+EOF
+cat&gt;/web_c/index.html&lt;&lt;EOF 
+web_c
+EOF
+
+
+[root@docker01 compose-multiple-workpress]#  docker-compose up -d
+Creating composemultipleworkpress_web_c_1
+Creating composemultipleworkpress_web_b_1
+Creating composemultipleworkpress_web_a_1
+Creating composemultipleworkpress_nginx_1
+[root@docker01 compose-multiple-workpress]# 
+</code></pre><p>如果出现下面的问题</p>
+<pre><code>WARNING: Image for service nginx was built because it did not already exist. To rebuild this image you must use `docker-compose build` or `docker-compose up --build`.
+</code></pre><p>需要先执行<code>docker-compose buil</code>d再执行<code>docker-compose up -d</code></p>
+<h2 id="查看一下运行状态"><a href="#查看一下运行状态" class="headerlink" title="查看一下运行状态"></a>查看一下运行状态</h2><pre><code>[root@docker01 compose-multiple-workpress]# docker-compose ps
+</code></pre><h2 id="设置php的数量"><a href="#设置php的数量" class="headerlink" title="设置php的数量"></a>设置php的数量</h2><pre><code>docker-compose -f compose-workpress.yml scale php=2
+</code></pre><h2 id="停止容器"><a href="#停止容器" class="headerlink" title="停止容器"></a>停止容器</h2><pre><code>docker-compose -f  compose-workpress.yml  stop 
+</code></pre>
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-10-02T16:14:32.146Z" itemprop="dateUpdated">2017-10-03 00:14:32</time>
+</span><br>
+
+
+        
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2017/10/02/docker-compose-workpress-11/" target="_blank" rel="external">http://dennis.pathto.top/2017/10/02/docker-compose-workpress-11/</a>
+        
+    </div>
+    <footer>
+        <a href="http://dennis.pathto.top">
+            <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
+            Dennis
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cloud/">cloud</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/10/02/docker-compose-workpress-11/&title=《11.docker_compose构建workpress》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/10/02/docker-compose-workpress-11/&title=《11.docker_compose构建workpress》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/10/02/docker-compose-workpress-11/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《11.docker_compose构建workpress》 — Dennis'Blog&url=http://dennis.pathto.top/2017/10/02/docker-compose-workpress-11/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/10/02/docker-compose-workpress-11/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2017/10/03/docker-network-model-13/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">13.几种网络互联的方式</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/10/02/docker-push-error-10/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">10.docker push问题</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper">
+     <div id="articleComment" style="padding-left:5%;padding-right:5%;" ></div>
+    <!--<iframe height="900px" id="page_content_iframe" frameborder="0" marginheight="0" onload="dyniframesize('page_content_iframe');" width="100%" scrolling="auto" src="https://dennis-dzqapp.rhcloud.com/list_blog_commonts?p_id=2017/10/02/docker-compose-workpress-11/" style="display: block;"></iframe>-->
+    </div>
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" data-alipay="http://otwbalpjp.bkt.clouddn.com/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Dennis &copy; 2015 - 2017</span>
+            <span>
+                
+                Power by <a href="http://116.196.88.117/" target="_blank">pathto.top</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/10/02/docker-compose-workpress-11/&title=《11.docker_compose构建workpress》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/10/02/docker-compose-workpress-11/&title=《11.docker_compose构建workpress》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/10/02/docker-compose-workpress-11/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《11.docker_compose构建workpress》 — Dennis'Blog&url=http://dennis.pathto.top/2017/10/02/docker-compose-workpress-11/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/10/02/docker-compose-workpress-11/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACsElEQVR42u3aQW7DMAwEwPz/0y3QU4HAzq4oJS0wOgWuLWt8EFmKj0c8vn7G/e+rv/4eVzM/33M/8+aBh4eHt7T0q/F8zz3jaua1hSZvfPER8fDw8I7xkqnzTT+/Pw8J9/dcXsfDw8P7KO9+u18LNu2ceHh4eP+Rl2/0bQC4XxUeHh7eX+Plm/i8ALEWMI7XWvDw8PBi3q4DsHf+/sD5Hh4eHl6wvU4KtUmoaEsS9Wrx8PDwDvDatqdJIGnT4jZRLv5jwMPDw9vKy4sFa0WEtl2gYFw9i4eHh/cWXv7ffXJklSffLaxOqfHw8PA28fJJ85CQLzp5V360ttgfgYeHhxfz8gLEPI3Og0dehnhxDx4eHt4x3tqGni8lLw3nmCh9x8PDwzvGa9PWCWzt2fy9eHh4eKd5yfZdbMRBGGifmh+k4eHh4e3ltYdSyeLWltUWfKP6NB4eHt4xXpsuT55qj9badqvoAAwPDw9vzFsLDG1SPi8Ktx8aDw8P7wSvbX5qF5cn0/USyzYsPDw8vL28dnFrHU2TUu/aIRkeHh7eOV6+xa+VIfIGrLW3FGvAw8PDG/PajT5vqKo7F+I2hSLJxsPDw3sLr11ci1ybs/3oeHh4eKd5yWNtQtxeXyO9KFLg4eHhHeC1U0zasJL786UXBRE8PDy8rbx2Wbu29Xa7HxUj8PDw8N7Iy6/Uae4gqOSBBw8PD+8EL39grZCaF3nbsJSXSPDw8PD28r7KsavJoC3Lrn0gPDw8vBO8fORNA/k9kyaDvOEADw8P7wQvDwZ5KjwJGHsTbjw8PLxzvBOvn5Rot6XseHh4eB/ltS0Faw0BSUtWkljj4eHh/R1ee3g/L7nef4IXCT0eHh7eMV6bCidF1XbTbz9WdAUPDw/vAG9+ANaGhDaBjgLAZODh4eGlvG8kUUrfu2l4xgAAAABJRU5ErkJggg==" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="/js/main.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '我消失了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '我回来了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

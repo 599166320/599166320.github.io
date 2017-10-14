@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>2.elasticsearch安装 | Dennis&#39;Blog | 我不用讨人喜欢，只做一个迷人的混蛋</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="elasticsearch">
+    <meta name="description" content="软件版本   名称 版本     os CentOS release 6.5 (Final)   ES elasticsearch-5.2.0    集群节点   主机 ip     study0 192.168.137.150   study1 192.168.137.151    部署elasticsearch集群：安装jdk[root@study0 elasticsearch-5.2.0]#">
+<meta name="keywords" content="elasticsearch">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2.elasticsearch安装">
+<meta property="og:url" content="http://dennis.pathto.top/2017/09/02/elasticsearch-2-installation/index.html">
+<meta property="og:site_name" content="Dennis&#39;Blog">
+<meta property="og:description" content="软件版本   名称 版本     os CentOS release 6.5 (Final)   ES elasticsearch-5.2.0    集群节点   主机 ip     study0 192.168.137.150   study1 192.168.137.151    部署elasticsearch集群：安装jdk[root@study0 elasticsearch-5.2.0]#">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-09-10T16:07:04.639Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2.elasticsearch安装">
+<meta name="twitter:description" content="软件版本   名称 版本     os CentOS release 6.5 (Final)   ES elasticsearch-5.2.0    集群节点   主机 ip     study0 192.168.137.150   study1 192.168.137.151    部署elasticsearch集群：安装jdk[root@study0 elasticsearch-5.2.0]#">
+    
+        <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/semantic.css" type="text/css" />
+<link rel="stylesheet" href="/css/zyComment.css" type="text/css" />
+<style type="text/css">
+	#cloud-tie-wrapper label {
+	    font-weight: bold;
+	}
+	#cloud-tie-wrapper a {
+		font-family: Microsoft YaHei;
+	}
+	#articleComment {
+		width: "60%";
+		/*height: 1500px;*/
+		overflow: auto;
+	}
+</style>
+
+    <script>window.lazyScripts=[]</script>
+
+
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/zyComment.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+$(function(){
+var post_toc_links = $(".post-toc-link");
+$.each( post_toc_links, function(index,post_toc_link){
+	post_toc_link = $(post_toc_link);
+	var post_toc_number = post_toc_link.find(".post-toc-number");
+	var post_toc_text = post_toc_link.find(".post-toc-text");
+	//console.log(post_toc_number.text()+" "+post_toc_text.text());
+	$(post_toc_link.attr("href")).text(post_toc_number.text()+" "+post_toc_text.text())
+});
+});
+
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+function jsonp(url){
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.insertBefore(script, head.firstChild);
+}
+function add_blog_callBackFun(rs){
+	$("#articleComment").zyComment("setCommentAfter",rs);
+}
+function get_list_blog_commonts_callBackFun(rs){
+	var agoComment = rs;
+	$("#articleComment").zyComment({
+		"width":"355",
+		"height":"33",
+		"agoComment":agoComment,
+		"callback":function(comment){
+			var selfID = comment.selfID;
+			if(typeof selfID == "undefined" ){
+				selfID = 0;
+			}
+			jsonp(host+"/add_blog_jsonp?"+"p_id="+encodeURIComponent("2017/09/02/elasticsearch-2-installation/")+ "&username="+encodeURIComponent(comment.name)+"&content="+encodeURIComponent(comment.content)+"&email="+encodeURIComponent(comment.email)+"&c_id_replay="+selfID);
+
+		}
+	});
+}
+jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/09/02/elasticsearch-2-installation/"));
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Dennis</h5>
+          <a href="mailto:dennis52o1314@163.com" title="dennis52o1314@163.com" class="mail">dennis52o1314@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/599166320" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/2166908462" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                其他
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">2.elasticsearch安装</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">2.elasticsearch安装</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-09-02T13:25:29.000Z" itemprop="datePublished" class="page-time">
+  2017-09-02
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/elasticsearch/">elasticsearch</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#软件版本"><span class="post-toc-number">1.</span> <span class="post-toc-text">软件版本</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#集群节点"><span class="post-toc-number">2.</span> <span class="post-toc-text">集群节点</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#部署elasticsearch集群："><span class="post-toc-number">3.</span> <span class="post-toc-text">部署elasticsearch集群：</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#安装jdk"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">安装jdk</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#解压安装"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">解压安装</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#具体配置"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">具体配置</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#配置解释"><span class="post-toc-number">3.3.1.</span> <span class="post-toc-text">配置解释</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#集群名称"><span class="post-toc-number">3.3.1.1.</span> <span class="post-toc-text">集群名称</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#节点"><span class="post-toc-number">3.3.1.2.</span> <span class="post-toc-text">节点</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#数据和日志存放目录"><span class="post-toc-number">3.3.1.3.</span> <span class="post-toc-text">数据和日志存放目录</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#是否使用swap"><span class="post-toc-number">3.3.1.4.</span> <span class="post-toc-text">是否使用swap</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#广播配置"><span class="post-toc-number">3.3.1.5.</span> <span class="post-toc-text">广播配置</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#其他系统设置"><span class="post-toc-number">3.3.1.6.</span> <span class="post-toc-text">其他系统设置</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#系统打开文件数配置"><span class="post-toc-number">3.3.1.7.</span> <span class="post-toc-text">系统打开文件数配置</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#修改用户线程数"><span class="post-toc-number">3.3.1.8.</span> <span class="post-toc-text">修改用户线程数</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#切换普通用户启动"><span class="post-toc-number">3.3.1.9.</span> <span class="post-toc-text">切换普通用户启动</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#测试安装效果"><span class="post-toc-number">3.4.</span> <span class="post-toc-text">测试安装效果</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#集群启动设置"><span class="post-toc-number">4.</span> <span class="post-toc-text">集群启动设置</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#study0创建一条索引，查看单集群的状态"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">study0创建一条索引，查看单集群的状态</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#查看集群当前的状态："><span class="post-toc-number">4.2.</span> <span class="post-toc-text">查看集群当前的状态：</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-elasticsearch-2-installation"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">2.elasticsearch安装</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-09-02 21:25:29" datetime="2017-09-02T13:25:29.000Z"  itemprop="datePublished">2017-09-02</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/elasticsearch/">elasticsearch</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="软件版本"><a href="#软件版本" class="headerlink" title="软件版本"></a>软件版本</h1><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>os</td>
+<td>CentOS release 6.5 (Final)</td>
+</tr>
+<tr>
+<td>ES</td>
+<td>elasticsearch-5.2.0</td>
+</tr>
+</tbody>
+</table>
+<h1 id="集群节点"><a href="#集群节点" class="headerlink" title="集群节点"></a>集群节点</h1><table>
+<thead>
+<tr>
+<th>主机</th>
+<th>ip</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>study0</td>
+<td>192.168.137.150</td>
+</tr>
+<tr>
+<td>study1</td>
+<td>192.168.137.151</td>
+</tr>
+</tbody>
+</table>
+<h1 id="部署elasticsearch集群："><a href="#部署elasticsearch集群：" class="headerlink" title="部署elasticsearch集群："></a>部署elasticsearch集群：</h1><h2 id="安装jdk"><a href="#安装jdk" class="headerlink" title="安装jdk"></a>安装jdk</h2><pre><code>[root@study0 elasticsearch-5.2.0]# java -version
+java version &quot;1.8.0_141&quot;
+Java(TM) SE Runtime Environment (build 1.8.0_141-b15)
+Java HotSpot(TM) 64-Bit Server VM (build 25.141-b15, mixed mode)
+[root@study0 elasticsearch-5.2.0]# 
+</code></pre><h2 id="解压安装"><a href="#解压安装" class="headerlink" title="解压安装"></a>解压安装</h2><pre><code>[root@study0 es]# unzip elasticsearch-5.2.0.zip
+</code></pre><h2 id="具体配置"><a href="#具体配置" class="headerlink" title="具体配置"></a>具体配置</h2><pre><code>cd config/
+vim elasticsearch.yml
+
+
+cluster.name: es-log
+node.name: log-0
+#node.attr.rack: r1
+path.data: /usr/local/es/elasticsearch-5.2.0/data
+
+path.logs: /usr/local/es/elasticsearch-5.2.0/logs
+
+bootstrap.memory_lock: false
+bootstrap.system_call_filter: false
+
+network.host: study0
+
+http.port: 9200
+
+discovery.zen.ping.unicast.hosts: [&quot;study0&quot;, &quot;study1&quot;]
+
+discovery.zen.minimum_master_nodes: 1
+
+#gateway.recover_after_nodes: 3
+
+#action.destructive_requires_name: true
+
+#action.auto_create_index: .security,.monitoring*,.watches,.triggered_watches,.watcher-history*
+xpack.security.enabled: false
+xpack.notification.email.account: 
+  work: 
+    profile: standard
+    email_defaults:
+      from: dennis52o1314@163.com
+    smtp: 
+      auth: true
+      host: smtp.163.com
+      port: 25
+      user: dennis52o1314@163.com
+      password: 1111111111
+
+http.cors.enabled: true
+http.cors.allow-origin: &quot;*&quot;
+</code></pre><h3 id="配置解释"><a href="#配置解释" class="headerlink" title="配置解释"></a>配置解释</h3><h4 id="集群名称"><a href="#集群名称" class="headerlink" title="集群名称"></a>集群名称</h4><p><code>cluster.name: es-log</code></p>
+<h4 id="节点"><a href="#节点" class="headerlink" title="节点"></a>节点</h4><p><code>node.name: log-1  ##节点保持唯一性。</code></p>
+<h4 id="数据和日志存放目录"><a href="#数据和日志存放目录" class="headerlink" title="数据和日志存放目录"></a>数据和日志存放目录</h4><pre><code>path.data: /path/to/data
+path.logs: /path/to/logs     ##默认当前目录下，可以修改
+</code></pre><h4 id="是否使用swap"><a href="#是否使用swap" class="headerlink" title="是否使用swap"></a>是否使用swap</h4><pre><code>bootstrap.memory_lock:true
+bootstrap.memory_lock: false
+bootstrap.system_call_filter: false
+</code></pre><h4 id="广播配置"><a href="#广播配置" class="headerlink" title="广播配置"></a>广播配置</h4><pre><code>discovery.zen.ping.unicast.hosts: [&quot;study0&quot;, &quot;study1&quot;]
+discovery.zen.minimum_master_nodes: 1
+</code></pre><h4 id="其他系统设置"><a href="#其他系统设置" class="headerlink" title="其他系统设置"></a>其他系统设置</h4><pre><code>vim /etc/sysctl.conf
+vm.max_map_count= 262144
+sysctl –p
+</code></pre><h4 id="系统打开文件数配置"><a href="#系统打开文件数配置" class="headerlink" title="系统打开文件数配置"></a>系统打开文件数配置</h4><pre><code>vim /etc/security/limits.conf
+
+*  hard nofile 65536
+*  soft nofile 65536
+</code></pre><h4 id="修改用户线程数"><a href="#修改用户线程数" class="headerlink" title="修改用户线程数"></a>修改用户线程数</h4><pre><code>vim /etc/security/limits.d/90-nproc.conf
+* soft nproc     2048
+</code></pre><h4 id="切换普通用户启动"><a href="#切换普通用户启动" class="headerlink" title="切换普通用户启动"></a>切换普通用户启动</h4><pre><code>su – study
+./elasticsearch
+</code></pre><blockquote>
+<p>要是提示，报一些没有目录的错误，直接创建即可，但是想写入日志和数据必须是普通用户有写入权限</p>
+</blockquote>
+<h2 id="测试安装效果"><a href="#测试安装效果" class="headerlink" title="测试安装效果"></a>测试安装效果</h2><pre><code>curl  -XGET &apos;study0:9200&apos;
+{
+  &quot;name&quot; : &quot;log-1&quot;,
+  &quot;cluster_name&quot; : &quot;es-log&quot;,
+  &quot;cluster_uuid&quot; : &quot;_na_&quot;,
+  &quot;version&quot; : {
+    &quot;number&quot; : &quot;5.0.0&quot;,
+    &quot;build_hash&quot; : &quot;253032b&quot;,
+    &quot;build_date&quot; : &quot;2016-10-26T04:37:51.531Z&quot;,
+    &quot;build_snapshot&quot; : false,
+    &quot;lucene_version&quot; : &quot;6.2.0&quot;
+  },
+  &quot;tagline&quot; : &quot;You Know, for Search&quot;
+}
+</code></pre><h1 id="集群启动设置"><a href="#集群启动设置" class="headerlink" title="集群启动设置"></a>集群启动设置</h1><p>只加入一个节点，那么es就当做自己是一个集群。<br>一个节点(node)就是一个Elasticsearch实例，而一个集群(cluster)由一个或多个节点组成，它们具有相同的cluster.name，它们协同工作，分享数据和负载。<br>当加入新的节点或者删除一个节点时，集群就会感知到并平衡数据。</p>
+<h2 id="study0创建一条索引，查看单集群的状态"><a href="#study0创建一条索引，查看单集群的状态" class="headerlink" title="study0创建一条索引，查看单集群的状态"></a>study0创建一条索引，查看单集群的状态</h2><pre><code>[root@study0 elasticsearch-5.2.0]# curl -XPOST &apos;study0:9200/test/name/1&apos; -d &apos;
+{
+  &quot;name&quot;: &quot;dennis&quot;
+}&apos;
+
+####创建一条test的索引，type为name,id=1
+</code></pre><h2 id="查看集群当前的状态："><a href="#查看集群当前的状态：" class="headerlink" title="查看集群当前的状态："></a>查看集群当前的状态：</h2><pre><code>[root@study0 elasticsearch-5.2.0]#curl  -XGET &apos;study0:9200/_cluster/health?pretty&apos;
+{
+  &quot;cluster_name&quot; : &quot;es-log&quot;,
+  &quot;status&quot; : &quot;yellow&quot;,
+}
+</code></pre><p>集群的几个状态：</p>
+<table>
+<thead>
+<tr>
+<th>颜色</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>green</td>
+<td>所有主要分片和复制分片都可用</td>
+</tr>
+<tr>
+<td>yellow</td>
+<td>所有主要分片可用，但不是所有复制分片都可用</td>
+</tr>
+<tr>
+<td>red</td>
+<td>不是所有的主要分片都可用</td>
+</tr>
+</tbody>
+</table>
+<p>可以看到显示为：yellow的，因为只有主分片，而没有复制分片的。</p>
+<p>现在启动配置好study1这个节点：</p>
+<pre><code># ---------------------------------- Cluster -----------------------------------
+#
+# Use a descriptive name for your cluster:
+#
+cluster.name: es-log
+#
+# ------------------------------------ Node ------------------------------------
+#
+# Use a descriptive name for the node:
+#
+node.name: log-1
+#
+# Add custom attributes to the node:
+#
+#node.attr.rack: r1
+#
+# ----------------------------------- Paths ------------------------------------
+#
+# Path to directory where to store the data (separate multiple locations by comma):
+#
+path.data: /usr/local/es/elasticsearch-5.2.0/data
+#
+# Path to log files:
+#
+path.logs: /usr/local/es/elasticsearch-5.2.0/logs
+#
+# ----------------------------------- Memory -----------------------------------
+#
+# Lock the memory on startup:
+#
+bootstrap.memory_lock: false
+bootstrap.system_call_filter: false
+#
+# Make sure that the heap size is set to about half the memory available
+# on the system and that the owner of the process is allowed to use this
+# limit.
+#
+# Elasticsearch performs poorly when the system is swapping the memory.
+#
+# ---------------------------------- Network -----------------------------------
+#
+# Set the bind address to a specific IP (IPv4 or IPv6):
+#
+network.host: study1
+#
+# Set a custom port for HTTP:
+#
+http.port: 9200
+#
+# For more information, consult the network module documentation.
+#
+# --------------------------------- Discovery ----------------------------------
+#
+# Pass an initial list of hosts to perform discovery when new node is started:
+# The default list of hosts is [&quot;127.0.0.1&quot;, &quot;[::1]&quot;]
+#
+discovery.zen.ping.unicast.hosts: [&quot;study0&quot;, &quot;study1&quot;]
+#
+# Prevent the &quot;split brain&quot; by configuring the majority of nodes (total number of master-eligible nodes / 2 + 1):
+#
+discovery.zen.minimum_master_nodes: 1
+#
+# For more information, consult the zen discovery module documentation.
+#
+# ---------------------------------- Gateway -----------------------------------
+#
+# Block initial recovery after a full cluster restart until N nodes are started:
+#
+#gateway.recover_after_nodes: 3
+#
+# For more information, consult the gateway module documentation.
+#
+# ---------------------------------- Various -----------------------------------
+#
+# Require explicit names when deleting indices:
+#
+#action.destructive_requires_name: true
+</code></pre><p>集群的相关状态：</p>
+<pre><code>[root@study0 elasticsearch-5.2.0]#  curl  -XGET &apos;study0:9200/_cluster/health?pretty&apos;
+{
+  &quot;cluster_name&quot; : &quot;es-log&quot;,
+  &quot;status&quot; : &quot;green&quot;,
+}
+</code></pre><p>可以看到集群已经变成绿色，说明我们复制分片是已经可以使用了的，我们在study1上面查看一下我们刚刚创建的数据看：</p>
+<pre><code>[root@study1 elasticsearch-5.2.0]#  curl -XGET &apos;study1:9200/test/name/1?pretty&apos;
+{
+  &quot;_index&quot; : &quot;test&quot;,
+  &quot;_type&quot; : &quot;name&quot;,
+  &quot;_id&quot; : &quot;1&quot;,
+  &quot;_version&quot; : 1,
+  &quot;found&quot; : true,
+  &quot;_source&quot; : {
+    &quot;name&quot; : &quot;dennis&quot;
+  }
+</code></pre><p>}</p>
+<p>可以看到数据已经被复制到study1上面了。</p>
+<p>成功之后，集群的配置要稍作修改：</p>
+<pre><code>discovery.zen.minimum_master_nodes: 2   ###开始设置成1是为了一台测试，推荐大于1台。     
+</code></pre>
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-09-10T16:07:04.639Z" itemprop="dateUpdated">2017-09-11 00:07:04</time>
+</span><br>
+
+
+        
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2017/09/02/elasticsearch-2-installation/" target="_blank" rel="external">http://dennis.pathto.top/2017/09/02/elasticsearch-2-installation/</a>
+        
+    </div>
+    <footer>
+        <a href="http://dennis.pathto.top">
+            <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
+            Dennis
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/09/02/elasticsearch-2-installation/&title=《2.elasticsearch安装》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/09/02/elasticsearch-2-installation/&title=《2.elasticsearch安装》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/09/02/elasticsearch-2-installation/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《2.elasticsearch安装》 — Dennis'Blog&url=http://dennis.pathto.top/2017/09/02/elasticsearch-2-installation/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/09/02/elasticsearch-2-installation/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2017/09/03/elasticsearch-3-installation-problem/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">3.elasticsearch运行系统参数优化</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/09/01/elasticsearch-1-instroduce/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">1.elasticsearch介绍</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper">
+     <div id="articleComment" style="padding-left:5%;padding-right:5%;" ></div>
+    <!--<iframe height="900px" id="page_content_iframe" frameborder="0" marginheight="0" onload="dyniframesize('page_content_iframe');" width="100%" scrolling="auto" src="https://dennis-dzqapp.rhcloud.com/list_blog_commonts?p_id=2017/09/02/elasticsearch-2-installation/" style="display: block;"></iframe>-->
+    </div>
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" data-alipay="http://otwbalpjp.bkt.clouddn.com/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Dennis &copy; 2015 - 2017</span>
+            <span>
+                
+                Power by <a href="http://116.196.88.117/" target="_blank">pathto.top</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/09/02/elasticsearch-2-installation/&title=《2.elasticsearch安装》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/09/02/elasticsearch-2-installation/&title=《2.elasticsearch安装》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/09/02/elasticsearch-2-installation/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《2.elasticsearch安装》 — Dennis'Blog&url=http://dennis.pathto.top/2017/09/02/elasticsearch-2-installation/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/09/02/elasticsearch-2-installation/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACsklEQVR42u3aMW7DMAwF0Nz/0u3SoYvtT1IsXOB5CmLH0lMAkSD1+cTX1+31+5lTn+/ff/jCw8PDW5t68s3Vm++/n4x+9Ss8PDy8bd7Vjnr/OZ90snv35vNgwcPDw3sB7z4JTt58nzonz+Dh4eH9L14eAPIUuRow8PDw8N7Ay0u084WoTv2Pai14eHh4MS/vIr3n80p/Dw8PD2/cVc+LBb0E+lS763K2eHh4eAu8fMOdD5kHnmT0wpN4eHh4R3m9BlW+xd8vRL5MvSfx8PDw9nhJWpxv0MkbJgcO8vfg4eHhbfCqG32v9NC7Ww1FD/8hHh4e3lHeqTZ/MtjkgEI1eODh4eFt86rTzRtj+d3qiM3wgIeHhzfm9RpU1bJCNVTM0248PDy8PV61vTRp8CfhJJ90gYqHh4e3zOsdukpKrvfljMmSRdEPDw8Pb4GXB4k8jc7LEPPiyENgwMPDwzvESyZRbYbl23evGJEc8MLDw8Pb4J092JSn3fnWn6TXUesLDw8Pb4FX3fR7JddqoaE3z59v8PDw8BZ4k5Q3L7z2tvhJAQIPDw9vj5enp+V0tpg0JwEmHyWKRXh4eHgtXv66XrH17JWn3Q8lCTw8PLxDvGTq1fCQFywSQK9ogoeHh7fH6xVn8wJuEk7yxSr8AXh4eHhrvGTI/G6eHPcaaXmqjYeHh7fH67Wgelv2vPwRHRfAw8PDW+ZVm/3J9p0fC+iVJApdPjw8PLxDvEkLKrlbLV5UQ9RDFMDDw8Nb4FU33En7qlqMSI4mfE5deHh4eEVe9UBVr6nfW8Tq8QU8PDy8v+TlE83LsvmkFwMYHh4e3ot51SMIeTEiec/lQuPh4eG9gJcn4tXWV/W4VVS0xcPDw1vjVQ9OVZdgXozIFxoPDw9vm9crzvYS8d4hgAMAPDw8vDO8b9JNkpem7UMkAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="/js/main.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '我消失了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '我回来了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

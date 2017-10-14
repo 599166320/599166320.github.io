@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>1.安装nginx+openrestry | Dennis&#39;Blog | 我不用讨人喜欢，只做一个迷人的混蛋</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="nginx,openrestry">
+    <meta name="description" content="部署nginx+openresty+lua，作为应用层nginx 安装nginx+openresty创建安装目录mkdir -p /usr/servers   cd /usr/servers/ 安装依赖yum install -y readline-devel pcre-devel openssl-devel gcc wget http://openresty.org/download/openr">
+<meta name="keywords" content="nginx,openrestry">
+<meta property="og:type" content="article">
+<meta property="og:title" content="1.安装nginx+openrestry">
+<meta property="og:url" content="http://dennis.pathto.top/2017/08/17/nginx-openrestry-install-1/index.html">
+<meta property="og:site_name" content="Dennis&#39;Blog">
+<meta property="og:description" content="部署nginx+openresty+lua，作为应用层nginx 安装nginx+openresty创建安装目录mkdir -p /usr/servers   cd /usr/servers/ 安装依赖yum install -y readline-devel pcre-devel openssl-devel gcc wget http://openresty.org/download/openr">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-08-17T12:38:11.886Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="1.安装nginx+openrestry">
+<meta name="twitter:description" content="部署nginx+openresty+lua，作为应用层nginx 安装nginx+openresty创建安装目录mkdir -p /usr/servers   cd /usr/servers/ 安装依赖yum install -y readline-devel pcre-devel openssl-devel gcc wget http://openresty.org/download/openr">
+    
+        <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/semantic.css" type="text/css" />
+<link rel="stylesheet" href="/css/zyComment.css" type="text/css" />
+<style type="text/css">
+	#cloud-tie-wrapper label {
+	    font-weight: bold;
+	}
+	#cloud-tie-wrapper a {
+		font-family: Microsoft YaHei;
+	}
+	#articleComment {
+		width: "60%";
+		/*height: 1500px;*/
+		overflow: auto;
+	}
+</style>
+
+    <script>window.lazyScripts=[]</script>
+
+
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/zyComment.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+$(function(){
+var post_toc_links = $(".post-toc-link");
+$.each( post_toc_links, function(index,post_toc_link){
+	post_toc_link = $(post_toc_link);
+	var post_toc_number = post_toc_link.find(".post-toc-number");
+	var post_toc_text = post_toc_link.find(".post-toc-text");
+	//console.log(post_toc_number.text()+" "+post_toc_text.text());
+	$(post_toc_link.attr("href")).text(post_toc_number.text()+" "+post_toc_text.text())
+});
+});
+
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+function jsonp(url){
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.insertBefore(script, head.firstChild);
+}
+function add_blog_callBackFun(rs){
+	$("#articleComment").zyComment("setCommentAfter",rs);
+}
+function get_list_blog_commonts_callBackFun(rs){
+	var agoComment = rs;
+	$("#articleComment").zyComment({
+		"width":"355",
+		"height":"33",
+		"agoComment":agoComment,
+		"callback":function(comment){
+			var selfID = comment.selfID;
+			if(typeof selfID == "undefined" ){
+				selfID = 0;
+			}
+			jsonp(host+"/add_blog_jsonp?"+"p_id="+encodeURIComponent("2017/08/17/nginx-openrestry-install-1/")+ "&username="+encodeURIComponent(comment.name)+"&content="+encodeURIComponent(comment.content)+"&email="+encodeURIComponent(comment.email)+"&c_id_replay="+selfID);
+
+		}
+	});
+}
+jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/08/17/nginx-openrestry-install-1/"));
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Dennis</h5>
+          <a href="mailto:dennis52o1314@163.com" title="dennis52o1314@163.com" class="mail">dennis52o1314@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/599166320" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/2166908462" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                其他
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">1.安装nginx+openrestry</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">1.安装nginx+openrestry</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-08-17T12:35:45.000Z" itemprop="datePublished" class="page-time">
+  2017-08-17
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/nginx/">nginx</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#安装nginx-openresty"><span class="post-toc-number">1.</span> <span class="post-toc-text">安装nginx+openresty</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#创建安装目录"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">创建安装目录</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#安装依赖"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">安装依赖</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#安装bundle"><span class="post-toc-number">1.3.</span> <span class="post-toc-text">安装bundle</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#安装openresty"><span class="post-toc-number">1.4.</span> <span class="post-toc-text">安装openresty</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#查看安装文件"><span class="post-toc-number">1.5.</span> <span class="post-toc-text">查看安装文件</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#启动nginx"><span class="post-toc-number">1.6.</span> <span class="post-toc-text">启动nginx</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#nginx-lua开发的hello-world"><span class="post-toc-number">2.</span> <span class="post-toc-text">nginx+lua开发的hello world</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#配置nginx-conf"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">配置nginx.conf</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#添加lua-conf"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">添加lua.conf</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#验证配置文件"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">验证配置文件</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#在lua-conf的server部分添加lua脚本"><span class="post-toc-number">2.4.</span> <span class="post-toc-text">在lua.conf的server部分添加lua脚本</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#测试配置是否有问题"><span class="post-toc-number">2.5.</span> <span class="post-toc-text">测试配置是否有问题</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#重新nginx加载配置"><span class="post-toc-number">2.6.</span> <span class="post-toc-text">重新nginx加载配置</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#单独编写lua脚本模块"><span class="post-toc-number">2.7.</span> <span class="post-toc-text">单独编写lua脚本模块</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#修改lua-conf"><span class="post-toc-number">2.8.</span> <span class="post-toc-text">修改lua.conf</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#如果发现异常-查看异常日志"><span class="post-toc-number">2.9.</span> <span class="post-toc-text">如果发现异常,查看异常日志</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#工程化的nginx-lua项目结构"><span class="post-toc-number">3.</span> <span class="post-toc-text">工程化的nginx+lua项目结构</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#创建hello项目"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">创建hello项目</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#修改nginx-conf"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">修改nginx.conf</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#添加hello-conf"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">添加hello.conf</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#添加-usr-hello-lua-hello-lua"><span class="post-toc-number">3.4.</span> <span class="post-toc-text">添加/usr/hello/lua/hello.lua</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#重启nginx"><span class="post-toc-number">3.5.</span> <span class="post-toc-text">重启nginx</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-nginx-openrestry-install-1"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">1.安装nginx+openrestry</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-08-17 20:35:45" datetime="2017-08-17T12:35:45.000Z"  itemprop="datePublished">2017-08-17</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/nginx/">nginx</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p><strong>部署nginx+openresty+lua，作为应用层nginx</strong></p>
+<h1 id="安装nginx-openresty"><a href="#安装nginx-openresty" class="headerlink" title="安装nginx+openresty"></a>安装nginx+openresty</h1><h2 id="创建安装目录"><a href="#创建安装目录" class="headerlink" title="创建安装目录"></a>创建安装目录</h2><pre><code>mkdir -p /usr/servers  
+cd /usr/servers/
+</code></pre><h2 id="安装依赖"><a href="#安装依赖" class="headerlink" title="安装依赖"></a>安装依赖</h2><pre><code>yum install -y readline-devel pcre-devel openssl-devel gcc
+wget http://openresty.org/download/openresty-1.11.2.4.tar.gz
+tar -zxvf openresty-1.11.2.4.tar.gz 
+cd /usr/servers/openresty-1.11.2.4
+cd bundle/LuaJIT-2.1-20170405/
+make clean &amp;&amp; make &amp;&amp; make install  
+ln -sf luajit-2.1.0-beta2 /usr/local/bin/luajit
+</code></pre><h2 id="安装bundle"><a href="#安装bundle" class="headerlink" title="安装bundle"></a>安装bundle</h2><pre><code>cd /usr/servers/openresty-1.11.2.4/bundle  
+wget https://github.com/FRiCKLE/ngx_cache_purge/archive/2.3.tar.gz  
+tar -xvf 2.3
+
+wget https://github.com/yaoweibin/nginx_upstream_check_module/archive/v0.3.0.tar.gz  
+tar -xvf v0.3.0
+</code></pre><h2 id="安装openresty"><a href="#安装openresty" class="headerlink" title="安装openresty"></a>安装openresty</h2><pre><code>cd /usr/servers/openresty-1.11.2.4
+./configure --prefix=/usr/servers --with-http_realip_module  --with-pcre  --with-luajit --add-module=./bundle/ngx_cache_purge-2.3/ --add-module=./bundle/nginx_upstream_check_module-0.3.0/ -j2  
+gmake &amp;&amp; gmake install 
+</code></pre><h2 id="查看安装文件"><a href="#查看安装文件" class="headerlink" title="查看安装文件"></a>查看安装文件</h2><pre><code>cd /usr/servers/  
+ll
+total 4304
+drwxr-xr-x.  2 root root    4096 Aug 17 17:14 bin
+drwxr-xr-x.  6 root root    4096 Aug 17 17:14 luajit
+drwxr-xr-x.  6 root root    4096 Aug 17 17:14 lualib
+drwxr-xr-x. 11 root root    4096 Aug 17 17:16 nginx
+drwxrwxr-x.  6 1000 1000    4096 Aug 17 17:12 openresty-1.11.2.4
+-rw-r--r--.  1 root root 4158984 Jul 12 01:44 openresty-1.11.2.4.tar.gz
+drwxr-xr-x. 43 root root    4096 Aug 17 17:14 pod
+-rw-r--r--.  1 root root  214511 Aug 17 17:14 resty.index
+drwxr-xr-x.  5 root root    4096 Aug 17 17:14 site
+</code></pre><h2 id="启动nginx"><a href="#启动nginx" class="headerlink" title="启动nginx"></a>启动nginx</h2><pre><code>/usr/servers/nginx/sbin/nginx
+</code></pre><h1 id="nginx-lua开发的hello-world"><a href="#nginx-lua开发的hello-world" class="headerlink" title="nginx+lua开发的hello world"></a>nginx+lua开发的hello world</h1><h2 id="配置nginx-conf"><a href="#配置nginx-conf" class="headerlink" title="配置nginx.conf"></a>配置nginx.conf</h2><pre><code>vi /usr/servers/nginx/conf/nginx.conf
+</code></pre><p>在http部分添加：</p>
+<pre><code>lua_package_path &quot;/usr/servers/lualib/?.lua;;&quot;;  
+lua_package_cpath &quot;/usr/servers/lualib/?.so;;&quot;;  
+include lua.conf;
+</code></pre><h2 id="添加lua-conf"><a href="#添加lua-conf" class="headerlink" title="添加lua.conf"></a>添加lua.conf</h2><p>在/usr/servers/nginx/conf下，创建一个lua.conf,内容如下:</p>
+<pre><code>server {  
+    listen       80;  
+    server_name  _;  
+}  
+</code></pre><h2 id="验证配置文件"><a href="#验证配置文件" class="headerlink" title="验证配置文件"></a>验证配置文件</h2><pre><code>/usr/servers/nginx/sbin/nginx -t
+
+nginx: the configuration file /usr/servers/nginx/conf/nginx.conf syntax is ok
+nginx: configuration file /usr/servers/nginx/conf/nginx.conf test is successful
+</code></pre><h2 id="在lua-conf的server部分添加lua脚本"><a href="#在lua-conf的server部分添加lua脚本" class="headerlink" title="在lua.conf的server部分添加lua脚本"></a>在lua.conf的server部分添加lua脚本</h2><pre><code>location /lua {  
+    default_type &apos;text/html&apos;;  
+    content_by_lua &apos;ngx.say(&quot;hello world&quot;)&apos;;  
+} 
+</code></pre><h2 id="测试配置是否有问题"><a href="#测试配置是否有问题" class="headerlink" title="测试配置是否有问题"></a>测试配置是否有问题</h2><pre><code>/usr/servers/nginx/sbin/nginx -t  
+</code></pre><h2 id="重新nginx加载配置"><a href="#重新nginx加载配置" class="headerlink" title="重新nginx加载配置"></a>重新nginx加载配置</h2><pre><code>/usr/servers/nginx/sbin/nginx -s reload  
+</code></pre><p>访问http: <a href="http://study0/lua" target="_blank" rel="external">http://study0/lua</a></p>
+<h2 id="单独编写lua脚本模块"><a href="#单独编写lua脚本模块" class="headerlink" title="单独编写lua脚本模块"></a>单独编写lua脚本模块</h2><pre><code>vi /usr/servers/nginx/conf/lua/test.lua
+
+ngx.say(&quot;hello lua&quot;); 
+</code></pre><h2 id="修改lua-conf"><a href="#修改lua-conf" class="headerlink" title="修改lua.conf"></a>修改lua.conf</h2><pre><code>location /lua {  
+    default_type &apos;text/html&apos;;  
+    content_by_lua_file conf/lua/test.lua; 
+}
+</code></pre><h2 id="如果发现异常-查看异常日志"><a href="#如果发现异常-查看异常日志" class="headerlink" title="如果发现异常,查看异常日志"></a>如果发现异常,查看异常日志</h2><pre><code>tail -f /usr/servers/nginx/logs/error.log
+</code></pre><h1 id="工程化的nginx-lua项目结构"><a href="#工程化的nginx-lua项目结构" class="headerlink" title="工程化的nginx+lua项目结构"></a>工程化的nginx+lua项目结构</h1><p>项目工程结构</p>
+<pre><code>hello
+    hello.conf     
+    lua              
+      hello.lua
+    lualib            
+      *.lua
+      *.so
+</code></pre><h2 id="创建hello项目"><a href="#创建hello项目" class="headerlink" title="创建hello项目"></a>创建hello项目</h2><pre><code>mkdir /usr/hello
+cd /usr/hello
+cp -r /usr/servers/lualib/ .
+</code></pre><h2 id="修改nginx-conf"><a href="#修改nginx-conf" class="headerlink" title="修改nginx.conf"></a>修改nginx.conf</h2><pre><code>vi /usr/servers/nginx/conf/nginx.conf
+</code></pre><p>在http模块添加</p>
+<pre><code>lua_package_path &quot;/usr/hello/lualib/?.lua;;&quot;;
+lua_package_cpath &quot;/usr/hello/lualib/?.so;;&quot;;
+include /usr/hello/hello.conf;
+</code></pre><h2 id="添加hello-conf"><a href="#添加hello-conf" class="headerlink" title="添加hello.conf"></a>添加hello.conf</h2><pre><code>vi /usr/hello/hello.conf
+
+server {
+    listen       80;
+    server_name  _;
+
+    location /lua {
+        default_type &apos;text/html&apos;;
+        content_by_lua_file /usr/hello/lua/hello.lua;
+    }
+}
+</code></pre><h2 id="添加-usr-hello-lua-hello-lua"><a href="#添加-usr-hello-lua-hello-lua" class="headerlink" title="添加/usr/hello/lua/hello.lua"></a>添加/usr/hello/lua/hello.lua</h2><pre><code>mkdir /usr/hello/lua/
+vi /usr/hello/lua/hello.lua
+ngx.say(&quot;hello,lua project&quot;)
+</code></pre><h2 id="重启nginx"><a href="#重启nginx" class="headerlink" title="重启nginx"></a>重启nginx</h2><pre><code>/usr/servers/nginx/sbin/nginx -s reload  
+</code></pre>
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-08-17T12:38:11.886Z" itemprop="dateUpdated">2017-08-17 20:38:11</time>
+</span><br>
+
+
+        
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2017/08/17/nginx-openrestry-install-1/" target="_blank" rel="external">http://dennis.pathto.top/2017/08/17/nginx-openrestry-install-1/</a>
+        
+    </div>
+    <footer>
+        <a href="http://dennis.pathto.top">
+            <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
+            Dennis
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/openrestry/">openrestry</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/08/17/nginx-openrestry-install-1/&title=《1.安装nginx+openrestry》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/08/17/nginx-openrestry-install-1/&title=《1.安装nginx+openrestry》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/08/17/nginx-openrestry-install-1/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《1.安装nginx+openrestry》 — Dennis'Blog&url=http://dennis.pathto.top/2017/08/17/nginx-openrestry-install-1/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/08/17/nginx-openrestry-install-1/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2017/08/17/nginx-Traffic-distribution-2/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">2.nginx-根据查询参数实现后端流量分发</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/08/16/interview-garbage-company/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">这样的公司绝对不能去面试</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper">
+     <div id="articleComment" style="padding-left:5%;padding-right:5%;" ></div>
+    <!--<iframe height="900px" id="page_content_iframe" frameborder="0" marginheight="0" onload="dyniframesize('page_content_iframe');" width="100%" scrolling="auto" src="https://dennis-dzqapp.rhcloud.com/list_blog_commonts?p_id=2017/08/17/nginx-openrestry-install-1/" style="display: block;"></iframe>-->
+    </div>
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" data-alipay="http://otwbalpjp.bkt.clouddn.com/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Dennis &copy; 2015 - 2017</span>
+            <span>
+                
+                Power by <a href="http://116.196.88.117/" target="_blank">pathto.top</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/08/17/nginx-openrestry-install-1/&title=《1.安装nginx+openrestry》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/08/17/nginx-openrestry-install-1/&title=《1.安装nginx+openrestry》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/08/17/nginx-openrestry-install-1/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《1.安装nginx+openrestry》 — Dennis'Blog&url=http://dennis.pathto.top/2017/08/17/nginx-openrestry-install-1/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/08/17/nginx-openrestry-install-1/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACuElEQVR42u3aQW7jMAwF0N7/0h1gVh0UVj9JMc0Az6sgcBU/LSz2kx8f8fX59/r6+ev1/c7v9z+t9vTN+RkuX3h4eHitR3+6nh6691hP9yfrn7f4aQU8PDy8PV71MMh/uHfkTLYJDw8P7314vZ/JD5XzduDh4eH977xJ+ZunB3h4eHjvzKsWzckrfnIk5OHItawFDw8PL+b1GmC/+3m9v4eHh4fX6qpXX8rzUYB8KCF6Wjw8PLwF3nnRPFTNA9xeC20SYeDh4eFt8HoVabUUrsYNGyEvHh4e3i3e+Yfzb853zptk1UMFDw8Pb4/XC22rRXP1tZ63u8pRCB4eHt4Cbz6A1Qtzq0X2aFwADw8Pr8W7VbzmvOoxM2mP4eHh4e3xqqdHHjf0woJ5mIuHh4e3x8v/1e8NCiSF8iR6iMIIPDw8vAVedZQqL5qTAr0XbVzIp/Hw8PBavEk0UB01mBTlefzxzwp4eHh4y7zReVLcoGpbq1eI4+Hh4W3wmsFoq81fDYgnowN4eHh4e7ykkJ0MFswjid5oAh4eHt4redWlz8g8aMi3IN8gPDw8vG3e+VF6YURSLleHDwqBMh4eHt4C79yS7zWxzn/bG+TKkY8pCx4eHt4l3t1Xcy8C7h1I0Qbh4eHhLfDyf/XzeDeJJHq/24sq8PDw8O7yJqVtUo73XvR5u+uHFfDw8PCWeYXG0qWBgI1Qo3zi4eHh4XU6+x/5ojn77tFSbbw9ZtV4eHh4Y95n8ar2leaBRfUwiEpqPDw8vAEvv3rNqmoonAe7vaEEPDw8vFu83mHQCyyqBXq14MbDw8N7Ja93GFRHr/ItywcXfijN8fDw8H6Vl7fH8vbVJKSIVsDDw8N7G15eHM9zkeoKeHh4eK/h5WFEPmSQB8TzxhgeHh7eK3m3GmDz6KH6zWRb8fDw8Fq8PxNwNcrcddEbAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="/js/main.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '我消失了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '我回来了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

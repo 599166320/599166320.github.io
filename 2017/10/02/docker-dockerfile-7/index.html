@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>7.dockerfile | Dennis&#39;Blog | 我不用讨人喜欢，只做一个迷人的混蛋</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="docker,cloud">
+    <meta name="description" content="使用dockerfile构建一个nginx镜像准备配置文件mkdir nginx [root@bogon nginx]# vi epel-6.repo   [epel] name=Extra Packages for Enterprise Linux 6 - $basearch baseurl=http://mirrors.aliyun.com/epel/6/$basearch         h">
+<meta name="keywords" content="docker,cloud">
+<meta property="og:type" content="article">
+<meta property="og:title" content="7.dockerfile">
+<meta property="og:url" content="http://dennis.pathto.top/2017/10/02/docker-dockerfile-7/index.html">
+<meta property="og:site_name" content="Dennis&#39;Blog">
+<meta property="og:description" content="使用dockerfile构建一个nginx镜像准备配置文件mkdir nginx [root@bogon nginx]# vi epel-6.repo   [epel] name=Extra Packages for Enterprise Linux 6 - $basearch baseurl=http://mirrors.aliyun.com/epel/6/$basearch         h">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://ox4lrc1z7.bkt.clouddn.com/docker-single-machine-network.png">
+<meta property="og:updated_time" content="2017-10-02T16:07:57.733Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="7.dockerfile">
+<meta name="twitter:description" content="使用dockerfile构建一个nginx镜像准备配置文件mkdir nginx [root@bogon nginx]# vi epel-6.repo   [epel] name=Extra Packages for Enterprise Linux 6 - $basearch baseurl=http://mirrors.aliyun.com/epel/6/$basearch         h">
+<meta name="twitter:image" content="http://ox4lrc1z7.bkt.clouddn.com/docker-single-machine-network.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/semantic.css" type="text/css" />
+<link rel="stylesheet" href="/css/zyComment.css" type="text/css" />
+<style type="text/css">
+	#cloud-tie-wrapper label {
+	    font-weight: bold;
+	}
+	#cloud-tie-wrapper a {
+		font-family: Microsoft YaHei;
+	}
+	#articleComment {
+		width: "60%";
+		/*height: 1500px;*/
+		overflow: auto;
+	}
+</style>
+
+    <script>window.lazyScripts=[]</script>
+
+
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/zyComment.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+$(function(){
+var post_toc_links = $(".post-toc-link");
+$.each( post_toc_links, function(index,post_toc_link){
+	post_toc_link = $(post_toc_link);
+	var post_toc_number = post_toc_link.find(".post-toc-number");
+	var post_toc_text = post_toc_link.find(".post-toc-text");
+	//console.log(post_toc_number.text()+" "+post_toc_text.text());
+	$(post_toc_link.attr("href")).text(post_toc_number.text()+" "+post_toc_text.text())
+});
+});
+
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+function jsonp(url){
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.insertBefore(script, head.firstChild);
+}
+function add_blog_callBackFun(rs){
+	$("#articleComment").zyComment("setCommentAfter",rs);
+}
+function get_list_blog_commonts_callBackFun(rs){
+	var agoComment = rs;
+	$("#articleComment").zyComment({
+		"width":"355",
+		"height":"33",
+		"agoComment":agoComment,
+		"callback":function(comment){
+			var selfID = comment.selfID;
+			if(typeof selfID == "undefined" ){
+				selfID = 0;
+			}
+			jsonp(host+"/add_blog_jsonp?"+"p_id="+encodeURIComponent("2017/10/02/docker-dockerfile-7/")+ "&username="+encodeURIComponent(comment.name)+"&content="+encodeURIComponent(comment.content)+"&email="+encodeURIComponent(comment.email)+"&c_id_replay="+selfID);
+
+		}
+	});
+}
+jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/10/02/docker-dockerfile-7/"));
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Dennis</h5>
+          <a href="mailto:dennis52o1314@163.com" title="dennis52o1314@163.com" class="mail">dennis52o1314@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/599166320" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/2166908462" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                其他
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">7.dockerfile</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">7.dockerfile</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-10-02T15:06:41.000Z" itemprop="datePublished" class="page-time">
+  2017-10-02
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/docker/">docker</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#使用dockerfile构建一个nginx镜像"><span class="post-toc-number">1.</span> <span class="post-toc-text">使用dockerfile构建一个nginx镜像</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#准备配置文件"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">准备配置文件</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#通过自己构建的镜像，启动容器"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">通过自己构建的镜像，启动容器</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#容器连通性测试"><span class="post-toc-number">1.3.</span> <span class="post-toc-text">容器连通性测试</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#mynginx01"><span class="post-toc-number">1.3.1.</span> <span class="post-toc-text">mynginx01</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#mynginx02"><span class="post-toc-number">1.3.2.</span> <span class="post-toc-text">mynginx02</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#宿主机"><span class="post-toc-number">1.3.3.</span> <span class="post-toc-text">宿主机</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#构建一个tomcat镜像"><span class="post-toc-number">2.</span> <span class="post-toc-text">构建一个tomcat镜像</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#创建tomcat目录-新建Dockerfile和相关包"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">创建tomcat目录,新建Dockerfile和相关包</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#编写Dockerfile"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">编写Dockerfile</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-docker-dockerfile-7"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">7.dockerfile</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-10-02 23:06:41" datetime="2017-10-02T15:06:41.000Z"  itemprop="datePublished">2017-10-02</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/docker/">docker</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="使用dockerfile构建一个nginx镜像"><a href="#使用dockerfile构建一个nginx镜像" class="headerlink" title="使用dockerfile构建一个nginx镜像"></a>使用dockerfile构建一个nginx镜像</h1><h2 id="准备配置文件"><a href="#准备配置文件" class="headerlink" title="准备配置文件"></a>准备配置文件</h2><pre><code>mkdir nginx
+[root@bogon nginx]# vi epel-6.repo 
+
+[epel]
+name=Extra Packages for Enterprise Linux 6 - $basearch
+baseurl=http://mirrors.aliyun.com/epel/6/$basearch
+        http://mirrors.aliyuncs.com/epel/6/$basearch
+#mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-6&amp;arch=$basearch
+failovermethod=priority
+enabled=1
+gpgcheck=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6
+
+[epel-debuginfo]
+name=Extra Packages for Enterprise Linux 6 - $basearch - Debug
+baseurl=http://mirrors.aliyun.com/epel/6/$basearch/debug
+        http://mirrors.aliyuncs.com/epel/6/$basearch/debug
+#mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-debug-6&amp;arch=$basearch
+failovermethod=priority
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6
+gpgcheck=0
+
+[epel-source]
+name=Extra Packages for Enterprise Linux 6 - $basearch - Source
+baseurl=http://mirrors.aliyun.com/epel/6/SRPMS
+        http://mirrors.aliyuncs.com/epel/6/SRPMS
+#mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-source-6&amp;arch=$basearch
+failovermethod=priority
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6
+gpgcheck=0
+
+
+[root@bogon nginx]# cat Dockerfile
+
+#author dennis
+from centos:centos6
+ADD epel-6.repo /etc/yum.repos.d
+RUN yum install -y net-tools
+RUN yum install -y iputils
+RUN yum install -y nginx
+RUN echo &quot;daemon off;&quot;&gt;&gt; /etc/nginx/nginx.conf
+CMD service nginx start
+</code></pre><p>上面运行nginx前台运行，可以保证容器不会自动退出,容器没有一个运行的进程是会自动退出的,如果不这样运行，也要运行一个其他的长运行的进程，如top命令</p>
+<pre><code>[root@bogon nginx]# docker build -t mynginx:1.0 .
+
+[root@bogon nginx]# docker images
+REPOSITORY                  TAG                 IMAGE ID            CREATED             SIZE
+mynginx                     1.0                 f5387b3daae3        22 seconds ago      446MB
+test                        latest              b5e4ce650f0d        5 hours ago         194MB
+redis                       latest              b6dddb991dfa        9 days ago          107MB
+centos                      centos6             5dedbd63518e        2 weeks ago         194MB
+daocloud.io/library/nginx   1.13.2              2f7f7bce8929        2 months ago        107MB
+#mynginx就是使用docker file构建的镜像
+</code></pre><h2 id="通过自己构建的镜像，启动容器"><a href="#通过自己构建的镜像，启动容器" class="headerlink" title="通过自己构建的镜像，启动容器"></a>通过自己构建的镜像，启动容器</h2><pre><code>[root@bogon nginx]# docker run  -it --name mynginx01   f5387b3daae3 /bin/bash
+#新建另一个ssh回话，启动另一个容器
+[root@bogon ~]# docker run  -it --name mynginx02   f5387b3daae3 /bin/bash
+</code></pre><h2 id="容器连通性测试"><a href="#容器连通性测试" class="headerlink" title="容器连通性测试"></a>容器连通性测试</h2><h3 id="mynginx01"><a href="#mynginx01" class="headerlink" title="mynginx01"></a>mynginx01</h3><pre><code>[root@2887c1ce177b /]# ping 172.17.0.5
+PING 172.17.0.5 (172.17.0.5) 56(84) bytes of data.
+64 bytes from 172.17.0.5: icmp_seq=1 ttl=64 time=0.289 ms
+64 bytes from 172.17.0.5: icmp_seq=2 ttl=64 time=0.176 ms
+^C
+--- 172.17.0.5 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1947ms
+rtt min/avg/max/mdev = 0.176/0.232/0.289/0.058 ms
+</code></pre><h3 id="mynginx02"><a href="#mynginx02" class="headerlink" title="mynginx02"></a>mynginx02</h3><pre><code>[root@db8d5e5bb1a2 /]# ip a
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN qlen 1
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+72: eth0@if73: &lt;BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN&gt; mtu 1500 qdisc noqueue state UP 
+    link/ether 02:42:ac:11:00:05 brd ff:ff:ff:ff:ff:ff
+    inet 172.17.0.5/16 scope global eth0
+       valid_lft forever preferred_lft forever
+[root@db8d5e5bb1a2 /]# ping 172.17.0.5
+PING 172.17.0.5 (172.17.0.5) 56(84) bytes of data.
+64 bytes from 172.17.0.5: icmp_seq=1 ttl=64 time=0.098 ms
+64 bytes from 172.17.0.5: icmp_seq=2 ttl=64 time=0.090 ms
+^C
+--- 172.17.0.5 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1453ms
+rtt min/avg/max/mdev = 0.090/0.094/0.098/0.004 ms
+</code></pre><h3 id="宿主机"><a href="#宿主机" class="headerlink" title="宿主机"></a>宿主机</h3><pre><code>[root@bogon ~]# ping 172.17.0.5
+PING 172.17.0.5 (172.17.0.5) 56(84) bytes of data.
+64 bytes from 172.17.0.5: icmp_seq=1 ttl=64 time=0.197 ms
+64 bytes from 172.17.0.5: icmp_seq=2 ttl=64 time=0.120 ms
+^C
+--- 172.17.0.5 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1000ms
+rtt min/avg/max/mdev = 0.120/0.158/0.197/0.040 ms
+</code></pre><blockquote>
+<p>结论：同一个宿主机中的容器相互连通的，宿主机也和容器相互连通</p>
+</blockquote>
+<p>单机网络架构</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://ox4lrc1z7.bkt.clouddn.com/docker-single-machine-network.png" alt="image" title="">
+                </div>
+                <div class="image-caption">image</div>
+            </figure>
+<blockquote>
+<p>同一个系统docker共享同一个网桥</p>
+</blockquote>
+<h1 id="构建一个tomcat镜像"><a href="#构建一个tomcat镜像" class="headerlink" title="构建一个tomcat镜像"></a>构建一个tomcat镜像</h1><h2 id="创建tomcat目录-新建Dockerfile和相关包"><a href="#创建tomcat目录-新建Dockerfile和相关包" class="headerlink" title="创建tomcat目录,新建Dockerfile和相关包"></a>创建tomcat目录,新建Dockerfile和相关包</h2><pre><code>[root@node3 tomcat]# tree
+├── apache-tomcat-7.0.76.tar.gz
+├── Centos-6.repo
+├──Dockerfile
+├── epel-6.repo
+├── jdk-8u121-linux-x64.tar.gz
+└──supervisord.conf
+</code></pre><h2 id="编写Dockerfile"><a href="#编写Dockerfile" class="headerlink" title="编写Dockerfile"></a>编写Dockerfile</h2><pre><code>[root@node3 tomcat]# cat Dockerfile
+#pull down centos image
+FROM centos:centos6
+MAINTAINER dennis52o1314@163.com
+ADD epel-6.repo /etc/yum.repos.d/
+ADD Centos-6.repo /etc/yum.repos.d/
+RUN yum install -y supervisor
+RUN mkdir -p /var/log/supervisor
+ADD ./apache-tomcat-7.0.76.tar.gz /opt
+ADD ./jdk-8u121-linux-x64.tar.gz /opt
+#set environment variable
+ENV JAVA_HOME /opt/jdk1.8.0_121
+ENV PATH $JAVA_HOME/bin:$PATH
+ENV CATALINA_HOME /opt/apache-tomcat-7.0.76  
+ENV PATH $PATH:$CATALINA_HOME/bin
+EXPOSE 8080
+COPY supervisord.conf /etc/supervisor/supervisord.conf
+CMD supervisord -c /etc/supervisor/supervisord.conf
+</code></pre>
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-10-02T16:07:57.733Z" itemprop="dateUpdated">2017-10-03 00:07:57</time>
+</span><br>
+
+
+        
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2017/10/02/docker-dockerfile-7/" target="_blank" rel="external">http://dennis.pathto.top/2017/10/02/docker-dockerfile-7/</a>
+        
+    </div>
+    <footer>
+        <a href="http://dennis.pathto.top">
+            <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
+            Dennis
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cloud/">cloud</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/10/02/docker-dockerfile-7/&title=《7.dockerfile》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/10/02/docker-dockerfile-7/&title=《7.dockerfile》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/10/02/docker-dockerfile-7/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《7.dockerfile》 — Dennis'Blog&url=http://dennis.pathto.top/2017/10/02/docker-dockerfile-7/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/10/02/docker-dockerfile-7/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2017/10/02/docker-dockerfile-workpress-8/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">8.使用Dockerfile搭建自己的博客</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/10/02/docker-storagy-6/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">6.docker-存储</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper">
+     <div id="articleComment" style="padding-left:5%;padding-right:5%;" ></div>
+    <!--<iframe height="900px" id="page_content_iframe" frameborder="0" marginheight="0" onload="dyniframesize('page_content_iframe');" width="100%" scrolling="auto" src="https://dennis-dzqapp.rhcloud.com/list_blog_commonts?p_id=2017/10/02/docker-dockerfile-7/" style="display: block;"></iframe>-->
+    </div>
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" data-alipay="http://otwbalpjp.bkt.clouddn.com/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Dennis &copy; 2015 - 2017</span>
+            <span>
+                
+                Power by <a href="http://116.196.88.117/" target="_blank">pathto.top</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/10/02/docker-dockerfile-7/&title=《7.dockerfile》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/10/02/docker-dockerfile-7/&title=《7.dockerfile》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/10/02/docker-dockerfile-7/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《7.dockerfile》 — Dennis'Blog&url=http://dennis.pathto.top/2017/10/02/docker-dockerfile-7/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/10/02/docker-dockerfile-7/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACMElEQVR42u3aQXLCMAwFUO5/aTrTXYcS/pdDpzgvK6aE2C8LVbJ0u8XX/ft6/Pzs22fX46+On3byhYGB8bGMZOF8sWeby7c4eykYGBhXYOSPSyLe8V9m97/YMwYGBsbCPTl4ti4GBgZGu/BsoxgYGBgJIyli88I1OWg7Xv2NtTgGBsYHMlYaA+/+/Ef9DQwMjH/MuJfXcXJ2Vuisd4WBgbE1Y6U9mW/0Hc2DW1LXYmBgbMSYlZft5maDGsOSFQMDYyNGfkB2/NB2SGI2cPZ0DxgYGFsz3pH8tcdqbcGMgYFxNUZy1NUuPwu7bfoYVeEYGBhbMM4tKXNMO9gRNTsxMDA2ZbQPaovelQGOIonEwMC4GCM5SksGufLSd5ZoYmBgXJPRpnf54GkSjtuXhYGBcR1GGzqTpLANzXn6WBy3YWBgbMRoS9OVTaykgKf938DAwPhARjuGNRuhWGke5IEeAwNjb0Y+8hV1RBe6qUk4LtJEDAyM7Rj58nnzMr8nTyijJBUDA2MjRj4q0SZzeQhufzV8WxgYGB/OOPdorG2LzgrgH6tjYGBszZgdqLWl76wMzg/+MDAw9mbcy2tl2OtFA3I0zPFLJxYDA2M7xsrYRDvOtb7R+uwQAwNjI0ZbrOYLtC3JpYEMDAyMCzCSINveuRTj26CPgYGBsXA01rYBhiU0BgYGxmFDcb09eRzWo+dgYGBcgDHb1nqqt550YmBgXIHRFpBt8td+nr1WDAyMTRlfG8iodv8fM6kAAAAASUVORK5CYII=" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="/js/main.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '我消失了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '我回来了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

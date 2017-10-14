@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>subversion+centos7 | Dennis&#39;Blog | 我不用讨人喜欢，只做一个迷人的混蛋</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="svn">
+    <meta name="description" content="subversion 简介 Subversion是一个自由开源的版本控制系统。在Subversion管理下，文件和目录可以超越时空。Subversion将文件存放在中心版本库里，这个版本库很像一个普通的文件服务器，不同的是，它可以记录每一次文件和目录的修改情况，这样就可以借此将数据恢复到以前的版本，并可以查看数据的更改细节。正因为如此，许多人将版本控制系统当作一种神奇的“时间机器”。 subver">
+<meta name="keywords" content="svn">
+<meta property="og:type" content="article">
+<meta property="og:title" content="subversion+centos7">
+<meta property="og:url" content="http://dennis.pathto.top/2017/10/05/svn-0-centos7/index.html">
+<meta property="og:site_name" content="Dennis&#39;Blog">
+<meta property="og:description" content="subversion 简介 Subversion是一个自由开源的版本控制系统。在Subversion管理下，文件和目录可以超越时空。Subversion将文件存放在中心版本库里，这个版本库很像一个普通的文件服务器，不同的是，它可以记录每一次文件和目录的修改情况，这样就可以借此将数据恢复到以前的版本，并可以查看数据的更改细节。正因为如此，许多人将版本控制系统当作一种神奇的“时间机器”。 subver">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-10-05T09:34:57.523Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="subversion+centos7">
+<meta name="twitter:description" content="subversion 简介 Subversion是一个自由开源的版本控制系统。在Subversion管理下，文件和目录可以超越时空。Subversion将文件存放在中心版本库里，这个版本库很像一个普通的文件服务器，不同的是，它可以记录每一次文件和目录的修改情况，这样就可以借此将数据恢复到以前的版本，并可以查看数据的更改细节。正因为如此，许多人将版本控制系统当作一种神奇的“时间机器”。 subver">
+    
+        <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/semantic.css" type="text/css" />
+<link rel="stylesheet" href="/css/zyComment.css" type="text/css" />
+<style type="text/css">
+	#cloud-tie-wrapper label {
+	    font-weight: bold;
+	}
+	#cloud-tie-wrapper a {
+		font-family: Microsoft YaHei;
+	}
+	#articleComment {
+		width: "60%";
+		/*height: 1500px;*/
+		overflow: auto;
+	}
+</style>
+
+    <script>window.lazyScripts=[]</script>
+
+
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/zyComment.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+$(function(){
+var post_toc_links = $(".post-toc-link");
+$.each( post_toc_links, function(index,post_toc_link){
+	post_toc_link = $(post_toc_link);
+	var post_toc_number = post_toc_link.find(".post-toc-number");
+	var post_toc_text = post_toc_link.find(".post-toc-text");
+	//console.log(post_toc_number.text()+" "+post_toc_text.text());
+	$(post_toc_link.attr("href")).text(post_toc_number.text()+" "+post_toc_text.text())
+});
+});
+
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+function jsonp(url){
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.insertBefore(script, head.firstChild);
+}
+function add_blog_callBackFun(rs){
+	$("#articleComment").zyComment("setCommentAfter",rs);
+}
+function get_list_blog_commonts_callBackFun(rs){
+	var agoComment = rs;
+	$("#articleComment").zyComment({
+		"width":"355",
+		"height":"33",
+		"agoComment":agoComment,
+		"callback":function(comment){
+			var selfID = comment.selfID;
+			if(typeof selfID == "undefined" ){
+				selfID = 0;
+			}
+			jsonp(host+"/add_blog_jsonp?"+"p_id="+encodeURIComponent("2017/10/05/svn-0-centos7/")+ "&username="+encodeURIComponent(comment.name)+"&content="+encodeURIComponent(comment.content)+"&email="+encodeURIComponent(comment.email)+"&c_id_replay="+selfID);
+
+		}
+	});
+}
+jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/10/05/svn-0-centos7/"));
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Dennis</h5>
+          <a href="mailto:dennis52o1314@163.com" title="dennis52o1314@163.com" class="mail">dennis52o1314@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/599166320" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/2166908462" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                其他
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">subversion+centos7</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">subversion+centos7</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-10-05T09:34:57.000Z" itemprop="datePublished" class="page-time">
+  2017-10-05
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/svn/">svn</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#subversion-访问控制"><span class="post-toc-number">1.</span> <span class="post-toc-text">subversion 访问控制</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#设置访问控制“-var-svn-repos-project”"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">设置访问控制“/var/svn/repos/project”</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#svn-client-客户端测试"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">svn client 客户端测试</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-svn-0-centos7"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">subversion+centos7</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-10-05 17:34:57" datetime="2017-10-05T09:34:57.000Z"  itemprop="datePublished">2017-10-05</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/svn/">svn</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>subversion 简介</p>
+<p>Subversion是一个自由开源的版本控制系统。在Subversion管理下，文件和目录可以超越时空。<br>Subversion将文件存放在中心版本库里，这个版本库很像一个普通的文件服务器，不同的是，它可以记录每一次文件和目录的修改情况，这样就可以借此将数据恢复到以前的版本，并可以查看数据的更改细节。正因为如此，许多人将版本控制系统当作一种神奇的“时间机器”。</p>
+<p>subversion 官网：<a href="http://subversion.apache.org/" target="_blank" rel="external">http://subversion.apache.org/</a></p>
+<p>subversion 安装</p>
+<pre><code>[root@linuxprobe~]# yum -y install subversion
+</code></pre><p>创建源仓库，以“/var/svn/repos/project”为例</p>
+<pre><code>[root@linuxprobe ~]# mkdir -p /var/svn/repos/project
+[root@linuxprobe ~]# svnadmin create /var/svn/repos/project   # 创建源仓库
+[root@linuxprobe ~]# svn mkdir file:///var/svn/repos/project/trunk -m &quot;create&quot; 
+Committed revision 1.
+[root@linuxprobe ~]# svn mkdir file:///var/svn/repos/project/branches -m &quot;create&quot; # 创建分支
+Committed revision 2.
+[root@linuxprobe ~]# svn mkdir file:///var/svn/repos/project/tags -m &quot;create&quot; # 创建标签 
+Committed revision 3.
+</code></pre><p>导入已存在的代码文件到SVN仓库，导入/home/project目录的文件</p>
+<pre><code>[root@linuxprobe ~]# ll /home/project/
+total 0
+-rw-r--r-- 1 root root 0 Nov  1 11:57 index.go
+-rw-r--r-- 1 root root 0 Nov  1 11:57 index.html
+-rw-r--r-- 1 root root 0 Nov  1 11:57 index.php
+-rw-r--r-- 1 root root 0 Nov  1 11:58 index.py
+-rw-r--r-- 1 root root 0 Nov  1 11:58 info.php
+[root@linuxprobe ~]# svn import /home/project file:///var/svn/repos/project/trunk -m &quot;initial import&quot;
+Adding         /home/project/index.html
+Adding         /home/project/index.go
+Adding         /home/project/index.php
+Adding         /home/project/index.py
+Adding         /home/project/info.php
+Committed revision 4.
+# 确认
+[root@linuxprobe ~]# svn list file:///var/svn/repos/project/trunk
+index.go
+index.html
+index.php
+index.py
+info.php
+</code></pre><p>启动svnserver，svnserve监听TCP 3690，防火墙开启端口通信</p>
+<pre><code># svn server 端
+[root@linuxprobe ~]# systemctl start svnserve
+# svn client 端
+[root@vdevops ~]# yum -y install svn
+[root@vdevops ~]# svn list svn://linuxprobe.org/repos/project
+branches/
+tags/
+trunk/
+# 导出代码到本地
+[root@vdevops ~]# svn checkout svn://linuxprobe.org/repos/project
+A    project/tags
+A    project/trunk
+A    project/trunk/info.php
+A    project/trunk/index.html
+A    project/trunk/index.go
+A    project/trunk/index.php
+A    project/trunk/index.py
+A    project/branches
+Checked out revision 4.
+</code></pre><p>如果没有启动svnserve，通过端口无法连接到svn server，可以通过ssh的方式连接到svn server</p>
+<pre><code># svn server 端
+[root@linuxprobe ~]# systemctl stop svnserve
+# svn client端
+[root@vdevops ~]# svn list svn+ssh://root@linuxprobe.org/var/svn/repos/project
+root@linuxprobe.org&apos;s password: 
+branches/
+tags/
+trunk/
+</code></pre><h1 id="subversion-访问控制"><a href="#subversion-访问控制" class="headerlink" title="subversion 访问控制"></a>subversion 访问控制</h1><h2 id="设置访问控制“-var-svn-repos-project”"><a href="#设置访问控制“-var-svn-repos-project”" class="headerlink" title="设置访问控制“/var/svn/repos/project”"></a>设置访问控制“/var/svn/repos/project”</h2><pre><code>[root@linuxprobe ~]# vi /var/svn/repos/project/conf/svnserve.conf
+# line 9: add (prohibit anonymous access)
+[general]
+anon-access = none
+# line 28: uncomment
+password-db = passwd
+# line 35: uncomment
+authz-db = authz
+[root@linuxprobe ~]# vi /var/svn/repos/project/conf/passwd
+# define username and password for this repository
+[users]
+shaon= password
+wang = password
+devops = password
+[root@linuxprobe ~]# vi /var/svn/repos/project/conf/authz
+# define groups and users
+[groups]
+developer = devops,wang
+# allow read/write on document root for developer group
+[/]
+@developer = rw
+# allow read on trunk folder for fedora user
+[/trunk]
+shaon = r 
+</code></pre><h2 id="svn-client-客户端测试"><a href="#svn-client-客户端测试" class="headerlink" title="svn client 客户端测试"></a>svn client 客户端测试</h2><pre><code>[root@vdevops trunk]# svn --username shaon list svn://linuxprobe.org/repos/project/trunk
+Authentication realm: &lt;svn://linuxprobe.org:3690&gt; LinuxProbe Repository
+Password for &apos;shaon&apos;: 
+
+-----------------------------------------------------------------------
+ATTENTION!  Your password for authentication realm:
+
+   &lt;svn://linuxprobe.org:3690&gt; LinuxProbe Repository  # 仓库名称
+
+can only be stored to disk unencrypted!  You are advised to configure
+your system so that Subversion can store passwords encrypted, if
+possible.  See the documentation for details.
+
+You can avoid future appearances of this warning by setting the value
+of the &apos;store-plaintext-passwords&apos; option to either &apos;yes&apos; or &apos;no&apos; in
+&apos;/root/.subversion/servers&apos;.
+-----------------------------------------------------------------------
+Store password unencrypted (yes/no)? yes #记住密码
+index.go
+index.html
+index.php
+index.py
+info.php
+</code></pre>
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-10-05T09:34:57.523Z" itemprop="dateUpdated">2017-10-05 17:34:57</time>
+</span><br>
+
+
+        
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2017/10/05/svn-0-centos7/" target="_blank" rel="external">http://dennis.pathto.top/2017/10/05/svn-0-centos7/</a>
+        
+    </div>
+    <footer>
+        <a href="http://dennis.pathto.top">
+            <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
+            Dennis
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/svn/">svn</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/10/05/svn-0-centos7/&title=《subversion+centos7》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/10/05/svn-0-centos7/&title=《subversion+centos7》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/10/05/svn-0-centos7/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《subversion+centos7》 — Dennis'Blog&url=http://dennis.pathto.top/2017/10/05/svn-0-centos7/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/10/05/svn-0-centos7/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2017/10/05/linux-0-shell-file-problem/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">linux-shell文件问题</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/10/05/linux-0-firewalld/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">CentOS 7下用firewall-cmd控制端口与端口转发</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper">
+     <div id="articleComment" style="padding-left:5%;padding-right:5%;" ></div>
+    <!--<iframe height="900px" id="page_content_iframe" frameborder="0" marginheight="0" onload="dyniframesize('page_content_iframe');" width="100%" scrolling="auto" src="https://dennis-dzqapp.rhcloud.com/list_blog_commonts?p_id=2017/10/05/svn-0-centos7/" style="display: block;"></iframe>-->
+    </div>
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" data-alipay="http://otwbalpjp.bkt.clouddn.com/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Dennis &copy; 2015 - 2017</span>
+            <span>
+                
+                Power by <a href="http://116.196.88.117/" target="_blank">pathto.top</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/10/05/svn-0-centos7/&title=《subversion+centos7》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/10/05/svn-0-centos7/&title=《subversion+centos7》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/10/05/svn-0-centos7/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《subversion+centos7》 — Dennis'Blog&url=http://dennis.pathto.top/2017/10/05/svn-0-centos7/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/10/05/svn-0-centos7/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACO0lEQVR42u3aS27DMAxF0ex/0+60QGr1PtIJIOpqFDgf63jAUCRfL7yut/X7ev+T79dfn1gyZMjYlnEt13pz/bsQ/Pq7MmTIOIdxd+N1uLx7zan8l//ZswwZMmTg4LgOtfz3ZciQIePZgLv+Fk8x00cjQ4aM0xjkkEnCaK1U99WzuAwZMjZkpEfNb77+SH9DhgwZWzGucKXp2jqA1vbwx65kyJAxmsEDHEndeNGt3yKVIUPGOQyeqNWK++ngF3lMrbxVhgwZGzJIKKydImvDE62RDhkyZAxlPFuaXx9i0yAblN5kyJAxmsEDLm9nksQuhZG0UoYMGScw0m2lSSR/QMUynAwZMkYzeLDjzQCe8KWDaPF/iAwZMjZnpAkfvw0v7vP7BuU2GTJkDGKkQZZfqaWAtTanDBkyZjOeHfOqpXq8PHd7RYYMGccwaiMRaTuhdkc0bCFDhoyhDL65NHWL63ylo68MGTJOYFxg8U2n81pp0nn7rgwZMkYzasMQaQB9qknQ6sHKkCFjcwYJsmmDM30QKbhYdJMhQ8bmjFpjgITFNH0s7kqGDBkHMGrDFmmyWPskCvEyZMgYyrjClTYX04Bbm52QIUPGbEYn2JECXL85GgxbyJAhYzSj38IkG+UhuPbIZMiQcQKDF/R5cY0PTKRH39uAK0OGDBmlz6SNTH5H9IYMGTKOZJA0sTM8wQ/GD/xvyJAhYysG30Sa6pGhsc5BV4YMGScw0sEIUg7jm057F62mpgwZMvZj/ACAnPoIjRD3oAAAAABJRU5ErkJggg==" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="/js/main.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '我消失了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '我回来了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

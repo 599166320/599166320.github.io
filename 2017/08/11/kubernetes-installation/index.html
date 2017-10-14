@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>1.kubernetes安装 | Dennis&#39;Blog | 我不用讨人喜欢，只做一个迷人的混蛋</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="docker,cloud,kubernetes,container,virtualization">
+    <meta name="description" content="环境介绍及准备物理机操作系统[root@master tmp]# cat /etc/redhat-release  CentOS Linux release 7.2.1511 (Core) [root@master tmp]# uname -r 3.10.0-327.el7.x86_64 服务器信息   hostname ip      master,etcd,registry 10.0.0.16">
+<meta name="keywords" content="docker,cloud,kubernetes,container,virtualization">
+<meta property="og:type" content="article">
+<meta property="og:title" content="1.kubernetes安装">
+<meta property="og:url" content="http://dennis.pathto.top/2017/08/11/kubernetes-installation/index.html">
+<meta property="og:site_name" content="Dennis&#39;Blog">
+<meta property="og:description" content="环境介绍及准备物理机操作系统[root@master tmp]# cat /etc/redhat-release  CentOS Linux release 7.2.1511 (Core) [root@master tmp]# uname -r 3.10.0-327.el7.x86_64 服务器信息   hostname ip      master,etcd,registry 10.0.0.16">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://ouiyr2icr.bkt.clouddn.com/kubernetes-dashboard01.jpg">
+<meta property="og:updated_time" content="2017-08-11T14:50:10.926Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="1.kubernetes安装">
+<meta name="twitter:description" content="环境介绍及准备物理机操作系统[root@master tmp]# cat /etc/redhat-release  CentOS Linux release 7.2.1511 (Core) [root@master tmp]# uname -r 3.10.0-327.el7.x86_64 服务器信息   hostname ip      master,etcd,registry 10.0.0.16">
+<meta name="twitter:image" content="http://ouiyr2icr.bkt.clouddn.com/kubernetes-dashboard01.jpg">
+    
+        <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/semantic.css" type="text/css" />
+<link rel="stylesheet" href="/css/zyComment.css" type="text/css" />
+<style type="text/css">
+	#cloud-tie-wrapper label {
+	    font-weight: bold;
+	}
+	#cloud-tie-wrapper a {
+		font-family: Microsoft YaHei;
+	}
+	#articleComment {
+		width: "60%";
+		/*height: 1500px;*/
+		overflow: auto;
+	}
+</style>
+
+    <script>window.lazyScripts=[]</script>
+
+
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/zyComment.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+$(function(){
+var post_toc_links = $(".post-toc-link");
+$.each( post_toc_links, function(index,post_toc_link){
+	post_toc_link = $(post_toc_link);
+	var post_toc_number = post_toc_link.find(".post-toc-number");
+	var post_toc_text = post_toc_link.find(".post-toc-text");
+	//console.log(post_toc_number.text()+" "+post_toc_text.text());
+	$(post_toc_link.attr("href")).text(post_toc_number.text()+" "+post_toc_text.text())
+});
+});
+
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+function jsonp(url){
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.insertBefore(script, head.firstChild);
+}
+function add_blog_callBackFun(rs){
+	$("#articleComment").zyComment("setCommentAfter",rs);
+}
+function get_list_blog_commonts_callBackFun(rs){
+	var agoComment = rs;
+	$("#articleComment").zyComment({
+		"width":"355",
+		"height":"33",
+		"agoComment":agoComment,
+		"callback":function(comment){
+			var selfID = comment.selfID;
+			if(typeof selfID == "undefined" ){
+				selfID = 0;
+			}
+			jsonp(host+"/add_blog_jsonp?"+"p_id="+encodeURIComponent("2017/08/11/kubernetes-installation/")+ "&username="+encodeURIComponent(comment.name)+"&content="+encodeURIComponent(comment.content)+"&email="+encodeURIComponent(comment.email)+"&c_id_replay="+selfID);
+
+		}
+	});
+}
+jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/08/11/kubernetes-installation/"));
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Dennis</h5>
+          <a href="mailto:dennis52o1314@163.com" title="dennis52o1314@163.com" class="mail">dennis52o1314@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/599166320" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/2166908462" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                其他
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">1.kubernetes安装</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">1.kubernetes安装</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-08-11T12:50:58.000Z" itemprop="datePublished" class="page-time">
+  2017-08-11
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/kubernetes/">kubernetes</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#环境介绍及准备"><span class="post-toc-number">1.</span> <span class="post-toc-text">环境介绍及准备</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#物理机操作系统"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">物理机操作系统</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#服务器信息"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">服务器信息</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#修改主机名"><span class="post-toc-number">1.2.1.</span> <span class="post-toc-text">修改主机名</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#集群全部服务器修改hosts配置文件-关闭防火墙"><span class="post-toc-number">1.2.2.</span> <span class="post-toc-text">集群全部服务器修改hosts配置文件,关闭防火墙</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#部署master"><span class="post-toc-number">2.</span> <span class="post-toc-text">部署master</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#安装etcd"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">安装etcd</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#安装etcd-1"><span class="post-toc-number">2.1.1.</span> <span class="post-toc-text">安装etcd</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#修改-etc-etcd-etcd-conf"><span class="post-toc-number">2.1.2.</span> <span class="post-toc-text">修改/etc/etcd/etcd.conf</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#验证etcd"><span class="post-toc-number">2.1.3.</span> <span class="post-toc-text">验证etcd</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#安装Docker"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">安装Docker</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#配置registry"><span class="post-toc-number">2.2.1.</span> <span class="post-toc-text">配置registry</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#配置docker服务"><span class="post-toc-number">2.2.2.</span> <span class="post-toc-text">配置docker服务</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#安装kubernets"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">安装kubernets</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#配置kubernetes"><span class="post-toc-number">2.3.1.</span> <span class="post-toc-text">配置kubernetes</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#启动kubernetes"><span class="post-toc-number">2.3.2.</span> <span class="post-toc-text">启动kubernetes</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#部署node"><span class="post-toc-number">3.</span> <span class="post-toc-text">部署node</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#安装docker"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">安装docker</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#安装kubernets-1"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">安装kubernets</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#配置并启动kubernetes"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">配置并启动kubernetes</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#启动服务并设置开机自启动"><span class="post-toc-number">3.4.</span> <span class="post-toc-text">启动服务并设置开机自启动</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#创建覆盖网络——Flannel"><span class="post-toc-number">4.</span> <span class="post-toc-text">创建覆盖网络——Flannel</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#安装Flannel"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">安装Flannel</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#配置Flannel"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">配置Flannel</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#启动"><span class="post-toc-number">4.3.</span> <span class="post-toc-text">启动</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#安装dashboard"><span class="post-toc-number">5.</span> <span class="post-toc-text">安装dashboard</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#拉取docker镜像"><span class="post-toc-number">5.1.</span> <span class="post-toc-text">拉取docker镜像</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#修改docker镜像的tag"><span class="post-toc-number">5.2.</span> <span class="post-toc-text">修改docker镜像的tag</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#查看docker镜像"><span class="post-toc-number">5.3.</span> <span class="post-toc-text">查看docker镜像</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#复制docker到node01-node02"><span class="post-toc-number">5.4.</span> <span class="post-toc-text">复制docker到node01/node02</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#配置dashboard"><span class="post-toc-number">5.5.</span> <span class="post-toc-text">配置dashboard</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#验证dashboard"><span class="post-toc-number">5.6.</span> <span class="post-toc-text">验证dashboard</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-kubernetes-installation"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">1.kubernetes安装</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-08-11 20:50:58" datetime="2017-08-11T12:50:58.000Z"  itemprop="datePublished">2017-08-11</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/kubernetes/">kubernetes</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="环境介绍及准备"><a href="#环境介绍及准备" class="headerlink" title="环境介绍及准备"></a>环境介绍及准备</h1><h2 id="物理机操作系统"><a href="#物理机操作系统" class="headerlink" title="物理机操作系统"></a>物理机操作系统</h2><pre><code>[root@master tmp]# cat /etc/redhat-release 
+CentOS Linux release 7.2.1511 (Core)
+[root@master tmp]# uname -r
+3.10.0-327.el7.x86_64
+</code></pre><h2 id="服务器信息"><a href="#服务器信息" class="headerlink" title="服务器信息"></a>服务器信息</h2><table>
+<thead>
+<tr>
+<th>hostname</th>
+<th>ip</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> master,etcd,registry</td>
+<td>10.0.0.161</td>
+</tr>
+<tr>
+<td> node01</td>
+<td>10.0.0.159</td>
+</tr>
+<tr>
+<td> node02</td>
+<td>10.0.0.160</td>
+</tr>
+</tbody>
+</table>
+<h3 id="修改主机名"><a href="#修改主机名" class="headerlink" title="修改主机名"></a>修改主机名</h3><p>master:</p>
+<pre><code>[root@master ~]#hostnamectl --static set-hostname  master
+</code></pre><p>node01:</p>
+<pre><code>[root@node01 ~]# hostnamectl --static set-hostname  node01
+</code></pre><p>node02:</p>
+<pre><code>[root@node02 ~]# hostnamectl --static set-hostname  node02
+</code></pre><h3 id="集群全部服务器修改hosts配置文件-关闭防火墙"><a href="#集群全部服务器修改hosts配置文件-关闭防火墙" class="headerlink" title="集群全部服务器修改hosts配置文件,关闭防火墙"></a>集群全部服务器修改hosts配置文件,关闭防火墙</h3><pre><code>cat &gt;&gt;/etc/hosts&lt;&lt;EOF 
+10.0.0.161   etcd
+10.0.0.161   registry
+10.0.0.159 node01
+10.0.0.160 node02
+10.0.0.161 master
+EOF
+systemctl disable firewalld.service
+systemctl stop firewalld.service
+</code></pre><h1 id="部署master"><a href="#部署master" class="headerlink" title="部署master"></a>部署master</h1><h2 id="安装etcd"><a href="#安装etcd" class="headerlink" title="安装etcd"></a>安装etcd</h2><h3 id="安装etcd-1"><a href="#安装etcd-1" class="headerlink" title="安装etcd"></a>安装etcd</h3><pre><code>[root@master tmp]# yum install etcd -y
+</code></pre><h3 id="修改-etc-etcd-etcd-conf"><a href="#修改-etc-etcd-etcd-conf" class="headerlink" title="修改/etc/etcd/etcd.conf"></a>修改/etc/etcd/etcd.conf</h3><pre><code># [member]
+ETCD_NAME=master
+==ETCD_DATA_DIR=&quot;/var/lib/etcd/default.etcd&quot;==
+ETCD_LISTEN_CLIENT_URLS=&quot;http://0.0.0.0:2379,http://0.0.0.0:4001&quot;
+ETCD_ADVERTISE_CLIENT_URLS=&quot;http://etcd:2379,http://etcd:4001&quot;
+</code></pre><h3 id="验证etcd"><a href="#验证etcd" class="headerlink" title="验证etcd"></a>验证etcd</h3><pre><code>[root@master ~]# systemctl start etcd
+[root@master ~]#  etcdctl set testdir/testkey0 0
+0
+[root@master ~]#  etcdctl get testdir/testkey0 
+0
+[root@master ~]# etcdctl -C http://etcd:4001 cluster-health
+member 8e9e05c52164694d is healthy: got healthy result from http://etcd:2379
+cluster is healthy
+[root@master ~]# etcdctl -C http://etcd:2379 cluster-health
+member 8e9e05c52164694d is healthy: got healthy result from http://0.0.0.0:2379
+cluster is healthy
+</code></pre><h2 id="安装Docker"><a href="#安装Docker" class="headerlink" title="安装Docker"></a>安装Docker</h2><pre><code>[root@master ~]# yum install docker
+</code></pre><h3 id="配置registry"><a href="#配置registry" class="headerlink" title="配置registry"></a>配置registry</h3><p>配置Docker配置文件，使其允许从registry中拉取镜像。</p>
+<pre><code>[root@master ~]# vim /etc/sysconfig/docker
+OPTIONS=&apos;--selinux-enabled --log-driver=journald --signature-verification=false&apos;
+if [ -z &quot;${DOCKER_CERT_PATH}&quot; ]; then
+    DOCKER_CERT_PATH=/etc/docker
+fi
+OPTIONS=&apos;--insecure-registry registry:5000&apos;
+</code></pre><h3 id="配置docker服务"><a href="#配置docker服务" class="headerlink" title="配置docker服务"></a>配置docker服务</h3><pre><code>[root@master ~]# chkconfig docker on
+[root@master ~]# service docker start
+</code></pre><h2 id="安装kubernets"><a href="#安装kubernets" class="headerlink" title="安装kubernets"></a>安装kubernets</h2><pre><code>[root@master ~]# yum install kubernetes
+</code></pre><h3 id="配置kubernetes"><a href="#配置kubernetes" class="headerlink" title="配置kubernetes"></a>配置kubernetes</h3><pre><code>[root@master ~]#vi /etc/kubernetes/apiserver
+KUBE_API_ADDRESS=&quot;--insecure-bind-address=0.0.0.0&quot;
+KUBE_ETCD_SERVERS=&quot;--etcd-servers=http://etcd:2379&quot;
+KUBE_SERVICE_ADDRESSES=&quot;--service-cluster-ip-range=10.254.0.0/16&quot;
+KUBE_ADMISSION_CONTROL=&quot;--admission-control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ResourceQuota&quot;
+KUBE_API_ARGS=&quot;&quot;
+
+[root@master ~]# vi /etc/kubernetes/config
+KUBE_LOGTOSTDERR=&quot;--logtostderr=true&quot;
+KUBE_LOG_LEVEL=&quot;--v=0&quot;
+KUBE_ALLOW_PRIV=&quot;--allow-privileged=false&quot;
+KUBE_MASTER=&quot;--master=http://master:8080&quot;
+</code></pre><h3 id="启动kubernetes"><a href="#启动kubernetes" class="headerlink" title="启动kubernetes"></a>启动kubernetes</h3><pre><code>[root@master ~]# systemctl enable kube-apiserver.service
+[root@master ~]# systemctl start kube-apiserver.service
+[root@master ~]# systemctl enable kube-controller-manager.service
+[root@master ~]# systemctl start kube-controller-manager.service
+[root@master ~]# systemctl enable kube-scheduler.service
+[root@master ~]# systemctl start kube-scheduler.service
+</code></pre><h1 id="部署node"><a href="#部署node" class="headerlink" title="部署node"></a>部署node</h1><h2 id="安装docker"><a href="#安装docker" class="headerlink" title="安装docker"></a>安装docker</h2><p>　　参见2.2</p>
+<h2 id="安装kubernets-1"><a href="#安装kubernets-1" class="headerlink" title="安装kubernets"></a>安装kubernets</h2><p>　　参见2.3</p>
+<h2 id="配置并启动kubernetes"><a href="#配置并启动kubernetes" class="headerlink" title="配置并启动kubernetes"></a>配置并启动kubernetes</h2><p>　　在kubernetes node上需要运行以下组件：<br>　　　　Kubelet<br>　　　　Kubernets Proxy</p>
+<p>相应的要更改以下几个配置信息：</p>
+<pre><code>[root@node01 ~]# vim /etc/kubernetes/config
+
+KUBE_LOGTOSTDERR=&quot;--logtostderr=true&quot;
+KUBE_LOG_LEVEL=&quot;--v=0&quot;
+KUBE_ALLOW_PRIV=&quot;--allow-privileged=false&quot;
+KUBE_MASTER=&quot;--master=http://master:8080&quot;
+
+
+[root@node01 ~] vim /etc/kubernetes/kubelet
+KUBELET_ADDRESS=&quot;--address=0.0.0.0&quot;
+KUBELET_HOSTNAME=&quot;--hostname-override=node01&quot;
+KUBELET_API_SERVER=&quot;--api-servers=http://master:8080&quot;
+KUBELET_POD_INFRA_CONTAINER=&quot;--pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest&quot;
+KUBELET_ARGS=&quot;&quot;
+</code></pre><h2 id="启动服务并设置开机自启动"><a href="#启动服务并设置开机自启动" class="headerlink" title="启动服务并设置开机自启动"></a>启动服务并设置开机自启动</h2><pre><code>[root@master ~]# systemctl enable kubelet.service
+[root@master ~]# systemctl start kubelet.service
+[root@master ~]# systemctl enable kube-proxy.service
+[root@master ~]# systemctl start kube-proxy.service
+</code></pre><p>查看状态</p>
+<p>　　在master上查看集群中节点及节点状态</p>
+<pre><code>[root@master ~]#  kubectl -s http://master:8080 get node
+NAME         STATUS    AGE
+node01   Ready     3m
+node02  Ready     16s
+[root@master ~]# kubectl get nodes
+NAME         STATUS    AGE
+node01   Ready     3m
+node02   Ready     43s
+</code></pre><p>至此，已经搭建了一个kubernetes集群，但目前该集群还不能很好的工作，请继续后续的步骤。</p>
+<h1 id="创建覆盖网络——Flannel"><a href="#创建覆盖网络——Flannel" class="headerlink" title="创建覆盖网络——Flannel"></a>创建覆盖网络——Flannel</h1><h2 id="安装Flannel"><a href="#安装Flannel" class="headerlink" title="安装Flannel"></a>安装Flannel</h2><p>在master、node上均执行如下命令，进行安装</p>
+<pre><code>[root@master ~]# yum install flannel
+</code></pre><h2 id="配置Flannel"><a href="#配置Flannel" class="headerlink" title="配置Flannel"></a>配置Flannel</h2><p>master、node上均修改/etc/sysconfig/flanneld</p>
+<pre><code>[root@master ~]# vi /etc/sysconfig/flanneld
+FLANNEL_ETCD_ENDPOINTS=&quot;http://etcd:2379&quot;
+FLANNEL_ETCD_PREFIX=&quot;/atomic.io/network&quot;
+</code></pre><p>配置etcd中关于flannel的key</p>
+<blockquote>
+<p>　Flannel使用Etcd进行配置，来保证多个Flannel实例之间的配置一致性，所以需要在etcd上进行如下配置：（‘/atomic.io/network/config’这个key与上文/etc/sysconfig/flannel中的配置项FLANNEL_ETCD_PREFIX是相对应的，错误的话启动就会出错）</p>
+</blockquote>
+<pre><code>[root@master ~]# etcdctl mk /atomic.io/network/config &apos;{ &quot;Network&quot;: &quot;10.0.0.0/16&quot; }&apos;
+{ &quot;Network&quot;: &quot;10.0.0.0/16&quot; }
+</code></pre><h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><p>　　启动Flannel之后，需要依次重启docker、kubernete。</p>
+<p>在master执行：</p>
+<pre><code>systemctl enable flanneld.service 
+systemctl start flanneld.service 
+service docker restart
+systemctl restart kube-apiserver.service
+systemctl restart kube-controller-manager.service
+systemctl restart kube-scheduler.service
+</code></pre><p>在node上执行：</p>
+<pre><code>systemctl enable flanneld.service 
+systemctl start flanneld.service 
+service docker restart
+systemctl restart kubelet.service
+systemctl restart kube-proxy.service
+</code></pre><h1 id="安装dashboard"><a href="#安装dashboard" class="headerlink" title="安装dashboard"></a>安装dashboard</h1><h2 id="拉取docker镜像"><a href="#拉取docker镜像" class="headerlink" title="拉取docker镜像"></a>拉取docker镜像</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">docker pull registry.cn-hangzhou.aliyuncs.com/google-containers/kubernetes-dashboard-amd64:v1.6.0</div><div class="line">docker pull registry.access.redhat.com/rhel7/pod-infrastructure:latest</div></pre></td></tr></table></figure>
+<h2 id="修改docker镜像的tag"><a href="#修改docker镜像的tag" class="headerlink" title="修改docker镜像的tag"></a>修改docker镜像的tag</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker tag registry.cn-hangzhou.aliyuncs.com/google-containers/kubernetes-dashboard-amd64:v1.6.0 gcr.io/google_containers/kubernetes-dashboard-amd64:v1.6.0</div></pre></td></tr></table></figure>
+<h2 id="查看docker镜像"><a href="#查看docker镜像" class="headerlink" title="查看docker镜像"></a>查看docker镜像</h2><pre><code>[root@master tmp]# docker images
+REPOSITORY                                                                       TAG                 IMAGE ID            CREATED             SIZE
+registry.access.redhat.com/rhel7/pod-infrastructure                              latest              f66f4bd9b894        8 weeks ago         205.8 MB
+gcr.io/google_containers/kubernetes-dashboard-amd64                              v1.6.0              416701f962f2        4 months ago        108.6 MB
+registry.cn-hangzhou.aliyuncs.com/google-containers/kubernetes-dashboard-amd64   v1.6.0              416701f962f2        4 months ago        108.6 MB
+
+ [root@master tmp]#docker save registry.cn-hangzhou.aliyuncs.com/google-containers/kubernetes-dashboard-amd64  &gt; dashboard.tar
+ [root@master tmp]#docker save registry.access.redhat.com/rhel7/pod-infrastructure &gt; podinfrastructure.tar
+</code></pre><h2 id="复制docker到node01-node02"><a href="#复制docker到node01-node02" class="headerlink" title="复制docker到node01/node02"></a>复制docker到node01/node02</h2><pre><code>[root@master tmp]scp podinfrastructure.tar node01:~
+[root@master tmp]scp podinfrastructure.tar node02:~
+[root@master tmp]scp dashboard.tar node01:~
+[root@master tmp]scp dashboard.tar node02:~
+</code></pre><p>node01/node02生成docker镜像</p>
+<pre><code>docker load &lt; dashboard.tar
+docker load &lt; podinfrastructure.tar
+</code></pre><h2 id="配置dashboard"><a href="#配置dashboard" class="headerlink" title="配置dashboard"></a>配置dashboard</h2><pre><code>cat &gt;dashboard.yaml&lt;&lt;EOF
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+# Keep the name in sync with image version and
+# gce/coreos/kube-manifests/addons/dashboard counterparts
+  name: kubernetes-dashboard-latest
+  namespace: kube-system
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        k8s-app: kubernetes-dashboard
+        version: latest
+        kubernetes.io/cluster-service: &quot;true&quot;
+    spec:
+      containers:
+      - name: kubernetes-dashboard
+        image: gcr.io/google_containers/kubernetes-dashboard-amd64:v1.6.0
+        resources:
+          # keep request = limit to keep this container in guaranteed class
+          limits:
+            cpu: 100m
+            memory: 50Mi
+          requests:
+            cpu: 100m
+            memory: 50Mi
+        ports:
+        - containerPort: 9090
+        args:
+         -  --apiserver-host=http://10.0.0.161:8080
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 9090
+          initialDelaySeconds: 30
+          timeoutSeconds: 30
+EOF
+
+cat &gt;dashboardsvc.yaml&lt;&lt;EOF
+apiVersion: v1
+kind: Service
+metadata:
+  name: kubernetes-dashboard
+  namespace: kube-system
+  labels:
+    k8s-app: kubernetes-dashboard
+    kubernetes.io/cluster-service: &quot;true&quot;
+spec:
+  selector:
+    k8s-app: kubernetes-dashboard
+  ports:
+  - port: 80
+    targetPort: 9090
+EOF
+kubectl create -f dashboard.yaml
+kubectl create -f dashboardsvc.yaml
+</code></pre><h2 id="验证dashboard"><a href="#验证dashboard" class="headerlink" title="验证dashboard"></a>验证dashboard</h2><pre><code>[root@master tmp]# kubectl get deployment --all-namespaces
+NAMESPACE     NAME                          DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+kube-system   kubernetes-dashboard-latest   1         1         1            1           1h
+[root@master tmp]#  kubectl get svc  --all-namespaces
+NAMESPACE     NAME                   CLUSTER-IP       EXTERNAL-IP   PORT(S)   AGE
+default       kubernetes             10.0.0.1         &lt;none&gt;        443/TCP   3h
+kube-system   kubernetes-dashboard   10.254.161.116   &lt;none&gt;        80/TCP    1h
+[root@master tmp]# kubectl get pod  -o wide  --all-namespaces
+NAMESPACE     NAME                                           READY     STATUS    RESTARTS   AGE       IP         NODE
+kube-system   kubernetes-dashboard-latest-2587589530-czkq5   1/1       Running   0          1h        10.0.7.2   node02
+</code></pre><p>浏览<a href="http://10.0.0.161:8080/ui" target="_blank" rel="external">http://10.0.0.161:8080/ui</a></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://ouiyr2icr.bkt.clouddn.com/kubernetes-dashboard01.jpg" alt="image" title="">
+                </div>
+                <div class="image-caption">image</div>
+            </figure>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-08-11T14:50:10.926Z" itemprop="dateUpdated">2017-08-11 22:50:10</time>
+</span><br>
+
+
+        
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2017/08/11/kubernetes-installation/" target="_blank" rel="external">http://dennis.pathto.top/2017/08/11/kubernetes-installation/</a>
+        
+    </div>
+    <footer>
+        <a href="http://dennis.pathto.top">
+            <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
+            Dennis
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cloud/">cloud</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/container/">container</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kubernetes/">kubernetes</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/virtualization/">virtualization</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/08/11/kubernetes-installation/&title=《1.kubernetes安装》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/08/11/kubernetes-installation/&title=《1.kubernetes安装》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/08/11/kubernetes-installation/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《1.kubernetes安装》 — Dennis'Blog&url=http://dennis.pathto.top/2017/08/11/kubernetes-installation/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/08/11/kubernetes-installation/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2017/08/13/redis-1-rw-separation-installation/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">1.redis读写分离搭建</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/08/08/4-zookeeper-principle/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">4.zookeeper-原理</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper">
+     <div id="articleComment" style="padding-left:5%;padding-right:5%;" ></div>
+    <!--<iframe height="900px" id="page_content_iframe" frameborder="0" marginheight="0" onload="dyniframesize('page_content_iframe');" width="100%" scrolling="auto" src="https://dennis-dzqapp.rhcloud.com/list_blog_commonts?p_id=2017/08/11/kubernetes-installation/" style="display: block;"></iframe>-->
+    </div>
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" data-alipay="http://otwbalpjp.bkt.clouddn.com/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Dennis &copy; 2015 - 2017</span>
+            <span>
+                
+                Power by <a href="http://116.196.88.117/" target="_blank">pathto.top</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/08/11/kubernetes-installation/&title=《1.kubernetes安装》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/08/11/kubernetes-installation/&title=《1.kubernetes安装》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/08/11/kubernetes-installation/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《1.kubernetes安装》 — Dennis'Blog&url=http://dennis.pathto.top/2017/08/11/kubernetes-installation/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/08/11/kubernetes-installation/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACIUlEQVR42u3aSQ7CMAwFUO5/aTgAonzb6aLJ6wqhDnkby9PrFV/vr6t656+nvv+/fv/owsDAeCzjfXld35N8+PrZBJ+8AQMD4wTGdShMDvr94V4A7YVpDAwMjOsgmCR5ORUDAwNjbcBNjl59FgMDA2NSxPaaYsk78+C+oBbHwMB4IGNSWN79+5b5BgYGxqMY7+K1KpjmITU6FQYGxtaMPMDlvHxImbTwkvNgYGCcyeglcJNGWxKOC9krBgbG1ow8EUzCaJI+5snfn3NiYGBsyqiWqYVErRguR603DAyMrRnJyDA5aLIqUV0sq6aVGBgY5zB6hevaUNtsw2FgYGzKyK3l8NcK5VVAoYjFwMB4LKMXOuctuflO188zYGBgbMrolZSFyUO8bNEbc2JgYJzAyB/Lh5e9BbKkqVduumFgYGzEKN/UWg6rHrQa1jEwMHZl5C2ttUG5OiT4kyBiYGAcwMiDadIOq65i5MXqn1ocAwNjU0avQd8bDFQDet6ew8DA2JtRDZeTFn8eQMsrIBgYGMcw7giv1fFkr5GHgYFxDqPX0M8z0LyIba5ZYGBgbMeYl6z523LS7fU3BgbGoxi9YFctaFcVveWdEQwMjI0Y849Vg2Y+vMTAwMDoFZx5c20yMKgiMTAwMO5rpU0aduXtNgwMjGMYvTt7A9E86cTAwDiBMWmcVQeck3HCglocAwPjgYw8gZunj8khqitoGBgYWzM+P2ZBz3WynsQAAAAASUVORK5CYII=" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="/js/main.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '我消失了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '我回来了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

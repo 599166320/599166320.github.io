@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>3.elasticsearch运行系统参数优化 | Dennis&#39;Blog | 我不用讨人喜欢，只做一个迷人的混蛋</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="elasticsearch">
+    <meta name="description" content="在centos6.5系统中，不能直接运行elasticsearch,必须对系统参数进行优化如果没有优化，会出现如下面的问题                                                                                                           下面我们来进行系统优化吧~~ 启动 elasticsearch">
+<meta name="keywords" content="elasticsearch">
+<meta property="og:type" content="article">
+<meta property="og:title" content="3.elasticsearch运行系统参数优化">
+<meta property="og:url" content="http://dennis.pathto.top/2017/09/03/elasticsearch-3-installation-problem/index.html">
+<meta property="og:site_name" content="Dennis&#39;Blog">
+<meta property="og:description" content="在centos6.5系统中，不能直接运行elasticsearch,必须对系统参数进行优化如果没有优化，会出现如下面的问题                                                                                                           下面我们来进行系统优化吧~~ 启动 elasticsearch">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://otnlrpxzv.bkt.clouddn.com/elasticsearch-operation-system-problem.png">
+<meta property="og:updated_time" content="2017-09-10T16:07:04.645Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="3.elasticsearch运行系统参数优化">
+<meta name="twitter:description" content="在centos6.5系统中，不能直接运行elasticsearch,必须对系统参数进行优化如果没有优化，会出现如下面的问题                                                                                                           下面我们来进行系统优化吧~~ 启动 elasticsearch">
+<meta name="twitter:image" content="http://otnlrpxzv.bkt.clouddn.com/elasticsearch-operation-system-problem.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/semantic.css" type="text/css" />
+<link rel="stylesheet" href="/css/zyComment.css" type="text/css" />
+<style type="text/css">
+	#cloud-tie-wrapper label {
+	    font-weight: bold;
+	}
+	#cloud-tie-wrapper a {
+		font-family: Microsoft YaHei;
+	}
+	#articleComment {
+		width: "60%";
+		/*height: 1500px;*/
+		overflow: auto;
+	}
+</style>
+
+    <script>window.lazyScripts=[]</script>
+
+
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/zyComment.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+$(function(){
+var post_toc_links = $(".post-toc-link");
+$.each( post_toc_links, function(index,post_toc_link){
+	post_toc_link = $(post_toc_link);
+	var post_toc_number = post_toc_link.find(".post-toc-number");
+	var post_toc_text = post_toc_link.find(".post-toc-text");
+	//console.log(post_toc_number.text()+" "+post_toc_text.text());
+	$(post_toc_link.attr("href")).text(post_toc_number.text()+" "+post_toc_text.text())
+});
+});
+
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+function jsonp(url){
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.insertBefore(script, head.firstChild);
+}
+function add_blog_callBackFun(rs){
+	$("#articleComment").zyComment("setCommentAfter",rs);
+}
+function get_list_blog_commonts_callBackFun(rs){
+	var agoComment = rs;
+	$("#articleComment").zyComment({
+		"width":"355",
+		"height":"33",
+		"agoComment":agoComment,
+		"callback":function(comment){
+			var selfID = comment.selfID;
+			if(typeof selfID == "undefined" ){
+				selfID = 0;
+			}
+			jsonp(host+"/add_blog_jsonp?"+"p_id="+encodeURIComponent("2017/09/03/elasticsearch-3-installation-problem/")+ "&username="+encodeURIComponent(comment.name)+"&content="+encodeURIComponent(comment.content)+"&email="+encodeURIComponent(comment.email)+"&c_id_replay="+selfID);
+
+		}
+	});
+}
+jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/09/03/elasticsearch-3-installation-problem/"));
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Dennis</h5>
+          <a href="mailto:dennis52o1314@163.com" title="dennis52o1314@163.com" class="mail">dennis52o1314@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/599166320" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/2166908462" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                其他
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">3.elasticsearch运行系统参数优化</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">3.elasticsearch运行系统参数优化</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-09-03T13:25:29.000Z" itemprop="datePublished" class="page-time">
+  2017-09-03
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/elasticsearch/">elasticsearch</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#启动-elasticsearch-如出现异常-can-not-run-elasticsearch-as-root"><span class="post-toc-number">1.</span> <span class="post-toc-text">启动 elasticsearch 如出现异常  can not run elasticsearch as root</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#启动异常：ERROR-bootstrap-checks-failed"><span class="post-toc-number">2.</span> <span class="post-toc-text">启动异常：ERROR: bootstrap checks failed</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#启动后，如果只有本地可以访问，尝试修改配置文件-elasticsearch-yml"><span class="post-toc-number">3.</span> <span class="post-toc-text">启动后，如果只有本地可以访问，尝试修改配置文件 elasticsearch.yml</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#ERROR-bootstrap-checks-failed"><span class="post-toc-number">4.</span> <span class="post-toc-text">ERROR: bootstrap checks failed</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#max-number-of-threads-1024-for-user-lish-likely-too-low-increase-to-at-least-2048"><span class="post-toc-number">5.</span> <span class="post-toc-text">max number of threads [1024] for user [lish] likely too low, increase to at least [2048]</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#max-virtual-memory-areas-vm-max-map-count-65530-likely-too-low-increase-to-at-least-262144"><span class="post-toc-number">6.</span> <span class="post-toc-text">max virtual memory areas vm.max_map_count [65530] likely too low, increase to at least [262144]</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#ping超时问题"><span class="post-toc-number">7.</span> <span class="post-toc-text">ping超时问题</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#错误的详细信息"><span class="post-toc-number">7.1.</span> <span class="post-toc-text">错误的详细信息</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#解决办法"><span class="post-toc-number">7.2.</span> <span class="post-toc-text">解决办法</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#分词器问题"><span class="post-toc-number">8.</span> <span class="post-toc-text">分词器问题</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#错误日志"><span class="post-toc-number">8.1.</span> <span class="post-toc-text">错误日志</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#解决办法-1"><span class="post-toc-number">8.2.</span> <span class="post-toc-text">解决办法</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-elasticsearch-3-installation-problem"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">3.elasticsearch运行系统参数优化</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-09-03 21:25:29" datetime="2017-09-03T13:25:29.000Z"  itemprop="datePublished">2017-09-03</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/elasticsearch/">elasticsearch</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>在centos6.5系统中，不能直接运行elasticsearch,必须对系统参数进行优化<br>如果没有优化，会出现如下面的问题<br><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://otnlrpxzv.bkt.clouddn.com/elasticsearch-operation-system-problem.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure></p>
+<p>下面我们来进行系统优化吧~~</p>
+<h1 id="启动-elasticsearch-如出现异常-can-not-run-elasticsearch-as-root"><a href="#启动-elasticsearch-如出现异常-can-not-run-elasticsearch-as-root" class="headerlink" title="启动 elasticsearch 如出现异常  can not run elasticsearch as root"></a>启动 elasticsearch 如出现异常  can not run elasticsearch as root</h1><p>解决方法：创建ES 账户，修改文件夹 文件 所属用户 组</p>
+<h1 id="启动异常：ERROR-bootstrap-checks-failed"><a href="#启动异常：ERROR-bootstrap-checks-failed" class="headerlink" title="启动异常：ERROR: bootstrap checks failed"></a>启动异常：ERROR: bootstrap checks failed</h1><p>system call filters failed to install; check the logs and fix your configuration or disable system call filters at your own risk</p>
+<p>问题原因：因为Centos6不支持SecComp，而ES5.2.1默认bootstrap.system_call_filter为true进行检测，所以导致检测失败，失败后直接导致ES不能启动。详见 ：<a href="https://github.com/elastic/elasticsearch/issues/22899" target="_blank" rel="external">https://github.com/elastic/elasticsearch/issues/22899</a></p>
+<p>解决方法：在elasticsearch.yml中配置bootstrap.system_call_filter为false，注意要在Memory下面:</p>
+<pre><code>bootstrap.memory_lock: false
+bootstrap.system_call_filter: false
+</code></pre><h1 id="启动后，如果只有本地可以访问，尝试修改配置文件-elasticsearch-yml"><a href="#启动后，如果只有本地可以访问，尝试修改配置文件-elasticsearch-yml" class="headerlink" title="启动后，如果只有本地可以访问，尝试修改配置文件 elasticsearch.yml"></a>启动后，如果只有本地可以访问，尝试修改配置文件 elasticsearch.yml</h1><p>中network.host(注意配置文件格式不是以 # 开头的要空一格， ： 后要空一格)<br>为 </p>
+<pre><code>network.host: 0.0.0.0
+</code></pre><p>默认端口是 9200</p>
+<p>注意：关闭防火墙 或者开放9200端口</p>
+<h1 id="ERROR-bootstrap-checks-failed"><a href="#ERROR-bootstrap-checks-failed" class="headerlink" title="ERROR: bootstrap checks failed"></a>ERROR: bootstrap checks failed</h1><p>max file descriptors [4096] for elasticsearch process likely too low, increase to at least [65536]<br>max number of threads [1024] for user [lishang] likely too low, increase to at least [2048]<br>解决方法：切换到root用户，编辑limits.conf 添加类似如下内容</p>
+<p>vi /etc/security/limits.conf </p>
+<p>添加如下内容:</p>
+<pre><code>* soft nofile 65536
+* hard nofile 131072
+* soft nproc 2048
+* hard nproc 4096
+</code></pre><h1 id="max-number-of-threads-1024-for-user-lish-likely-too-low-increase-to-at-least-2048"><a href="#max-number-of-threads-1024-for-user-lish-likely-too-low-increase-to-at-least-2048" class="headerlink" title="max number of threads [1024] for user [lish] likely too low, increase to at least [2048]"></a>max number of threads [1024] for user [lish] likely too low, increase to at least [2048]</h1><p>解决：切换到root用户，进入limits.d目录下修改配置文件。</p>
+<p>vi /etc/security/limits.d/90-nproc.conf </p>
+<p>修改如下内容：</p>
+<pre><code>* soft nproc 1024
+#修改为
+* soft nproc 2048
+</code></pre><h1 id="max-virtual-memory-areas-vm-max-map-count-65530-likely-too-low-increase-to-at-least-262144"><a href="#max-virtual-memory-areas-vm-max-map-count-65530-likely-too-low-increase-to-at-least-262144" class="headerlink" title="max virtual memory areas vm.max_map_count [65530] likely too low, increase to at least [262144]"></a>max virtual memory areas vm.max_map_count [65530] likely too low, increase to at least [262144]</h1><p>解决：切换到root用户修改配置sysctl.conf</p>
+<p>vi /etc/sysctl.conf </p>
+<p>添加下面配置：</p>
+<pre><code>vm.max_map_count=655360
+</code></pre><p>并执行命令：</p>
+<pre><code>sysctl -p
+</code></pre><p>然后，重新启动elasticsearch，即可启动成功。</p>
+<h1 id="ping超时问题"><a href="#ping超时问题" class="headerlink" title="ping超时问题"></a>ping超时问题</h1><h2 id="错误的详细信息"><a href="#错误的详细信息" class="headerlink" title="错误的详细信息"></a>错误的详细信息</h2><pre><code>09-09T16:08:16,479][WARN ][o.e.d.z.ZenDiscovery     ] [log-1] master left (reason = failed to ping, tried [3] times, each with  maximum [30s] timeout), current nodes: nodes: 
+   {log-0}{awifQlJfRcKNggd2II3LQQ}{FpEt0t3cRy6eBxiKtPYfRw}{study0}{192.168.137.150:9300}, master
+   {log-1}{gTsJJfRoRF6hX1vP_TfUiA}{l84qWHqzTdm2wNBGxdpzIg}{study1}{192.168.137.151:9300}, local
+
+[2017-09-09T16:08:19,637][INFO ][o.e.c.s.ClusterService   ] [log-1] detected_master {log-0}{awifQlJfRcKNggd2II3LQQ}{FpEt0t3cRy6eBxiKtPYfRw}{study0}{192.168.137.150:9300}, reason: zen-disco-receive(from master [master {log-0}{awifQlJfRcKNggd2II3LQQ}{FpEt0t3cRy6eBxiKtPYfRw}{study0}{192.168.137.150:9300} committed version [141]])
+[2017-09-09T16:08:20,647][INFO ][o.e.d.z.ZenDiscovery     ] [log-1] master_left [{log-0}{awifQlJfRcKNggd2II3LQQ}{FpEt0t3cRy6eBxiKtPYfRw}{study0}{192.168.137.150:9300}], reason [failed to ping, tried [3] times, each with  maximum [30s] timeout]
+[2017-09-09T16:08:20,648][WARN ][o.e.d.z.ZenDiscovery     ] [log-1] master left (reason = failed to ping, tried [3] times, each with  maximum [30s] timeout), current nodes: nodes: 
+   {log-0}{awifQlJfRcKNggd2II3LQQ}{FpEt0t3cRy6eBxiKtPYfRw}{study0}{192.168.137.150:9300}, master
+   {log-1}{gTsJJfRoRF6hX1vP_TfUiA}{l84qWHqzTdm2wNBGxdpzIg}{study1}{192.168.137.151:9300}, local
+</code></pre><h2 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h2><p>每一个节点上，<code>elasticsearch.yml</code> 都添加<code>xpack.security.enabled: false</code></p>
+<h1 id="分词器问题"><a href="#分词器问题" class="headerlink" title="分词器问题"></a>分词器问题</h1><h2 id="错误日志"><a href="#错误日志" class="headerlink" title="错误日志"></a>错误日志</h2><pre><code>[2017-09-10T20:01:22,848][WARN ][o.e.i.c.IndicesClusterStateService] [log-1] [[iktest][4]] marking and sending shard failed due to [failed to create index]
+java.lang.IllegalArgumentException: Custom Analyzer [ik] failed to find tokenizer under name [ik_max_word]
+    at org.elasticsearch.index.analysis.CustomAnalyzerProvider.build(CustomAnalyzerProvider.java:56) ~[elasticsearch-5.2.0.jar:5.2.0]
+    at org.elasticsearch.index.analysis.AnalysisRegistry.processAnalyzerFactory(AnalysisRegistry.java:560) ~[elasticsearch-5.2.0.jar:5.2.0]
+    at org.elasticsearch.index.analysis.AnalysisRegistry.build(AnalysisRegistry.java:490) ~[elasticsearch-5.2.0.jar:5.2.0]
+    at org.elasticsearch.index.analysis.AnalysisRegistry.build(AnalysisRegistry.java:158) ~[elasticsearch-5.2.0.jar:5.2.0]
+    at org.elasticsearch.index.IndexService.&lt;init&gt;(IndexService.java:146) ~[elasticsearch-5.2.0.jar:5.2.0]
+    at org.elasticsearch.index.IndexModule.newIndexService(IndexModule.java:363) ~[elasticsearch-5.2.0.jar:5.2.0]
+    at org.elasticsearch.indices.IndicesService.createIndexService(IndicesService.java:425) ~[elasticsearch-5.2.0.jar:5.2.0]
+    at org.elasticsearch.indices.IndicesService.createIndex(IndicesService.java:390) ~[elasticsearch-5.2.0.jar:5.2.0]
+    at org.elasticsearch.indices.IndicesService.createIndex(IndicesService.java:146) ~[elasticsearch-5.2.0.jar:5.2.0]
+    at org.elasticsearch.indices.cluster.IndicesClusterStateService.createIndices(IndicesClusterStateService.java:444) [elasticsearch-5.2.0.jar:5.2.0]
+    at org.elasticsearch.indices.cluster.IndicesClusterStateService.applyClusterState(IndicesClusterStateService.java:202) [elasticsearch-5.2.0.jar:5.2.0]
+    at org.elasticsearch.cluster.service.ClusterService.callClusterStateAppliers(ClusterService.java:856) [elasticsearch-5.2.0.jar:5.2.0]
+    at org.elasticsearch.cluster.service.ClusterService.publishAndApplyChanges(ClusterService.java:810) [elasticsearch-5.2.0.jar:5.2.0]
+    at org.elasticsearch.cluster.service.ClusterService.runTasks(ClusterService.java:628) [elasticsearch-5.2.0.jar:5.2.0]
+    at org.elasticsearch.cluster.service.ClusterService$UpdateTask.run(ClusterService.java:1112) [elasticsearch-5.2.0.jar:5.2.0]
+    at org.elasticsearch.common.util.concurrent.ThreadContext$ContextPreservingRunnable.run(ThreadContext.java:527) [elasticsearch-5.2.0.jar:5.2.0]
+    at org.elasticsearch.common.util.concurrent.PrioritizedEsThreadPoolExecutor$TieBreakingPrioritizedRunnable.runAndClean(PrioritizedEsThreadPoolExecutor.java:238) [elasticsearch-5.2.0.jar:5.2.0]
+    at org.elasticsearch.common.util.concurrent.PrioritizedEsThreadPoolExecutor$TieBreakingPrioritizedRunnable.run(PrioritizedEsThreadPoolExecutor.java:201) [elasticsearch-5.2.0.jar:5.2.0]
+    at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_141]
+    at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_141]
+    at java.lang.Thread.run(Thread.java:748) [?:1.8.0_141]
+</code></pre><h2 id="解决办法-1"><a href="#解决办法-1" class="headerlink" title="解决办法"></a>解决办法</h2><pre><code>scp -r ik study@study1:/usr/local/es/elasticsearch-5.2.0/plugins
+</code></pre><p>每一个节点都安装一下分词器插件</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-09-10T16:07:04.645Z" itemprop="dateUpdated">2017-09-11 00:07:04</time>
+</span><br>
+
+
+        
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2017/09/03/elasticsearch-3-installation-problem/" target="_blank" rel="external">http://dennis.pathto.top/2017/09/03/elasticsearch-3-installation-problem/</a>
+        
+    </div>
+    <footer>
+        <a href="http://dennis.pathto.top">
+            <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
+            Dennis
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/09/03/elasticsearch-3-installation-problem/&title=《3.elasticsearch运行系统参数优化》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/09/03/elasticsearch-3-installation-problem/&title=《3.elasticsearch运行系统参数优化》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/09/03/elasticsearch-3-installation-problem/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《3.elasticsearch运行系统参数优化》 — Dennis'Blog&url=http://dennis.pathto.top/2017/09/03/elasticsearch-3-installation-problem/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/09/03/elasticsearch-3-installation-problem/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2017/09/05/elasticsearch-5-ik/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">5.elasticsearch-IK分词器安装</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/09/02/elasticsearch-2-installation/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">2.elasticsearch安装</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper">
+     <div id="articleComment" style="padding-left:5%;padding-right:5%;" ></div>
+    <!--<iframe height="900px" id="page_content_iframe" frameborder="0" marginheight="0" onload="dyniframesize('page_content_iframe');" width="100%" scrolling="auto" src="https://dennis-dzqapp.rhcloud.com/list_blog_commonts?p_id=2017/09/03/elasticsearch-3-installation-problem/" style="display: block;"></iframe>-->
+    </div>
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" data-alipay="http://otwbalpjp.bkt.clouddn.com/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Dennis &copy; 2015 - 2017</span>
+            <span>
+                
+                Power by <a href="http://116.196.88.117/" target="_blank">pathto.top</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/09/03/elasticsearch-3-installation-problem/&title=《3.elasticsearch运行系统参数优化》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/09/03/elasticsearch-3-installation-problem/&title=《3.elasticsearch运行系统参数优化》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/09/03/elasticsearch-3-installation-problem/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《3.elasticsearch运行系统参数优化》 — Dennis'Blog&url=http://dennis.pathto.top/2017/09/03/elasticsearch-3-installation-problem/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/09/03/elasticsearch-3-installation-problem/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACr0lEQVR42u3aQVLEMAwEQP7/aXgAbGpGspc9dE4pKpu4fbCEpK+v+Pr+dc2e/33/6i/Pvz184eHh4a2X/vzh5GPP27Fh52vGw8PDu817tcTnz7e/zU/y2Tvx8PDwPpO3x7fblIclPDw8vM/k5YWGPEVOggQeHh7ep/HyEmqbLrfvyYsXh2steHh4eDGvLRB8wv2V/h4eHh7euqueNMPaNlW+fXkYeLlaPDw8vAu8Ni1um16z55+/nq8TDw8P7zavHZB6fj7JbJNNacPDH2vAw8PDu8ZrxwWej+wE344FFMFg1kPDw8PDC3h5QWFf9p2VMNpg8zLi4eHh4R3lJWFg09pve1Lt9tVdOzw8PLwFb9Ztn21BsrhNCIm2CQ8PD2/Na5eef+DUQMCqhIGHh4d3gTdbYl7kTUqum1LIsL+Hh4eHt+BthgDyRlRbqmjHrVYzEXh4eHgj3iz/bAcF2mLxrJH2R2DAw8PDu8DLj/LZEpPUfJPWvwweeHh4eBd4mxpGnuzmiXiS4ifBDA8PD+8279SL2nGBfL/bkYWiJIGHh4e34LXjVpum/qzgO2zO4eHh4b2FNzvo8wbVppyRbHQ/PoGHh4fX8WZFhHwpyeE+C0vtBuHh4eHd423a9m2KXB/reTKNh4eHd423T3DzxlVbqmi3uKhS4+Hh4R3ibe7bZPo5eOzTfTw8PLz38PLG/KqdHy+9LWfg4eHhvZNXH7hBuaEdumpLElGTDA8PD+8ob3YQz3h526wtAePh4eG9k7eJJ7PWfgs70MfDw8PDu8DL/+FvXz0bCNiXQvDw8PDew2sbY/uiw+HY9VxrwcPDw/tXXrsRs+f3m4iHh4f3ObxNk2zzzrbEjIeHh3eb1w42JY3/zSjq8zuT7cPDw8O7x2sLsvv0uh0COADAw8PDO8P7AeKFDQEQnBGcAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="/js/main.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '我消失了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '我回来了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

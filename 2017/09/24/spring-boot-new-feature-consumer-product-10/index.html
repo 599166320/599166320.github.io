@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>10.spring-boot使用新特性开发生产者和消费者程序 | Dennis&#39;Blog | 我不用讨人喜欢，只做一个迷人的混蛋</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="spring-boot,spring,java">
+    <meta name="description" content="在spring-boot中，引入非常多的新特性，简化了spring中繁琐，臃肿的开发方式 组合注解使用组合注解，通过其名称，就可以非常容易知道其意义，提高代码的可读性 @RestController=@Controller+@ResponseBody @GetMapping=@RequestMapping(method = RequestMethod.GET) http客户端spring-boot">
+<meta name="keywords" content="spring-boot,spring,java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="10.spring-boot使用新特性开发生产者和消费者程序">
+<meta property="og:url" content="http://dennis.pathto.top/2017/09/24/spring-boot-new-feature-consumer-product-10/index.html">
+<meta property="og:site_name" content="Dennis&#39;Blog">
+<meta property="og:description" content="在spring-boot中，引入非常多的新特性，简化了spring中繁琐，臃肿的开发方式 组合注解使用组合注解，通过其名称，就可以非常容易知道其意义，提高代码的可读性 @RestController=@Controller+@ResponseBody @GetMapping=@RequestMapping(method = RequestMethod.GET) http客户端spring-boot">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-09-24T11:07:55.236Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="10.spring-boot使用新特性开发生产者和消费者程序">
+<meta name="twitter:description" content="在spring-boot中，引入非常多的新特性，简化了spring中繁琐，臃肿的开发方式 组合注解使用组合注解，通过其名称，就可以非常容易知道其意义，提高代码的可读性 @RestController=@Controller+@ResponseBody @GetMapping=@RequestMapping(method = RequestMethod.GET) http客户端spring-boot">
+    
+        <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/semantic.css" type="text/css" />
+<link rel="stylesheet" href="/css/zyComment.css" type="text/css" />
+<style type="text/css">
+	#cloud-tie-wrapper label {
+	    font-weight: bold;
+	}
+	#cloud-tie-wrapper a {
+		font-family: Microsoft YaHei;
+	}
+	#articleComment {
+		width: "60%";
+		/*height: 1500px;*/
+		overflow: auto;
+	}
+</style>
+
+    <script>window.lazyScripts=[]</script>
+
+
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/zyComment.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+$(function(){
+var post_toc_links = $(".post-toc-link");
+$.each( post_toc_links, function(index,post_toc_link){
+	post_toc_link = $(post_toc_link);
+	var post_toc_number = post_toc_link.find(".post-toc-number");
+	var post_toc_text = post_toc_link.find(".post-toc-text");
+	//console.log(post_toc_number.text()+" "+post_toc_text.text());
+	$(post_toc_link.attr("href")).text(post_toc_number.text()+" "+post_toc_text.text())
+});
+});
+
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+function jsonp(url){
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.insertBefore(script, head.firstChild);
+}
+function add_blog_callBackFun(rs){
+	$("#articleComment").zyComment("setCommentAfter",rs);
+}
+function get_list_blog_commonts_callBackFun(rs){
+	var agoComment = rs;
+	$("#articleComment").zyComment({
+		"width":"355",
+		"height":"33",
+		"agoComment":agoComment,
+		"callback":function(comment){
+			var selfID = comment.selfID;
+			if(typeof selfID == "undefined" ){
+				selfID = 0;
+			}
+			jsonp(host+"/add_blog_jsonp?"+"p_id="+encodeURIComponent("2017/09/24/spring-boot-new-feature-consumer-product-10/")+ "&username="+encodeURIComponent(comment.name)+"&content="+encodeURIComponent(comment.content)+"&email="+encodeURIComponent(comment.email)+"&c_id_replay="+selfID);
+
+		}
+	});
+}
+jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/09/24/spring-boot-new-feature-consumer-product-10/"));
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Dennis</h5>
+          <a href="mailto:dennis52o1314@163.com" title="dennis52o1314@163.com" class="mail">dennis52o1314@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/599166320" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/2166908462" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                其他
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">10.spring-boot使用新特性开发生产者和消费者程序</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">10.spring-boot使用新特性开发生产者和消费者程序</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-09-24T11:03:25.000Z" itemprop="datePublished" class="page-time">
+  2017-09-24
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-boot/">spring-boot</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#组合注解"><span class="post-toc-number">1.</span> <span class="post-toc-text">组合注解</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#http客户端"><span class="post-toc-number">2.</span> <span class="post-toc-text">http客户端</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#列子"><span class="post-toc-number">3.</span> <span class="post-toc-text">列子</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#spring-cloud-consumer-user工程"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">spring-cloud-consumer-user工程</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#spring-cloud-provider工程"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">spring-cloud-provider工程</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-spring-boot-new-feature-consumer-product-10"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">10.spring-boot使用新特性开发生产者和消费者程序</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-09-24 19:03:25" datetime="2017-09-24T11:03:25.000Z"  itemprop="datePublished">2017-09-24</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-boot/">spring-boot</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>在spring-boot中，引入非常多的新特性，简化了spring中繁琐，臃肿的开发方式</p>
+<h1 id="组合注解"><a href="#组合注解" class="headerlink" title="组合注解"></a>组合注解</h1><p>使用组合注解，通过其名称，就可以非常容易知道其意义，提高代码的可读性</p>
+<p>@RestController=@Controller+@ResponseBody</p>
+<p>@GetMapping=@RequestMapping(method = RequestMethod.GET)</p>
+<h1 id="http客户端"><a href="#http客户端" class="headerlink" title="http客户端"></a>http客户端</h1><p>spring-boot提供了专门用于restApi调用的模板类RestTemplate，该模板类使用了单例的设计模式，底层也实现了线程池,http长连接的特性，开发人员非常方便就可以开发出高性能的http客户端程序</p>
+<h1 id="列子"><a href="#列子" class="headerlink" title="列子"></a>列子</h1><h2 id="spring-cloud-consumer-user工程"><a href="#spring-cloud-consumer-user工程" class="headerlink" title="spring-cloud-consumer-user工程"></a>spring-cloud-consumer-user工程</h2><p>UserController.java</p>
+<pre><code>package com.example.demo.controller;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+import com.example.demo.model.User;
+@RestController
+@RequestMapping(value=&quot;/user&quot;)
+public class UserController {
+    @Autowired
+    private RestTemplate restTemplate;
+    @GetMapping(value=&quot;/get/{id}&quot;)
+    public User get(@PathVariable String id){
+        return restTemplate.getForObject(&quot;http://localhost:8080/user/get?id=&quot;+id, User.class);
+    }
+}
+</code></pre><p>CoreConfig.java</p>
+<pre><code>package com.example.demo.config;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
+@Configuration
+public class CoreConfig {
+    @Bean
+    public RestTemplate restTemplateBean(){
+        return new RestTemplate();
+    }
+}
+</code></pre><p>User.java</p>
+<pre><code>package com.example.demo.model;
+import java.util.Date;
+public class User {
+    private String id;
+    private String userName;
+    private int age;
+    private Date birthday;
+    public String getId() {
+        return id;
+    }
+    public void setId(String id) {
+        this.id = id;
+    }
+    public String getUserName() {
+        return userName;
+    }
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+    public int getAge() {
+        return age;
+    }
+    public void setAge(int age) {
+        this.age = age;
+    }
+    public Date getBirthday() {
+        return birthday;
+    }
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+}
+</code></pre><p>application.properties</p>
+<pre><code>server.port=8081
+</code></pre><h2 id="spring-cloud-provider工程"><a href="#spring-cloud-provider工程" class="headerlink" title="spring-cloud-provider工程"></a>spring-cloud-provider工程</h2><p>UserController.java</p>
+<pre><code>package com.dennis.controller;
+import java.util.HashMap;
+import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.dennis.model.User;
+@RestController
+@RequestMapping(value=&quot;/user&quot;)
+public class UserController {
+    private Map&lt;String, User&gt; umap = new HashMap();
+    public UserController(){
+        umap.put(&quot;1&quot;, new User(&quot;1&quot;, &quot;xiaoming&quot;, 30));
+        umap.put(&quot;2&quot;, new User(&quot;2&quot;, &quot;xiaohong&quot;, 20));
+        umap.put(&quot;3&quot;, new User(&quot;3&quot;, &quot;zhangsan&quot;, 80));
+        umap.put(&quot;4&quot;, new User(&quot;4&quot;, &quot;lisi&quot;, 10));
+        umap.put(&quot;5&quot;, new User(&quot;5&quot;, &quot;wangwu&quot;, 22));
+    }
+    @GetMapping(value=&quot;/get&quot;)
+    @ResponseBody
+    public User get(String id){
+        return umap.get(id);
+    }
+}
+</code></pre>
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-09-24T11:07:55.236Z" itemprop="dateUpdated">2017-09-24 19:07:55</time>
+</span><br>
+
+
+        
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2017/09/24/spring-boot-new-feature-consumer-product-10/" target="_blank" rel="external">http://dennis.pathto.top/2017/09/24/spring-boot-new-feature-consumer-product-10/</a>
+        
+    </div>
+    <footer>
+        <a href="http://dennis.pathto.top">
+            <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
+            Dennis
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/">spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-boot/">spring-boot</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/09/24/spring-boot-new-feature-consumer-product-10/&title=《10.spring-boot使用新特性开发生产者和消费者程序》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/09/24/spring-boot-new-feature-consumer-product-10/&title=《10.spring-boot使用新特性开发生产者和消费者程序》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/09/24/spring-boot-new-feature-consumer-product-10/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《10.spring-boot使用新特性开发生产者和消费者程序》 — Dennis'Blog&url=http://dennis.pathto.top/2017/09/24/spring-boot-new-feature-consumer-product-10/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/09/24/spring-boot-new-feature-consumer-product-10/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2017/09/24/spring-boot-Thymeleaf-context-path-11/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">11.spring-boot-Thymeleaf和context path</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/09/24/life-A-person-s-thinking/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">一个人的思维，决定了他在什么阶层</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper">
+     <div id="articleComment" style="padding-left:5%;padding-right:5%;" ></div>
+    <!--<iframe height="900px" id="page_content_iframe" frameborder="0" marginheight="0" onload="dyniframesize('page_content_iframe');" width="100%" scrolling="auto" src="https://dennis-dzqapp.rhcloud.com/list_blog_commonts?p_id=2017/09/24/spring-boot-new-feature-consumer-product-10/" style="display: block;"></iframe>-->
+    </div>
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" data-alipay="http://otwbalpjp.bkt.clouddn.com/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Dennis &copy; 2015 - 2017</span>
+            <span>
+                
+                Power by <a href="http://116.196.88.117/" target="_blank">pathto.top</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/09/24/spring-boot-new-feature-consumer-product-10/&title=《10.spring-boot使用新特性开发生产者和消费者程序》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/09/24/spring-boot-new-feature-consumer-product-10/&title=《10.spring-boot使用新特性开发生产者和消费者程序》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/09/24/spring-boot-new-feature-consumer-product-10/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《10.spring-boot使用新特性开发生产者和消费者程序》 — Dennis'Blog&url=http://dennis.pathto.top/2017/09/24/spring-boot-new-feature-consumer-product-10/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/09/24/spring-boot-new-feature-consumer-product-10/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACnklEQVR42u3aQZLCMAwEQP7/afYBVMKMZbM5dE7UEhK3D5JW8usVX++L6/Pbq1+1f796y+vEhYeHh7dp6feAqzs/n3z/rrXtS9aMh4eHd5p3v7gkDeSM9v72OXh4eHhP490H66S+zVNL+y48PDy8Z/ImZXGyEcmv8PDw8J7AW2uhts3ctXL5R70WPDw8vJiXT5Ge8/nIfA8PDw9vPFXPi+M2rLeNhvfShYeHh3eC17Zf2+NTbdxOjh3U68TDw8P7IW8UjuMR19rRq2Jr8PDw8A7z8kH+WvI40Yr9cj8eHh7eMd7esJ4X3BNkPd/Dw8PDG/PaBe09BJAfUKiTAR4eHt4/8dpSeD4Sa9NMMd/Dw8PD28TbNe5qlzgZhs2TCh4eHt6Elz/u/vNkrNUewMpHdHh4eHgneHmozYN7kkLaRm1+z5f0gIeHh7eV1xa4bSNgbaHzARseHh7eXl7bLGiD/mS0lqeoy43Dw8PDO8BrA/18O9Z47QAMDw8P7xxvEo7bkJ0sLm9JRO/Fw8PD+wmvLZEnsLzEz9eAh4eHd5q3FqDz1u0avj4jdn8/Hh4e3lbeCUwe6PPQvzhgw8PDwzvASzBt+M4XUY+y4oNWRa8aDw8Pb8Cbl78tdR6969SFh4eHt4nXDu9b/IbTDfFWjv4zwMPDwxvz1hoW+ZMnW5Cz8fDw8M7x2hbDvN0waRCPxmB4eHh4A967vBJYXo5PWiFResDDw8M7wGsDbtuM2LXctQ3Cw8PDO8ebJIOkBG8ByQYViQcPDw/vGG9ysGnXkYJ5M+KVp0I8PDy8H/LaReRJZUMawMPDw3skry2jk21qjxQUwzM8PDy8Y7xkWWvNgjyRrI2vviDx8PDwDvDasjgJynnzYu0gwsGGBR4eHt7d9Qd/60rfUrFEawAAAABJRU5ErkJggg==" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="/js/main.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '我消失了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '我回来了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>9.elasticsearch-查询demo | Dennis&#39;Blog | 我不用讨人喜欢，只做一个迷人的混蛋</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="elasticsearch,elk">
+    <meta name="description" content="初始化数据创建一个company索引,在company索引下面建立一个emp类型,并且批量保存几个文档 curl -XPOST &amp;apos;study0:9200/company/emp/_bulk&amp;apos; -d &amp;apos; { &amp;quot;index&amp;quot;: { &amp;quot;_id&amp;quot;: 1 }} { &amp;quot;name&amp;quot; : &amp;quot;zhangshan&amp;qu">
+<meta name="keywords" content="elasticsearch,elk">
+<meta property="og:type" content="article">
+<meta property="og:title" content="9.elasticsearch-查询demo">
+<meta property="og:url" content="http://dennis.pathto.top/2017/09/10/elasticsearch-normal-api/index.html">
+<meta property="og:site_name" content="Dennis&#39;Blog">
+<meta property="og:description" content="初始化数据创建一个company索引,在company索引下面建立一个emp类型,并且批量保存几个文档 curl -XPOST &amp;apos;study0:9200/company/emp/_bulk&amp;apos; -d &amp;apos; { &amp;quot;index&amp;quot;: { &amp;quot;_id&amp;quot;: 1 }} { &amp;quot;name&amp;quot; : &amp;quot;zhangshan&amp;qu">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-09-10T16:07:04.687Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="9.elasticsearch-查询demo">
+<meta name="twitter:description" content="初始化数据创建一个company索引,在company索引下面建立一个emp类型,并且批量保存几个文档 curl -XPOST &amp;apos;study0:9200/company/emp/_bulk&amp;apos; -d &amp;apos; { &amp;quot;index&amp;quot;: { &amp;quot;_id&amp;quot;: 1 }} { &amp;quot;name&amp;quot; : &amp;quot;zhangshan&amp;qu">
+    
+        <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/semantic.css" type="text/css" />
+<link rel="stylesheet" href="/css/zyComment.css" type="text/css" />
+<style type="text/css">
+	#cloud-tie-wrapper label {
+	    font-weight: bold;
+	}
+	#cloud-tie-wrapper a {
+		font-family: Microsoft YaHei;
+	}
+	#articleComment {
+		width: "60%";
+		/*height: 1500px;*/
+		overflow: auto;
+	}
+</style>
+
+    <script>window.lazyScripts=[]</script>
+
+
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/zyComment.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+$(function(){
+var post_toc_links = $(".post-toc-link");
+$.each( post_toc_links, function(index,post_toc_link){
+	post_toc_link = $(post_toc_link);
+	var post_toc_number = post_toc_link.find(".post-toc-number");
+	var post_toc_text = post_toc_link.find(".post-toc-text");
+	//console.log(post_toc_number.text()+" "+post_toc_text.text());
+	$(post_toc_link.attr("href")).text(post_toc_number.text()+" "+post_toc_text.text())
+});
+});
+
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+function jsonp(url){
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.insertBefore(script, head.firstChild);
+}
+function add_blog_callBackFun(rs){
+	$("#articleComment").zyComment("setCommentAfter",rs);
+}
+function get_list_blog_commonts_callBackFun(rs){
+	var agoComment = rs;
+	$("#articleComment").zyComment({
+		"width":"355",
+		"height":"33",
+		"agoComment":agoComment,
+		"callback":function(comment){
+			var selfID = comment.selfID;
+			if(typeof selfID == "undefined" ){
+				selfID = 0;
+			}
+			jsonp(host+"/add_blog_jsonp?"+"p_id="+encodeURIComponent("2017/09/10/elasticsearch-normal-api/")+ "&username="+encodeURIComponent(comment.name)+"&content="+encodeURIComponent(comment.content)+"&email="+encodeURIComponent(comment.email)+"&c_id_replay="+selfID);
+
+		}
+	});
+}
+jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/09/10/elasticsearch-normal-api/"));
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Dennis</h5>
+          <a href="mailto:dennis52o1314@163.com" title="dennis52o1314@163.com" class="mail">dennis52o1314@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/599166320" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/2166908462" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                其他
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">9.elasticsearch-查询demo</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">9.elasticsearch-查询demo</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-09-10T13:25:29.000Z" itemprop="datePublished" class="page-time">
+  2017-09-10
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/elasticsearch/">elasticsearch</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#初始化数据"><span class="post-toc-number">1.</span> <span class="post-toc-text">初始化数据</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#match"><span class="post-toc-number">2.</span> <span class="post-toc-text">match</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#match-all"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">match_all</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#pretty"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">pretty</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#match-1"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">match</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#多条件查询"><span class="post-toc-number">3.</span> <span class="post-toc-text">多条件查询</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#must和must-not"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">must和must_not</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#should"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">should</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Term过滤"><span class="post-toc-number">4.</span> <span class="post-toc-text">Term过滤</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#用term过滤替换match"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">用term过滤替换match</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#terms可以用来匹配多个值"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">terms可以用来匹配多个值</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#关于match和term比较的例子"><span class="post-toc-number">5.</span> <span class="post-toc-text">关于match和term比较的例子</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#match-2"><span class="post-toc-number">5.1.</span> <span class="post-toc-text">match</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#term"><span class="post-toc-number">5.2.</span> <span class="post-toc-text">term</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Range过滤"><span class="post-toc-number">6.</span> <span class="post-toc-text">Range过滤</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#range之gt和lt"><span class="post-toc-number">6.1.</span> <span class="post-toc-text">range之gt和lt</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#exists和-missing过滤"><span class="post-toc-number">7.</span> <span class="post-toc-text">exists和 missing过滤</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#exists"><span class="post-toc-number">7.1.</span> <span class="post-toc-text">exists</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#bool"><span class="post-toc-number">8.</span> <span class="post-toc-text">bool</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#普通查询与过滤条件合并"><span class="post-toc-number">8.1.</span> <span class="post-toc-text">普通查询与过滤条件合并</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#条件过滤"><span class="post-toc-number">8.2.</span> <span class="post-toc-text">条件过滤</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-elasticsearch-normal-api"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">9.elasticsearch-查询demo</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-09-10 21:25:29" datetime="2017-09-10T13:25:29.000Z"  itemprop="datePublished">2017-09-10</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/elasticsearch/">elasticsearch</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="初始化数据"><a href="#初始化数据" class="headerlink" title="初始化数据"></a>初始化数据</h1><p>创建一个company索引,在company索引下面建立一个emp类型,并且批量保存几个文档</p>
+<pre><code>curl -XPOST &apos;study0:9200/company/emp/_bulk&apos; -d &apos;
+{ &quot;index&quot;: { &quot;_id&quot;: 1 }}
+{ &quot;name&quot; : &quot;zhangshan&quot;, &quot;age&quot; : 21 , &quot;sex&quot;: &quot;man&quot;, &quot;birthday&quot;: &quot;1996-01-02&quot; , &quot;hobby&quot;: &quot;i like sport&quot; }
+{ &quot;index&quot;: { &quot;_id&quot;: 2 }}
+{ &quot;name&quot; : &quot;lisi&quot;, &quot;age&quot; : 21 , &quot;sex&quot;: &quot;man&quot;, &quot;birthday&quot;: &quot;1995-01-02&quot; , &quot;hobby&quot;: &quot;i like compute&quot; }
+{ &quot;index&quot;: { &quot;_id&quot;: 3 }}
+{ &quot;name&quot; : &quot;wangwu&quot;, &quot;age&quot; : 17 , &quot;sex&quot;: &quot;man&quot;, &quot;birthday&quot;: &quot;1998-01-02&quot; , &quot;hobby&quot;: &quot;i like trivel&quot; }
+{ &quot;index&quot;: { &quot;_id&quot;: 4 }}
+{ &quot;name&quot; : &quot;wangba&quot;, &quot;age&quot; : 25 , &quot;sex&quot;: &quot;woman&quot;, &quot;birthday&quot;: &quot;1996-01-02&quot; , &quot;hobby&quot;: &quot;i like trivel&quot; }
+{ &quot;index&quot;: { &quot;_id&quot;: 5 }}
+{ &quot;name&quot; : &quot;xiaoming&quot;, &quot;age&quot; : 25 , &quot;sex&quot;: &quot;woman&quot;, &quot;birthday&quot;: &quot;1991-01-02&quot; , &quot;hobby&quot;: &quot;i like song&quot; }
+{ &quot;index&quot;: { &quot;_id&quot;: 6 }}
+{ &quot;name&quot; : &quot;xiaohong&quot;, &quot;age&quot; : 31 , &quot;sex&quot;: &quot;man&quot;, &quot;birthday&quot;: &quot;1988-01-02&quot; , &quot;hobby&quot;: &quot;i like piano&quot; }
+{ &quot;index&quot;: { &quot;_id&quot;: 7 }}
+{ &quot;name&quot; : &quot;zhaowu&quot;, &quot;age&quot; : 31 , &quot;sex&quot;: &quot;man&quot;, &quot;birthday&quot;: &quot;1997-01-02&quot; , &quot;hobby&quot;: &quot;i like trivel and music&quot; }
+{ &quot;index&quot;: { &quot;_id&quot;: 8 }}
+{ &quot;name&quot; : &quot;zhaoliu&quot;, &quot;age&quot; : 18 , &quot;sex&quot;: &quot;woman&quot;, &quot;birthday&quot;: &quot;1998-01-02&quot; , &quot;hobby&quot;: &quot;i like compute game&quot; }
+{ &quot;index&quot;: { &quot;_id&quot;: 9 }}
+{ &quot;name&quot; : &quot;zhaoqi&quot;, &quot;age&quot; : 20 , &quot;sex&quot;: &quot;woman&quot;, &quot;birthday&quot;: &quot;1996-01-02&quot; , &quot;hobby&quot;: &quot;i like compute game&quot; }
+&apos;
+</code></pre><h1 id="match"><a href="#match" class="headerlink" title="match"></a>match</h1><p>类似sql中的like,但是比like查询更加强大</p>
+<h2 id="match-all"><a href="#match-all" class="headerlink" title="match_all"></a>match_all</h2><p>match_all 表示要获取全部文档</p>
+<pre><code>curl -XPOST &apos;study0:9200/company/emp/_search&apos; -d &apos;
+{
+&quot;query&quot;: {
+&quot;match_all&quot;: {}
+}
+}&apos;
+</code></pre><p><strong>查询结果:</strong></p>
+<pre><code>{&quot;took&quot;:10,&quot;timed_out&quot;:false,&quot;_shards&quot;:{&quot;total&quot;:5,&quot;successful&quot;:5,&quot;failed&quot;:0},&quot;hits&quot;:{&quot;total&quot;:9,&quot;max_score&quot;:1.0,&quot;hits&quot;:[{&quot;_index&quot;:&quot;company&quot;,&quot;_type&quot;:&quot;emp&quot;,&quot;_id&quot;:&quot;5&quot;,&quot;_score&quot;:1.0,&quot;_source&quot;:{ &quot;name&quot; : &quot;xiaoming&quot;, &quot;age&quot; : 25 , &quot;sex&quot;: &quot;woman&quot;, &quot;birthday&quot;: &quot;1991-01-02&quot; , &quot;hobby&quot;: &quot;i like song&quot; }},{&quot;_index&quot;:&quot;company&quot;,&quot;_type&quot;:&quot;emp&quot;,&quot;_id&quot;:&quot;8&quot;,&quot;_score&quot;:1.0,&quot;_source&quot;:{ &quot;name&quot; : &quot;zhaoliu&quot;, &quot;age&quot; : 18 , &quot;sex&quot;: &quot;woman&quot;, &quot;birthday&quot;: &quot;1998-01-02&quot; , &quot;hobby&quot;: &quot;i like compute game&quot; }},{&quot;_index&quot;:&quot;company&quot;,&quot;_type&quot;:&quot;emp&quot;,&quot;_id&quot;:&quot;9&quot;,&quot;_score&quot;:1.0,&quot;_source&quot;:{ &quot;name&quot; : &quot;zhaoqi&quot;, &quot;age&quot; : 20 , &quot;sex&quot;: &quot;woman&quot;, &quot;birthday&quot;: &quot;1996-01-02&quot; , &quot;hobby&quot;: &quot;i like compute game&quot; }},{&quot;_index&quot;:&quot;company&quot;,&quot;_type&quot;:&quot;emp&quot;,&quot;_id&quot;:&quot;2&quot;,&quot;_score&quot;:1.0,&quot;_source&quot;:{ &quot;name&quot; : &quot;lisi&quot;, &quot;age&quot; : 21 , &quot;sex&quot;: &quot;man&quot;, &quot;birthday&quot;: &quot;1995-01-02&quot; , &quot;hobby&quot;: &quot;i like compute&quot; }},{&quot;_index&quot;:&quot;company&quot;,&quot;_type&quot;:&quot;emp&quot;,&quot;_id&quot;:&quot;4&quot;,&quot;_score&quot;:1.0,&quot;_source&quot;:{ &quot;name&quot; : &quot;wangba&quot;, &quot;age&quot; : 25 , &quot;sex&quot;: &quot;woman&quot;, &quot;birthday&quot;: &quot;1996-01-02&quot; , &quot;hobby&quot;: &quot;i like trivel&quot; }},{&quot;_index&quot;:&quot;company&quot;,&quot;_type&quot;:&quot;emp&quot;,&quot;_id&quot;:&quot;6&quot;,&quot;_score&quot;:1.0,&quot;_source&quot;:{ &quot;name&quot; : &quot;xiaohong&quot;, &quot;age&quot; : 31 , &quot;sex&quot;: &quot;man&quot;, &quot;birthday&quot;: &quot;1988-01-02&quot; , &quot;hobby&quot;: &quot;i like piano&quot; }},{&quot;_index&quot;:&quot;company&quot;,&quot;_type&quot;:&quot;emp&quot;,&quot;_id&quot;:&quot;1&quot;,&quot;_score&quot;:1.0,&quot;_source&quot;:{ &quot;name&quot; : &quot;zhangshan&quot;, &quot;age&quot; : 21 , &quot;sex&quot;: &quot;man&quot;, &quot;birthday&quot;: &quot;1996-01-02&quot; , &quot;hobby&quot;: &quot;i like sport&quot; }},{&quot;_index&quot;:&quot;company&quot;,&quot;_type&quot;:&quot;emp&quot;,&quot;_id&quot;:&quot;7&quot;,&quot;_score&quot;:1.0,&quot;_source&quot;:{ &quot;name&quot; : &quot;zhaowu&quot;, &quot;age&quot; : 31 , &quot;sex&quot;: &quot;man&quot;, &quot;birthday&quot;: &quot;1997-01-02&quot; , &quot;hobby&quot;: &quot;i like trivel and music&quot; }},{&quot;_index&quot;:&quot;company&quot;,&quot;_type&quot;:&quot;emp&quot;,&quot;_id&quot;:&quot;3&quot;,&quot;_score&quot;:1.0,&quot;_source&quot;:{ &quot;name&quot; : &quot;wangwu&quot;, &quot;age&quot; : 17 , &quot;sex&quot;: &quot;man&quot;, &quot;birthday&quot;: &quot;1998-01-02&quot; , &quot;hobby&quot;: &quot;i like trivel&quot; }}]}}
+</code></pre><h2 id="pretty"><a href="#pretty" class="headerlink" title="pretty"></a>pretty</h2><p>在查询url后面添加pretty,可以格式化查询结果，使阅读更加友好</p>
+<pre><code>curl -XPOST &apos;study0:9200/company/emp/_search?pretty&apos; -d &apos;
+{
+&quot;query&quot;: {
+&quot;match_all&quot;: {}
+}
+}&apos;
+</code></pre><p><strong>查询结果:</strong></p>
+<pre><code>{
+  &quot;took&quot; : 8,
+  &quot;timed_out&quot; : false,
+  &quot;_shards&quot; : {
+&quot;total&quot; : 5,
+&quot;successful&quot; : 5,
+&quot;failed&quot; : 0
+  },
+  &quot;hits&quot; : {
+&quot;total&quot; : 9,
+&quot;max_score&quot; : 1.0,
+&quot;hits&quot; : [
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;5&quot;,
+&quot;_score&quot; : 1.0,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;xiaoming&quot;,
+  &quot;age&quot; : 25,
+  &quot;sex&quot; : &quot;woman&quot;,
+  &quot;birthday&quot; : &quot;1991-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like song&quot;
+}
+  },
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;8&quot;,
+&quot;_score&quot; : 1.0,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;zhaoliu&quot;,
+  &quot;age&quot; : 18,
+  &quot;sex&quot; : &quot;woman&quot;,
+  &quot;birthday&quot; : &quot;1998-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like compute game&quot;
+}
+  },
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;9&quot;,
+&quot;_score&quot; : 1.0,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;zhaoqi&quot;,
+  &quot;age&quot; : 20,
+  &quot;sex&quot; : &quot;woman&quot;,
+  &quot;birthday&quot; : &quot;1996-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like compute game&quot;
+}
+  },
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;2&quot;,
+&quot;_score&quot; : 1.0,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;lisi&quot;,
+  &quot;age&quot; : 21,
+  &quot;sex&quot; : &quot;man&quot;,
+  &quot;birthday&quot; : &quot;1995-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like compute&quot;
+}
+  },
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;4&quot;,
+&quot;_score&quot; : 1.0,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;wangba&quot;,
+  &quot;age&quot; : 25,
+  &quot;sex&quot; : &quot;woman&quot;,
+  &quot;birthday&quot; : &quot;1996-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like trivel&quot;
+}
+  },
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;6&quot;,
+&quot;_score&quot; : 1.0,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;xiaohong&quot;,
+  &quot;age&quot; : 31,
+  &quot;sex&quot; : &quot;man&quot;,
+  &quot;birthday&quot; : &quot;1988-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like piano&quot;
+}
+  },
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;1&quot;,
+&quot;_score&quot; : 1.0,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;zhangshan&quot;,
+  &quot;age&quot; : 21,
+  &quot;sex&quot; : &quot;man&quot;,
+  &quot;birthday&quot; : &quot;1996-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like sport&quot;
+}
+  },
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;7&quot;,
+&quot;_score&quot; : 1.0,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;zhaowu&quot;,
+  &quot;age&quot; : 31,
+  &quot;sex&quot; : &quot;man&quot;,
+  &quot;birthday&quot; : &quot;1997-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like trivel and music&quot;
+}
+  },
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;3&quot;,
+&quot;_score&quot; : 1.0,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;wangwu&quot;,
+  &quot;age&quot; : 17,
+  &quot;sex&quot; : &quot;man&quot;,
+  &quot;birthday&quot; : &quot;1998-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like trivel&quot;
+}
+  }
+]
+  }
+}
+</code></pre><h2 id="match-1"><a href="#match-1" class="headerlink" title="match"></a>match</h2><p>查询hobby字段，喜欢trivel的人</p>
+<pre><code>curl -XPOST &apos;study0:9200/company/emp/_search?pretty&apos; -d &apos; 
+{
+  &quot;query&quot;: {
+ &quot;match&quot;: {&quot;hobby&quot;: &quot;trivel&quot;}
+ }
+}&apos;
+</code></pre><p>查询结果</p>
+<pre><code>{
+  &quot;took&quot; : 20,
+  &quot;timed_out&quot; : false,
+  &quot;_shards&quot; : {
+&quot;total&quot; : 5,
+&quot;successful&quot; : 5,
+&quot;failed&quot; : 0
+  },
+  &quot;hits&quot; : {
+&quot;total&quot; : 3,
+&quot;max_score&quot; : 0.86312973,
+&quot;hits&quot; : [
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;4&quot;,
+&quot;_score&quot; : 0.86312973,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;wangba&quot;,
+  &quot;age&quot; : 25,
+  &quot;sex&quot; : &quot;woman&quot;,
+  &quot;birthday&quot; : &quot;1996-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like trivel&quot;
+}
+  },
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;7&quot;,
+&quot;_score&quot; : 0.6160039,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;zhaowu&quot;,
+  &quot;age&quot; : 31,
+  &quot;sex&quot; : &quot;man&quot;,
+  &quot;birthday&quot; : &quot;1997-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like trivel and music&quot;
+}
+  },
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;3&quot;,
+&quot;_score&quot; : 0.25316024,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;wangwu&quot;,
+  &quot;age&quot; : 17,
+  &quot;sex&quot; : &quot;man&quot;,
+  &quot;birthday&quot; : &quot;1998-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like trivel&quot;
+}
+  }
+]
+  }
+}
+</code></pre><h1 id="多条件查询"><a href="#多条件查询" class="headerlink" title="多条件查询"></a>多条件查询</h1><p><strong>多条件查询的时候，可以用bool对象。Bool包含的字段有：must，must_not，should</strong></p>
+<h2 id="must和must-not"><a href="#must和must-not" class="headerlink" title="must和must_not"></a>must和must_not</h2><p><strong>查找hobby是compute，并且sex字段不是”man”的文档</strong></p>
+<pre><code>curl -XPOST &apos;study0:9200/company/emp/_search?pretty&apos; -d &apos; 
+{
+&quot;query&quot;: {
+   &quot;bool&quot;: {
+  &quot;must&quot;: { &quot;match&quot;: {&quot;hobby&quot;: &quot;compute&quot;}},
+  &quot;must_not&quot;: {&quot;match&quot;: {&quot;sex&quot;: &quot;man&quot;}}
+ }
+  }
+}&apos;
+</code></pre><p><strong>查询结果:</strong></p>
+<pre><code>{
+  &quot;took&quot; : 10,
+  &quot;timed_out&quot; : false,
+  &quot;_shards&quot; : {
+&quot;total&quot; : 5,
+&quot;successful&quot; : 5,
+&quot;failed&quot; : 0
+  },
+  &quot;hits&quot; : {
+&quot;total&quot; : 2,
+&quot;max_score&quot; : 0.45315093,
+&quot;hits&quot; : [
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;8&quot;,
+&quot;_score&quot; : 0.45315093,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;zhaoliu&quot;,
+  &quot;age&quot; : 18,
+  &quot;sex&quot; : &quot;woman&quot;,
+  &quot;birthday&quot; : &quot;1998-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like compute game&quot;
+}
+  },
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;9&quot;,
+&quot;_score&quot; : 0.45315093,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;zhaoqi&quot;,
+  &quot;age&quot; : 20,
+  &quot;sex&quot; : &quot;woman&quot;,
+  &quot;birthday&quot; : &quot;1996-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like compute game&quot;
+}
+  }
+]
+  }
+}
+</code></pre><h2 id="should"><a href="#should" class="headerlink" title="should"></a>should</h2><p>查询hobby是trivel或者性别是man的文档</p>
+<p>这种查询和sql中的or很类似</p>
+<pre><code>curl -XPOST &apos;study0:9200/company/emp/_search?pretty&apos; -d &apos; 
+{
+&quot;query&quot;: {
+   &quot;bool&quot;: {
+  &quot;must&quot;: { &quot;match&quot;: {&quot;hobby&quot;: &quot;trivel&quot;}},
+  &quot;should&quot;: {&quot;match&quot;: {&quot;sex&quot;: &quot;man&quot;}}
+ }
+  }
+}&apos;
+</code></pre><p><strong>查询结果:</strong></p>
+<pre><code>{
+  &quot;took&quot; : 8,
+  &quot;timed_out&quot; : false,
+  &quot;_shards&quot; : {
+&quot;total&quot; : 5,
+&quot;successful&quot; : 5,
+&quot;failed&quot; : 0
+  },
+  &quot;hits&quot; : {
+&quot;total&quot; : 3,
+&quot;max_score&quot; : 0.86312973,
+&quot;hits&quot; : [
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;4&quot;,
+&quot;_score&quot; : 0.86312973,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;wangba&quot;,
+  &quot;age&quot; : 25,
+  &quot;sex&quot; : &quot;woman&quot;,
+  &quot;birthday&quot; : &quot;1996-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like trivel&quot;
+}
+  },
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;7&quot;,
+&quot;_score&quot; : 0.7983254,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;zhaowu&quot;,
+  &quot;age&quot; : 31,
+  &quot;sex&quot; : &quot;man&quot;,
+  &quot;birthday&quot; : &quot;1997-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like trivel and music&quot;
+}
+  },
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;3&quot;,
+&quot;_score&quot; : 0.5408423,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;wangwu&quot;,
+  &quot;age&quot; : 17,
+  &quot;sex&quot; : &quot;man&quot;,
+  &quot;birthday&quot; : &quot;1998-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like trivel&quot;
+}
+  }
+]
+  }
+}
+</code></pre><h1 id="Term过滤"><a href="#Term过滤" class="headerlink" title="Term过滤"></a>Term过滤</h1><p>term主要用于精确匹配值，比如数字，日期，布尔值或 not_analyzed的字符串(未经分析的文本数据类型)</p>
+<pre><code>{ &quot;term&quot;: { &quot;age&quot;: 26 }}
+{ &quot;term&quot;: { &quot;date&quot;: &quot;2017-06-09&quot; }}
+{ &quot;term&quot;: { &quot;sex&quot;: true }}
+</code></pre><h2 id="用term过滤替换match"><a href="#用term过滤替换match" class="headerlink" title="用term过滤替换match"></a>用term过滤替换match</h2><pre><code>curl -XPOST &apos;study0:9200/company/emp/_search?pretty&apos; -d &apos; 
+{
+&quot;query&quot;: {
+   &quot;bool&quot;: {
+  &quot;must&quot;: { &quot;term&quot;: {&quot;hobby&quot;: &quot;trivel&quot;}},
+  &quot;should&quot;: {&quot;term&quot;: {&quot;sex&quot;: &quot;man&quot;}}
+ }}
+}&apos;
+</code></pre><p><strong>查询结果</strong></p>
+<pre><code>{
+  &quot;took&quot; : 7,
+  &quot;timed_out&quot; : false,
+  &quot;_shards&quot; : {
+&quot;total&quot; : 5,
+&quot;successful&quot; : 5,
+&quot;failed&quot; : 0
+  },
+  &quot;hits&quot; : {
+&quot;total&quot; : 3,
+&quot;max_score&quot; : 0.86312973,
+&quot;hits&quot; : [
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;4&quot;,
+&quot;_score&quot; : 0.86312973,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;wangba&quot;,
+  &quot;age&quot; : 25,
+  &quot;sex&quot; : &quot;woman&quot;,
+  &quot;birthday&quot; : &quot;1996-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like trivel&quot;
+}
+  },
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;7&quot;,
+&quot;_score&quot; : 0.7983254,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;zhaowu&quot;,
+  &quot;age&quot; : 31,
+  &quot;sex&quot; : &quot;man&quot;,
+  &quot;birthday&quot; : &quot;1997-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like trivel and music&quot;
+}
+  },
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;3&quot;,
+&quot;_score&quot; : 0.5408423,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;wangwu&quot;,
+  &quot;age&quot; : 17,
+  &quot;sex&quot; : &quot;man&quot;,
+  &quot;birthday&quot; : &quot;1998-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like trivel&quot;
+}
+  }
+]
+  }
+}
+</code></pre><h2 id="terms可以用来匹配多个值"><a href="#terms可以用来匹配多个值" class="headerlink" title="terms可以用来匹配多个值"></a>terms可以用来匹配多个值</h2><pre><code>curl -XPOST &apos;study0:9200/company/emp/_search?pretty&apos; -d &apos; 
+{
+&quot;query&quot;: {
+   &quot;bool&quot;: {
+  &quot;must&quot;: { &quot;terms&quot;: {&quot;hobby&quot;: [&quot;trivel&quot;,&quot;music&quot;]}} 
+ }
+  }
+}&apos;
+</code></pre><p>查询结果，可以匹配到语句里面包含，trivel,或者music的单词。</p>
+<pre><code>{
+  &quot;took&quot; : 16,
+  &quot;timed_out&quot; : false,
+  &quot;_shards&quot; : {
+&quot;total&quot; : 5,
+&quot;successful&quot; : 5,
+&quot;failed&quot; : 0
+  },
+  &quot;hits&quot; : {
+&quot;total&quot; : 3,
+&quot;max_score&quot; : 1.2320077,
+&quot;hits&quot; : [
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;7&quot;,
+&quot;_score&quot; : 1.2320077,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;zhaowu&quot;,
+  &quot;age&quot; : 31,
+  &quot;sex&quot; : &quot;man&quot;,
+  &quot;birthday&quot; : &quot;1997-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like trivel and music&quot;
+}
+  },
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;4&quot;,
+&quot;_score&quot; : 0.86312973,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;wangba&quot;,
+  &quot;age&quot; : 25,
+  &quot;sex&quot; : &quot;woman&quot;,
+  &quot;birthday&quot; : &quot;1996-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like trivel&quot;
+}
+  },
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;3&quot;,
+&quot;_score&quot; : 0.25316024,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;wangwu&quot;,
+  &quot;age&quot; : 17,
+  &quot;sex&quot; : &quot;man&quot;,
+  &quot;birthday&quot; : &quot;1998-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like trivel&quot;
+}
+  }
+]
+  }
+}
+</code></pre><h1 id="关于match和term比较的例子"><a href="#关于match和term比较的例子" class="headerlink" title="关于match和term比较的例子"></a>关于match和term比较的例子</h1><blockquote>
+<ol>
+<li>term主要是用于精确的过滤，代表完全匹配，即不进行分词器分析，文档中必须包含整个搜索的词汇，比如说,要匹配”我爱中国”,只能匹配到包含”我爱中国”的文本</li>
+<li>match会根据你给定的字段提供合适的分析器,比如需要匹配”我爱中国”，会先分词，我、爱、中国、我爱等，然后在匹配</li>
+</ol>
+</blockquote>
+<h2 id="match-2"><a href="#match-2" class="headerlink" title="match"></a>match</h2><pre><code>curl -XPOST &apos;study0:9200/company/emp/_search?pretty&apos; -d &apos; 
+{
+&quot;query&quot;: {
+   &quot;bool&quot;: {
+  &quot;must&quot;: { &quot;match&quot;: {&quot;hobby&quot;: &quot;trivel and&quot;}} 
+ }
+  }
+}&apos;
+</code></pre><p>查询结果</p>
+<pre><code>{
+  &quot;took&quot; : 13,
+  &quot;timed_out&quot; : false,
+  &quot;_shards&quot; : {
+&quot;total&quot; : 5,
+&quot;successful&quot; : 5,
+&quot;failed&quot; : 0
+  },
+  &quot;hits&quot; : {
+&quot;total&quot; : 3,
+&quot;max_score&quot; : 1.2320077,
+&quot;hits&quot; : [
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;7&quot;,
+&quot;_score&quot; : 1.2320077,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;zhaowu&quot;,
+  &quot;age&quot; : 31,
+  &quot;sex&quot; : &quot;man&quot;,
+  &quot;birthday&quot; : &quot;1997-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like trivel and music&quot;
+}
+  },
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;4&quot;,
+&quot;_score&quot; : 0.86312973,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;wangba&quot;,
+  &quot;age&quot; : 25,
+  &quot;sex&quot; : &quot;woman&quot;,
+  &quot;birthday&quot; : &quot;1996-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like trivel&quot;
+}
+  },
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;3&quot;,
+&quot;_score&quot; : 0.25316024,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;wangwu&quot;,
+  &quot;age&quot; : 17,
+  &quot;sex&quot; : &quot;man&quot;,
+  &quot;birthday&quot; : &quot;1998-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like trivel&quot;
+}
+  }
+]
+  }
+}
+</code></pre><blockquote>
+<p>上面的，返回包含trivel 或者 and 或者 trivel and 都包含的索引。</p>
+</blockquote>
+<h2 id="term"><a href="#term" class="headerlink" title="term"></a>term</h2><pre><code>curl -XPOST &apos;study0:9200/company/emp/_search?pretty&apos; -d &apos; 
+{
+&quot;query&quot;: {
+   &quot;bool&quot;: {
+  &quot;must&quot;: { &quot;term&quot;: {&quot;hobby&quot;: &quot;trivel and&quot;}}  
+ }
+  }
+}&apos;
+</code></pre><p>查询结果</p>
+<pre><code>{
+  &quot;took&quot; : 7,
+  &quot;timed_out&quot; : false,
+  &quot;_shards&quot; : {
+&quot;total&quot; : 5,
+&quot;successful&quot; : 5,
+&quot;failed&quot; : 0
+  },
+  &quot;hits&quot; : {
+&quot;total&quot; : 0,
+&quot;max_score&quot; : null,
+&quot;hits&quot; : [ ]
+  }
+}
+</code></pre><blockquote>
+<p>但是可以看到使用terms是没有返回结果的。就说明terms是精准匹配词组。</p>
+</blockquote>
+<h1 id="Range过滤"><a href="#Range过滤" class="headerlink" title="Range过滤"></a>Range过滤</h1><p>Range过滤允许我们按照指定的范围查找一些数据：操作范围：gt(大于)，gae(大于等于),lt(小于)，lte(小于等于)：</p>
+<h2 id="range之gt和lt"><a href="#range之gt和lt" class="headerlink" title="range之gt和lt"></a>range之gt和lt</h2><p>查找出大于20岁，小于25岁的emp</p>
+<pre><code>curl -XPOST &apos;study0:9200/company/emp/_search?pretty&apos; -d &apos; 
+{
+&quot;query&quot;: {
+   &quot;range&quot;: {
+&quot;age&quot;: {&quot;gt&quot;:20,&quot;lt&quot;:30}
+ }
+  }
+   }
+}&apos;
+</code></pre><p>查询结果</p>
+<pre><code>{
+  &quot;took&quot; : 19,
+  &quot;timed_out&quot; : false,
+  &quot;_shards&quot; : {
+&quot;total&quot; : 5,
+&quot;successful&quot; : 5,
+&quot;failed&quot; : 0
+  },
+  &quot;hits&quot; : {
+&quot;total&quot; : 4,
+&quot;max_score&quot; : 1.0,
+&quot;hits&quot; : [
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;5&quot;,
+&quot;_score&quot; : 1.0,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;xiaoming&quot;,
+  &quot;age&quot; : 25,
+  &quot;sex&quot; : &quot;woman&quot;,
+  &quot;birthday&quot; : &quot;1991-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like song&quot;
+}
+  },
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;2&quot;,
+&quot;_score&quot; : 1.0,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;lisi&quot;,
+  &quot;age&quot; : 21,
+  &quot;sex&quot; : &quot;man&quot;,
+  &quot;birthday&quot; : &quot;1995-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like compute&quot;
+}
+  },
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;4&quot;,
+&quot;_score&quot; : 1.0,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;wangba&quot;,
+  &quot;age&quot; : 25,
+  &quot;sex&quot; : &quot;woman&quot;,
+  &quot;birthday&quot; : &quot;1996-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like trivel&quot;
+}
+  },
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;1&quot;,
+&quot;_score&quot; : 1.0,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;zhangshan&quot;,
+  &quot;age&quot; : 21,
+  &quot;sex&quot; : &quot;man&quot;,
+  &quot;birthday&quot; : &quot;1996-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like sport&quot;
+}
+  }
+]
+  }
+}
+</code></pre><h1 id="exists和-missing过滤"><a href="#exists和-missing过滤" class="headerlink" title="exists和 missing过滤"></a>exists和 missing过滤</h1><p>Exists表示包含某个字段，missing表示没有某个字段的文档</p>
+<h2 id="exists"><a href="#exists" class="headerlink" title="exists"></a>exists</h2><p>匹配有age字段的文档</p>
+<pre><code>curl -XPOST &apos;study0:9200/company/emp/_search&apos; -d &apos; 
+{
+&quot;query&quot;: {
+   &quot;exists&quot;: {
+&quot;field&quot;: &quot;age&quot; 
+ }
+  }
+   }
+}&apos;
+</code></pre><p>查询结果</p>
+<pre><code>{&quot;took&quot;:3,&quot;timed_out&quot;:false,&quot;_shards&quot;:{&quot;total&quot;:5,&quot;successful&quot;:5,&quot;failed&quot;:0},&quot;hits&quot;:{&quot;total&quot;:9,&quot;max_score&quot;:1.0,&quot;hits&quot;:[{&quot;_index&quot;:&quot;company&quot;,&quot;_type&quot;:&quot;emp&quot;,&quot;_id&quot;:&quot;5&quot;,&quot;_score&quot;:1.0,&quot;_source&quot;:{ &quot;name&quot; : &quot;xiaoming&quot;, &quot;age&quot; : 25 , &quot;sex&quot;: &quot;woman&quot;, &quot;birthday&quot;: &quot;1991-01-02&quot; , &quot;hobby&quot;: &quot;i like song&quot; }},{&quot;_index&quot;:&quot;company&quot;,&quot;_type&quot;:&quot;emp&quot;,&quot;_id&quot;:&quot;8&quot;,&quot;_score&quot;:1.0,&quot;_source&quot;:{ &quot;name&quot; : &quot;zhaoliu&quot;, &quot;age&quot; : 18 , &quot;sex&quot;: &quot;woman&quot;, &quot;birthday&quot;: &quot;1998-01-02&quot; , &quot;hobby&quot;: &quot;i like compute game&quot; }},{&quot;_index&quot;:&quot;company&quot;,&quot;_type&quot;:&quot;emp&quot;,&quot;_id&quot;:&quot;9&quot;,&quot;_score&quot;:1.0,&quot;_source&quot;:{ &quot;name&quot; : &quot;zhaoqi&quot;, &quot;age&quot; : 20 , &quot;sex&quot;: &quot;woman&quot;, &quot;birthday&quot;: &quot;1996-01-02&quot; , &quot;hobby&quot;: &quot;i like compute game&quot; }},{&quot;_index&quot;:&quot;company&quot;,&quot;_type&quot;:&quot;emp&quot;,&quot;_id&quot;:&quot;2&quot;,&quot;_score&quot;:1.0,&quot;_source&quot;:{ &quot;name&quot; : &quot;lisi&quot;, &quot;age&quot; : 21 , &quot;sex&quot;: &quot;man&quot;, &quot;birthday&quot;: &quot;1995-01-02&quot; , &quot;hobby&quot;: &quot;i like compute&quot; }},{&quot;_index&quot;:&quot;company&quot;,&quot;_type&quot;:&quot;emp&quot;,&quot;_id&quot;:&quot;4&quot;,&quot;_score&quot;:1.0,&quot;_source&quot;:{ &quot;name&quot; : &quot;wangba&quot;, &quot;age&quot; : 25 , &quot;sex&quot;: &quot;woman&quot;, &quot;birthday&quot;: &quot;1996-01-02&quot; , &quot;hobby&quot;: &quot;i like trivel&quot; }},{&quot;_index&quot;:&quot;company&quot;,&quot;_type&quot;:&quot;emp&quot;,&quot;_id&quot;:&quot;6&quot;,&quot;_score&quot;:1.0,&quot;_source&quot;:{ &quot;name&quot; : &quot;xiaohong&quot;, &quot;age&quot; : 31 , &quot;sex&quot;: &quot;man&quot;, &quot;birthday&quot;: &quot;1988-01-02&quot; , &quot;hobby&quot;: &quot;i like piano&quot; }},{&quot;_index&quot;:&quot;company&quot;,&quot;_type&quot;:&quot;emp&quot;,&quot;_id&quot;:&quot;1&quot;,&quot;_score&quot;:1.0,&quot;_source&quot;:{ &quot;name&quot; : &quot;zhangshan&quot;, &quot;age&quot; : 21 , &quot;sex&quot;: &quot;man&quot;, &quot;birthday&quot;: &quot;1996-01-02&quot; , &quot;hobby&quot;: &quot;i like sport&quot; }},{&quot;_index&quot;:&quot;company&quot;,&quot;_type&quot;:&quot;emp&quot;,&quot;_id&quot;:&quot;7&quot;,&quot;_score&quot;:1.0,&quot;_source&quot;:{ &quot;name&quot; : &quot;zhaowu&quot;, &quot;age&quot; : 31 , &quot;sex&quot;: &quot;man&quot;, &quot;birthday&quot;: &quot;1997-01-02&quot; , &quot;hobby&quot;: &quot;i like trivel and music&quot; }},{&quot;_index&quot;:&quot;company&quot;,&quot;_type&quot;:&quot;emp&quot;,&quot;_id&quot;:&quot;3&quot;,&quot;_score&quot;:1.0,&quot;_source&quot;:{ &quot;name&quot; : &quot;wangwu&quot;, &quot;age&quot; : 17 , &quot;sex&quot;: &quot;man&quot;, &quot;birthday&quot;: &quot;1998-01-02&quot; , &quot;hobby&quot;: &quot;i like trivel&quot; }}]}}
+</code></pre><blockquote>
+<p>注意:上面全部结果都查询出来了</p>
+</blockquote>
+<h1 id="bool"><a href="#bool" class="headerlink" title="bool"></a>bool</h1><p>用bool可以进行多行条件查询</p>
+<ol>
+<li>must: 多个查询条件的完全匹配,相当于 and 。</li>
+<li>must_not:多个查询条件的相反匹配，相当于 not 。</li>
+<li>should:至少有一个查询条件匹配, 相当于 or 。</li>
+</ol>
+<p>执行下面的查询</p>
+<p>curl -XGET ‘study0:9200/company/emp/_search?pretty’ -d ‘<br>{<br>“query”: {<br>   “bool”: {<br>      “must”: { “match”: {“hobby”: “trivel”}},<br>      “must_not”: {“match”: {“sex”: “man”}}<br>     }<br>  }<br>}’</p>
+<p>查询结果</p>
+<pre><code>{
+  &quot;took&quot; : 7,
+  &quot;timed_out&quot; : false,
+  &quot;_shards&quot; : {
+&quot;total&quot; : 5,
+&quot;successful&quot; : 5,
+&quot;failed&quot; : 0
+  },
+  &quot;hits&quot; : {
+&quot;total&quot; : 1,
+&quot;max_score&quot; : 1.8631297,
+&quot;hits&quot; : [
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;4&quot;,
+&quot;_score&quot; : 1.8631297,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;wangba&quot;,
+  &quot;age&quot; : 25,
+  &quot;sex&quot; : &quot;woman&quot;,
+  &quot;birthday&quot; : &quot;1996-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like trivel&quot;
+}
+  }
+]
+  }
+}
+</code></pre><h2 id="普通查询与过滤条件合并"><a href="#普通查询与过滤条件合并" class="headerlink" title="普通查询与过滤条件合并"></a>普通查询与过滤条件合并</h2><pre><code>curl -XPOST &apos;study0:9200/company/emp/_search?pretty&apos; -d &apos; 
+{
+  &quot;query&quot;: {
+   &quot;bool&quot;: {
+ &quot;must&quot;: {&quot;match&quot;: {&quot;hobby&quot;: &quot;compute&quot;}},
+ &quot;filter&quot;: [{&quot;term&quot;:{&quot;age&quot;: 20}}]
+ }
+  }
+}&apos;
+</code></pre><p>查询结果</p>
+<pre><code>{
+  &quot;took&quot; : 4,
+  &quot;timed_out&quot; : false,
+  &quot;_shards&quot; : {
+&quot;total&quot; : 5,
+&quot;successful&quot; : 5,
+&quot;failed&quot; : 0
+  },
+  &quot;hits&quot; : {
+&quot;total&quot; : 1,
+&quot;max_score&quot; : 0.45315093,
+&quot;hits&quot; : [
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;9&quot;,
+&quot;_score&quot; : 0.45315093,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;zhaoqi&quot;,
+  &quot;age&quot; : 20,
+  &quot;sex&quot; : &quot;woman&quot;,
+  &quot;birthday&quot; : &quot;1996-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like compute game&quot;
+}
+  }
+]
+  }
+}
+</code></pre><h2 id="条件过滤"><a href="#条件过滤" class="headerlink" title="条件过滤"></a>条件过滤</h2><pre><code>curl -XPOST &apos;study0:9200/company/emp/_search?pretty&apos; -d &apos; 
+{
+  &quot;query&quot;: {
+   &quot;bool&quot;: {
+ &quot;filter&quot;: [{&quot;term&quot;:{&quot;age&quot;: 20}}]  
+ }  
+  }  
+}&apos;
+</code></pre><p>查询结果</p>
+<pre><code>{
+  &quot;took&quot; : 9,
+  &quot;timed_out&quot; : false,
+  &quot;_shards&quot; : {
+&quot;total&quot; : 5,
+&quot;successful&quot; : 5,
+&quot;failed&quot; : 0
+  },
+  &quot;hits&quot; : {
+&quot;total&quot; : 1,
+&quot;max_score&quot; : 0.0,
+&quot;hits&quot; : [
+  {
+&quot;_index&quot; : &quot;company&quot;,
+&quot;_type&quot; : &quot;emp&quot;,
+&quot;_id&quot; : &quot;9&quot;,
+&quot;_score&quot; : 0.0,
+&quot;_source&quot; : {
+  &quot;name&quot; : &quot;zhaoqi&quot;,
+  &quot;age&quot; : 20,
+  &quot;sex&quot; : &quot;woman&quot;,
+  &quot;birthday&quot; : &quot;1996-01-02&quot;,
+  &quot;hobby&quot; : &quot;i like compute game&quot;
+}
+  }
+]
+  }
+}
+</code></pre>
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-09-10T16:07:04.687Z" itemprop="dateUpdated">2017-09-11 00:07:04</time>
+</span><br>
+
+
+        
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2017/09/10/elasticsearch-normal-api/" target="_blank" rel="external">http://dennis.pathto.top/2017/09/10/elasticsearch-normal-api/</a>
+        
+    </div>
+    <footer>
+        <a href="http://dennis.pathto.top">
+            <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
+            Dennis
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elk/">elk</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/09/10/elasticsearch-normal-api/&title=《9.elasticsearch-查询demo》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/09/10/elasticsearch-normal-api/&title=《9.elasticsearch-查询demo》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/09/10/elasticsearch-normal-api/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《9.elasticsearch-查询demo》 — Dennis'Blog&url=http://dennis.pathto.top/2017/09/10/elasticsearch-normal-api/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/09/10/elasticsearch-normal-api/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2017/09/10/elasticsearch-10-match-bool/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">10.elasticsearch中的match查询和bool查询的关系，提升查询子句</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/09/09/elasticsearch-8-several-query/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">8.elasticsearch几种查询</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper">
+     <div id="articleComment" style="padding-left:5%;padding-right:5%;" ></div>
+    <!--<iframe height="900px" id="page_content_iframe" frameborder="0" marginheight="0" onload="dyniframesize('page_content_iframe');" width="100%" scrolling="auto" src="https://dennis-dzqapp.rhcloud.com/list_blog_commonts?p_id=2017/09/10/elasticsearch-normal-api/" style="display: block;"></iframe>-->
+    </div>
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" data-alipay="http://otwbalpjp.bkt.clouddn.com/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Dennis &copy; 2015 - 2017</span>
+            <span>
+                
+                Power by <a href="http://116.196.88.117/" target="_blank">pathto.top</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/09/10/elasticsearch-normal-api/&title=《9.elasticsearch-查询demo》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/09/10/elasticsearch-normal-api/&title=《9.elasticsearch-查询demo》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/09/10/elasticsearch-normal-api/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《9.elasticsearch-查询demo》 — Dennis'Blog&url=http://dennis.pathto.top/2017/09/10/elasticsearch-normal-api/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/09/10/elasticsearch-normal-api/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACGElEQVR42u3aMZbDMAgFwNz/0tk2TbQfUApL4ypvn21pXLAgeL3i6728end+3r/+y7YLAwPjsYxk4WTr1bXWeyh/FAwMjAsY61C43ui35XsBNHkWAwMDI3ndOjjmb8h/Y2BgYOSMZEN5+Zp/CAwMDIykiF1vOj8HS/A/rMUxMDAeyJgUlr/+/ZP+BgYGxqMY7+I1L3TzFmZhVxgYGEcz8gCXJ2RJm7PaIo1WwcDAOJTRG61IYNVRsPwArlwlY2BgHMfIU8DeKEYvEfxnDxgYGFcyqi/N25m9UnbzcRsGBsZjGfNisjr4ld9fGLPAwMA4jrG3pJwPQySJY+FhDAyM4xjzDsOuwa9m8MXAwDiUMSlfdxWxeZDddtyGgYHxQEYe4OYBOm8tFJqjGBgYlzGqTcTee3JehMTAwLiAUU0Hq8lc72NtznAxMDAey6iGzmqamITdXoIY/ffAwMA4jrHrQK0HnjRWMTAw7mHMm5T5PdWAG70TAwPjAka1GZAnc5ON5mklBgbGnYxJ2lcNvr3VMTAw7mT0lkxSwF33f30KAwPjUMa7eE1K2d7QWFQMY2BgHM3YFrPj0nfS1MxbFxgYGOcx8iC763hufrSHgYFxJ6PaXJyUtZO072uwxsDAwAhaldWQuvewDwMDA6M3tBoFyuATJGwMDIwbGNVmQHUT+fhXnoxiYGDcw9g7GDEB55+j2dTEwMB4HuMP0NAi4ACKBuYAAAAASUVORK5CYII=" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="/js/main.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '我消失了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '我回来了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

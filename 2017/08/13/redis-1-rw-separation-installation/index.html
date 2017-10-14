@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>1.redis读写分离搭建 | Dennis&#39;Blog | 我不用讨人喜欢，只做一个迷人的混蛋</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="redis">
+    <meta name="description" content="redis读写分离的安装 安装tclwget http://downloads.sourceforge.net/tcl/tcl8.6.1-src.tar.gz tar -xzvf tcl8.6.1-src.tar.gz cd  /usr/local/tcl8.6.1/unix/ ./configure   make &amp;amp;&amp;amp; make install 安装redisredis的版本是3">
+<meta name="keywords" content="redis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="1.redis读写分离搭建">
+<meta property="og:url" content="http://dennis.pathto.top/2017/08/13/redis-1-rw-separation-installation/index.html">
+<meta property="og:site_name" content="Dennis&#39;Blog">
+<meta property="og:description" content="redis读写分离的安装 安装tclwget http://downloads.sourceforge.net/tcl/tcl8.6.1-src.tar.gz tar -xzvf tcl8.6.1-src.tar.gz cd  /usr/local/tcl8.6.1/unix/ ./configure   make &amp;amp;&amp;amp; make install 安装redisredis的版本是3">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-08-13T16:16:19.135Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="1.redis读写分离搭建">
+<meta name="twitter:description" content="redis读写分离的安装 安装tclwget http://downloads.sourceforge.net/tcl/tcl8.6.1-src.tar.gz tar -xzvf tcl8.6.1-src.tar.gz cd  /usr/local/tcl8.6.1/unix/ ./configure   make &amp;amp;&amp;amp; make install 安装redisredis的版本是3">
+    
+        <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/semantic.css" type="text/css" />
+<link rel="stylesheet" href="/css/zyComment.css" type="text/css" />
+<style type="text/css">
+	#cloud-tie-wrapper label {
+	    font-weight: bold;
+	}
+	#cloud-tie-wrapper a {
+		font-family: Microsoft YaHei;
+	}
+	#articleComment {
+		width: "60%";
+		/*height: 1500px;*/
+		overflow: auto;
+	}
+</style>
+
+    <script>window.lazyScripts=[]</script>
+
+
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/zyComment.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+$(function(){
+var post_toc_links = $(".post-toc-link");
+$.each( post_toc_links, function(index,post_toc_link){
+	post_toc_link = $(post_toc_link);
+	var post_toc_number = post_toc_link.find(".post-toc-number");
+	var post_toc_text = post_toc_link.find(".post-toc-text");
+	//console.log(post_toc_number.text()+" "+post_toc_text.text());
+	$(post_toc_link.attr("href")).text(post_toc_number.text()+" "+post_toc_text.text())
+});
+});
+
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+function jsonp(url){
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.insertBefore(script, head.firstChild);
+}
+function add_blog_callBackFun(rs){
+	$("#articleComment").zyComment("setCommentAfter",rs);
+}
+function get_list_blog_commonts_callBackFun(rs){
+	var agoComment = rs;
+	$("#articleComment").zyComment({
+		"width":"355",
+		"height":"33",
+		"agoComment":agoComment,
+		"callback":function(comment){
+			var selfID = comment.selfID;
+			if(typeof selfID == "undefined" ){
+				selfID = 0;
+			}
+			jsonp(host+"/add_blog_jsonp?"+"p_id="+encodeURIComponent("2017/08/13/redis-1-rw-separation-installation/")+ "&username="+encodeURIComponent(comment.name)+"&content="+encodeURIComponent(comment.content)+"&email="+encodeURIComponent(comment.email)+"&c_id_replay="+selfID);
+
+		}
+	});
+}
+jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/08/13/redis-1-rw-separation-installation/"));
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Dennis</h5>
+          <a href="mailto:dennis52o1314@163.com" title="dennis52o1314@163.com" class="mail">dennis52o1314@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/599166320" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/2166908462" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                其他
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">1.redis读写分离搭建</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">1.redis读写分离搭建</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-08-13T15:52:56.000Z" itemprop="datePublished" class="page-time">
+  2017-08-13
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/redis/">redis</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#安装tcl"><span class="post-toc-number">1.</span> <span class="post-toc-text">安装tcl</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#安装redis"><span class="post-toc-number">2.</span> <span class="post-toc-text">安装redis</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#让redis跟随系统启动自动启动"><span class="post-toc-number">3.</span> <span class="post-toc-text">让redis跟随系统启动自动启动</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#强制读写分离"><span class="post-toc-number">4.</span> <span class="post-toc-text">强制读写分离</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#集群安全认证"><span class="post-toc-number">5.</span> <span class="post-toc-text">集群安全认证</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#读写分离架构的测试"><span class="post-toc-number">6.</span> <span class="post-toc-text">读写分离架构的测试</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#访问控制"><span class="post-toc-number">7.</span> <span class="post-toc-text">访问控制</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#修改bind"><span class="post-toc-number">7.1.</span> <span class="post-toc-text">修改bind</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-redis-1-rw-separation-installation"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">1.redis读写分离搭建</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-08-13 23:52:56" datetime="2017-08-13T15:52:56.000Z"  itemprop="datePublished">2017-08-13</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/redis/">redis</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p><strong>redis读写分离的安装</strong></p>
+<h1 id="安装tcl"><a href="#安装tcl" class="headerlink" title="安装tcl"></a>安装tcl</h1><pre><code>wget http://downloads.sourceforge.net/tcl/tcl8.6.1-src.tar.gz
+tar -xzvf tcl8.6.1-src.tar.gz
+cd  /usr/local/tcl8.6.1/unix/
+./configure  
+make &amp;&amp; make install
+</code></pre><h1 id="安装redis"><a href="#安装redis" class="headerlink" title="安装redis"></a>安装redis</h1><p>redis的版本是3.2.8</p>
+<pre><code>tar -zxvf redis-3.2.8.tar.gz
+cd redis-3.2.8
+make &amp;&amp; make test &amp;&amp; make install
+</code></pre><ol>
+<li>redis utils目录下，有个redis_init_script脚本</li>
+<li>将redis_init_script脚本拷贝到linux的/etc/init.d目录中，将redis_init_script重命名为redis_6379，6379是我们希望这个redis实例监听的端口号</li>
+<li>修改redis_6379脚本的第6行的REDISPORT，设置为相同的端口号（默认就是6379）</li>
+<li>创建两个目录：/etc/redis（存放redis的配置文件），/var/redis/6379（存放redis的持久化文件）</li>
+<li>修改redis配置文件（默认在根目录下，redis.conf），拷贝到/etc/redis目录中，修改名称为6379.conf</li>
+</ol>
+<p>修改redis.conf</p>
+<pre><code>daemonize    yes                            让redis以daemon进程运行
+pidfile        /var/run/redis_6379.pid     设置redis的pid文件位置
+port        6379                        设置redis的监听端口号
+dir         /var/redis/6379                设置持久化文件的存储位置
+</code></pre><h1 id="让redis跟随系统启动自动启动"><a href="#让redis跟随系统启动自动启动" class="headerlink" title="让redis跟随系统启动自动启动"></a>让redis跟随系统启动自动启动</h1><p>在redis_6379脚本中，最上面，加入两行注释</p>
+<pre><code># chkconfig:   2345 90 10
+# description:  Redis is a persistent key-value database
+</code></pre><p>开机启动</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">chkconfig redis_6379 on</div></pre></td></tr></table></figure>
+<p>在slave node上配置：<code>slaveof 192.168.1.1 6379</code>，即可</p>
+<p>也可以使用slaveof命令</p>
+<h1 id="强制读写分离"><a href="#强制读写分离" class="headerlink" title="强制读写分离"></a>强制读写分离</h1><p>基于主从复制架构，实现读写分离</p>
+<p>redis slave node只读，默认开启，<code>slave-read-only</code></p>
+<p>开启了只读的redis slave node，会拒绝所有的写操作，这样可以强制搭建成读写分离的架构</p>
+<h1 id="集群安全认证"><a href="#集群安全认证" class="headerlink" title="集群安全认证"></a>集群安全认证</h1><p>master上启用安全认证，requirepass<br>master连接口令，masterauth</p>
+<h1 id="读写分离架构的测试"><a href="#读写分离架构的测试" class="headerlink" title="读写分离架构的测试"></a>读写分离架构的测试</h1><p>先启动主节点，再启动从节点</p>
+<h1 id="访问控制"><a href="#访问控制" class="headerlink" title="访问控制"></a>访问控制</h1><h2 id="修改bind"><a href="#修改bind" class="headerlink" title="修改bind"></a>修改bind</h2><p><code>bind 127.0.0.1</code>是本地的开发调试的模式，就只能127.0.0.1本地才能访问到6379的端口.</p>
+<p>每个redis.conf中的<code>bind 127.0.0.1</code>是ind自己的ip地址</p>
+<p>在每个节点上都: <code>iptables -A INPUT -ptcp --dport  6379 -j ACCEPT</code></p>
+<pre><code>redis-cli -h ipaddr
+info replication
+</code></pre><p>完成读写分离架构的搭建之后，可以实现,在主节点上写，在从节点上读</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-08-13T16:16:19.135Z" itemprop="dateUpdated">2017-08-14 00:16:19</time>
+</span><br>
+
+
+        
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2017/08/13/redis-1-rw-separation-installation/" target="_blank" rel="external">http://dennis.pathto.top/2017/08/13/redis-1-rw-separation-installation/</a>
+        
+    </div>
+    <footer>
+        <a href="http://dennis.pathto.top">
+            <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
+            Dennis
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/08/13/redis-1-rw-separation-installation/&title=《1.redis读写分离搭建》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/08/13/redis-1-rw-separation-installation/&title=《1.redis读写分离搭建》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/08/13/redis-1-rw-separation-installation/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《1.redis读写分离搭建》 — Dennis'Blog&url=http://dennis.pathto.top/2017/08/13/redis-1-rw-separation-installation/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/08/13/redis-1-rw-separation-installation/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2017/08/13/redis-2-high-availability/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">2.redis高可用</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/08/11/kubernetes-installation/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">1.kubernetes安装</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper">
+     <div id="articleComment" style="padding-left:5%;padding-right:5%;" ></div>
+    <!--<iframe height="900px" id="page_content_iframe" frameborder="0" marginheight="0" onload="dyniframesize('page_content_iframe');" width="100%" scrolling="auto" src="https://dennis-dzqapp.rhcloud.com/list_blog_commonts?p_id=2017/08/13/redis-1-rw-separation-installation/" style="display: block;"></iframe>-->
+    </div>
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" data-alipay="http://otwbalpjp.bkt.clouddn.com/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Dennis &copy; 2015 - 2017</span>
+            <span>
+                
+                Power by <a href="http://116.196.88.117/" target="_blank">pathto.top</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/08/13/redis-1-rw-separation-installation/&title=《1.redis读写分离搭建》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/08/13/redis-1-rw-separation-installation/&title=《1.redis读写分离搭建》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/08/13/redis-1-rw-separation-installation/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《1.redis读写分离搭建》 — Dennis'Blog&url=http://dennis.pathto.top/2017/08/13/redis-1-rw-separation-installation/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/08/13/redis-1-rw-separation-installation/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACsUlEQVR42u3aMXIjMQwEQP//077kAlfZK88QhEtBb6SSdiU2A4Ia8OMjvj6/XF/fefr0+7PJU58P1/dnL194eHh4g6G//urX9ySTMpmsw/Hg4eHhrfHyBT0pBk+DmNyZFAk8PDy89+S1S/aclG+v8fDw8N6TN9mO50WlnWI8PDy8v+flEWq73Ldb8/ada1kLHh4e3knuOlqg//L1Sn8PDw8Pb9xVz5th+fLdTt/ZOP9/Ax4eHt4CL19wz+LUtqGVfFt7OAwPDw/vLm8etp5NTXLcqo1FfniNh4eH9ye8uyFFe8ggeaqYXDw8PLwF3sZAc8YkwqgbYHh4eHhXefmym0/B60m5WxKK6oeHh4c35uULes5rl/W22OStODw8PLwNXt4lOwt52zA3n46ahIeHh3eJt5JqxFvq+RREMQQeHh7eMq9duJPKMykqZ7/7wz8GPDw8vKu8u5vp6IeP7j/MWvDw8PAWeHliMQ8UJs2zZAxFAwwPDw9vwEuG0m6Cb4UdSZvtcVLw8PDwFnhtZ+ysJLzeLk/i4Oh+PDw8vAVevrifUdtQuC0GdQHDw8PDG/CSB9rtbx7FTgLfouLh4eHhrfHyxTffiC9GDElmi4eHh7fAy8PcW/v3sz1+/mkR4+Lh4eENeBPSWfjbHiM4O4aFh4eHt8drj0lNmlt5dHvraAIeHh7eHu8szM1bYu2z+Qb9lwnCw8PDW+a9XmTPGl3tO3kMUQQQeHh4eJd4n+V11uKK2vyD8vAIxsPDw1vgzaPY9qhBeyihPbhQw/Dw8PCOeJNBj+bsqFWWB8R4eHh427y2AXarxXVrah7HgIeHh/dmvDxcyL/nrAw8hhR4eHh4b8xrC0MyQfPIGA8PD2+PN28+3WpZtZvsX34FDw8Pb4FX/70/euo1uz1GcPnCw8PDS69/Ts1zqDiFG7MAAAAASUVORK5CYII=" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="/js/main.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '我消失了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '我回来了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>12.elasticsearch聚合查询-demo | Dennis&#39;Blog | 我不用讨人喜欢，只做一个迷人的混蛋</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="elasticsearch,elk">
+    <meta name="description" content="聚合查询介绍&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;elasticsearch1.0带来了改进和新功能，更包括备受期待的框架，它赋予了elasticsearch新的定位:全功能分析引擎。现在.你可以使用elasticsearch作为系统的一个关键部分。处理大量的数据,提取结论,并将这些数据可视化为可读的方式。 &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;聚合可以分成两组:度量聚合和桶聚">
+<meta name="keywords" content="elasticsearch,elk">
+<meta property="og:type" content="article">
+<meta property="og:title" content="12.elasticsearch聚合查询-demo">
+<meta property="og:url" content="http://dennis.pathto.top/2017/09/10/elasticsearch-12-aggs-query/index.html">
+<meta property="og:site_name" content="Dennis&#39;Blog">
+<meta property="og:description" content="聚合查询介绍&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;elasticsearch1.0带来了改进和新功能，更包括备受期待的框架，它赋予了elasticsearch新的定位:全功能分析引擎。现在.你可以使用elasticsearch作为系统的一个关键部分。处理大量的数据,提取结论,并将这些数据可视化为可读的方式。 &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;聚合可以分成两组:度量聚合和桶聚">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-09-10T16:07:04.699Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="12.elasticsearch聚合查询-demo">
+<meta name="twitter:description" content="聚合查询介绍&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;elasticsearch1.0带来了改进和新功能，更包括备受期待的框架，它赋予了elasticsearch新的定位:全功能分析引擎。现在.你可以使用elasticsearch作为系统的一个关键部分。处理大量的数据,提取结论,并将这些数据可视化为可读的方式。 &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;聚合可以分成两组:度量聚合和桶聚">
+    
+        <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/semantic.css" type="text/css" />
+<link rel="stylesheet" href="/css/zyComment.css" type="text/css" />
+<style type="text/css">
+	#cloud-tie-wrapper label {
+	    font-weight: bold;
+	}
+	#cloud-tie-wrapper a {
+		font-family: Microsoft YaHei;
+	}
+	#articleComment {
+		width: "60%";
+		/*height: 1500px;*/
+		overflow: auto;
+	}
+</style>
+
+    <script>window.lazyScripts=[]</script>
+
+
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/zyComment.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+$(function(){
+var post_toc_links = $(".post-toc-link");
+$.each( post_toc_links, function(index,post_toc_link){
+	post_toc_link = $(post_toc_link);
+	var post_toc_number = post_toc_link.find(".post-toc-number");
+	var post_toc_text = post_toc_link.find(".post-toc-text");
+	//console.log(post_toc_number.text()+" "+post_toc_text.text());
+	$(post_toc_link.attr("href")).text(post_toc_number.text()+" "+post_toc_text.text())
+});
+});
+
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+function jsonp(url){
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.insertBefore(script, head.firstChild);
+}
+function add_blog_callBackFun(rs){
+	$("#articleComment").zyComment("setCommentAfter",rs);
+}
+function get_list_blog_commonts_callBackFun(rs){
+	var agoComment = rs;
+	$("#articleComment").zyComment({
+		"width":"355",
+		"height":"33",
+		"agoComment":agoComment,
+		"callback":function(comment){
+			var selfID = comment.selfID;
+			if(typeof selfID == "undefined" ){
+				selfID = 0;
+			}
+			jsonp(host+"/add_blog_jsonp?"+"p_id="+encodeURIComponent("2017/09/10/elasticsearch-12-aggs-query/")+ "&username="+encodeURIComponent(comment.name)+"&content="+encodeURIComponent(comment.content)+"&email="+encodeURIComponent(comment.email)+"&c_id_replay="+selfID);
+
+		}
+	});
+}
+jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/09/10/elasticsearch-12-aggs-query/"));
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Dennis</h5>
+          <a href="mailto:dennis52o1314@163.com" title="dennis52o1314@163.com" class="mail">dennis52o1314@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/599166320" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/2166908462" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                其他
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">12.elasticsearch聚合查询-demo</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">12.elasticsearch聚合查询-demo</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-09-10T15:35:29.000Z" itemprop="datePublished" class="page-time">
+  2017-09-10
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/elasticsearch/">elasticsearch</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#聚合查询介绍"><span class="post-toc-number">1.</span> <span class="post-toc-text">聚合查询介绍</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#date-histogram"><span class="post-toc-number">2.</span> <span class="post-toc-text">date_histogram</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#date-histogram属性介绍"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">date_histogram属性介绍</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#format"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">format</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#time-zone时区的用法"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">time_zone时区的用法</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#offset"><span class="post-toc-number">2.4.</span> <span class="post-toc-text">offset</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#missing-value"><span class="post-toc-number">2.5.</span> <span class="post-toc-text">missing value</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#产品相关统计应用"><span class="post-toc-number">3.</span> <span class="post-toc-text">产品相关统计应用</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#数据准备"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">数据准备</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#统计每个月文档数"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">统计每个月文档数</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#histogram"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">histogram</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#非数值类型的文档数统计"><span class="post-toc-number">3.4.</span> <span class="post-toc-text">非数值类型的文档数统计</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Metric"><span class="post-toc-number">3.5.</span> <span class="post-toc-text">Metric</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-elasticsearch-12-aggs-query"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">12.elasticsearch聚合查询-demo</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-09-10 23:35:29" datetime="2017-09-10T15:35:29.000Z"  itemprop="datePublished">2017-09-10</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/elasticsearch/">elasticsearch</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="聚合查询介绍"><a href="#聚合查询介绍" class="headerlink" title="聚合查询介绍"></a>聚合查询介绍</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;elasticsearch1.0带来了改进和新功能，更包括备受期待的框架，它赋予了elasticsearch新的定位:全功能分析引擎。现在.你可以使用elasticsearch作为系统的一个关键部分。处理大量的数据,提取结论,并将这些数据可视化为可读的方式。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;聚合可以分成两组:度量聚合和桶聚合。</p>
+<h1 id="date-histogram"><a href="#date-histogram" class="headerlink" title="date_histogram"></a>date_histogram</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;时间区间的柱形图，Date histogram的用法与histogram差不多，只不过区间上支持了日期的表达式。</p>
+<h2 id="date-histogram属性介绍"><a href="#date-histogram属性介绍" class="headerlink" title="date_histogram属性介绍"></a>date_histogram属性介绍</h2><p><code>{
+&quot;aggs&quot;:{
+    &quot;articles_over_time&quot;:{
+        &quot;date_histogram&quot;:{
+            &quot;field&quot;:&quot;date&quot;,
+            &quot;interval&quot;:&quot;month&quot;
+            }
+        }
+    }
+}</code></p>
+<p>interval字段支持多种关键字：<code>year</code>, <code>quarter</code>, <code>month</code>, <code>week</code>, <code>day</code>, <code>hour</code>, <code>minute</code>, <code>second</code></p>
+<p>当然也支持对这些关键字进行扩展使用，比如一个半小时可以定义成如下:</p>
+<pre><code>{
+&quot;aggs&quot;:{
+&quot;articles_over_time&quot;:{
+&quot;date_histogram&quot;:{
+&quot;field&quot;:&quot;date&quot;,
+&quot;interval&quot;:&quot;1.5h&quot;
+             }
+         }
+    }
+}
+</code></pre><h2 id="format"><a href="#format" class="headerlink" title="format"></a>format</h2><p>返回的结果可以通过设置format进行格式化:</p>
+<pre><code>{
+&quot;aggs&quot;:{
+&quot;articles_over_time&quot;:{
+&quot;date_histogram&quot;:{
+&quot;field&quot;:&quot;date&quot;,
+&quot;interval&quot;:&quot;1M&quot;,
+&quot;format&quot;:&quot;yyyy-MM-dd&quot;
+        }
+    }
+  }
+}
+</code></pre><p>得到的结果如下：</p>
+<pre><code>{
+&quot;aggregations&quot;:{
+&quot;articles_over_time&quot;:{
+&quot;buckets&quot;:[{
+&quot;key_as_string&quot;:&quot;2013-02-02&quot;,
+&quot;key&quot;:1328140800000,
+&quot;doc_count&quot;:1
+},{
+&quot;key_as_string&quot;:&quot;2013-03-02&quot;,
+&quot;key&quot;:1330646400000,
+&quot;doc_count&quot;:2
+},
+...
+]}
+}
+}
+</code></pre><p>其中key_as_string是格式化后的日期，key显示了是日期时间戳</p>
+<h2 id="time-zone时区的用法"><a href="#time-zone时区的用法" class="headerlink" title="time_zone时区的用法"></a>time_zone时区的用法</h2><p>在es中日期支持时区的表示方法，这样就相当于东八区的时间。</p>
+<pre><code>{
+&quot;aggs&quot;:{
+&quot;by_day&quot;:{
+&quot;date_histogram&quot;:{
+&quot;field&quot;:&quot;date&quot;,
+&quot;interval&quot;:&quot;day&quot;,
+&quot;time_zone&quot;:&quot;+08:00&quot;
+       }
+    }
+  }
+}
+</code></pre><h2 id="offset"><a href="#offset" class="headerlink" title="offset"></a>offset</h2><p>offset 使用偏移值，改变时间区间<br>默认情况是从凌晨0点到午夜24:00，如果想改变时间区间，可以通过下面的方式，设置偏移值：</p>
+<pre><code>{&quot;aggs&quot;:{
+&quot;by_day&quot;:{
+&quot;date_histogram&quot;:{
+&quot;field&quot;:&quot;date&quot;,
+&quot;interval&quot;:&quot;day&quot;,
+&quot;offset&quot;:&quot;+6h&quot;
+ }
+   }
+  }
+}
+</code></pre><p>那么桶的区间就改变为：</p>
+<pre><code>&quot;aggregations&quot;:{
+    &quot;by_day&quot;:{
+    &quot;buckets&quot;:[{
+    &quot;key_as_string&quot;:&quot;2015-09-30T06:00:00.000Z&quot;,
+    &quot;key&quot;:1443592800000,
+    &quot;doc_count&quot;:1
+    },{
+       &quot;key_as_string&quot;:&quot;2015-10-01T06:00:00.000Z&quot;,
+       &quot;key&quot;:1443679200000,
+       &quot;doc_count&quot;:1
+      }]
+     }
+ }
+</code></pre><h2 id="missing-value"><a href="#missing-value" class="headerlink" title="missing value"></a>missing value</h2><p>Missing Value缺省字段<br>当遇到没有值的字段，就会按照缺省字段missing value来计算：</p>
+<pre><code>{
+&quot;aggs&quot;:{
+&quot;publish_date&quot;:{
+&quot;date_histogram&quot;:{
+&quot;field&quot;:&quot;publish_date&quot;,
+&quot;interval&quot;:&quot;year&quot;,
+&quot;missing&quot;:&quot;2000-01-01&quot;
+      }
+    }
+  }
+}
+</code></pre><h1 id="产品相关统计应用"><a href="#产品相关统计应用" class="headerlink" title="产品相关统计应用"></a>产品相关统计应用</h1><h2 id="数据准备"><a href="#数据准备" class="headerlink" title="数据准备"></a>数据准备</h2><pre><code>curl -XPOST http://study0:9200/cars/transactions/_bulk -d &apos;
+{ &quot;index&quot;: {}}
+{ &quot;price&quot; : 10000, &quot;color&quot; : &quot;red&quot;, &quot;make&quot; : &quot;honda&quot;, &quot;sold&quot; : &quot;2014-10-28&quot; }
+{ &quot;index&quot;: {}}
+{ &quot;price&quot; : 20000, &quot;color&quot; : &quot;red&quot;, &quot;make&quot; : &quot;honda&quot;, &quot;sold&quot; : &quot;2014-11-05&quot; }
+{ &quot;index&quot;: {}}
+{ &quot;price&quot; : 30000, &quot;color&quot; : &quot;green&quot;, &quot;make&quot; : &quot;ford&quot;, &quot;sold&quot; : &quot;2014-05-18&quot; }
+{ &quot;index&quot;: {}}
+{ &quot;price&quot; : 15000, &quot;color&quot; : &quot;blue&quot;, &quot;make&quot; : &quot;toyota&quot;, &quot;sold&quot; : &quot;2014-07-02&quot; }
+{ &quot;index&quot;: {}}
+{ &quot;price&quot; : 12000, &quot;color&quot; : &quot;green&quot;, &quot;make&quot; : &quot;toyota&quot;, &quot;sold&quot; : &quot;2014-08-19&quot; }
+{ &quot;index&quot;: {}}
+{ &quot;price&quot; : 20000, &quot;color&quot; : &quot;red&quot;, &quot;make&quot; : &quot;honda&quot;, &quot;sold&quot; : &quot;2014-11-05&quot; }
+{ &quot;index&quot;: {}}
+{ &quot;price&quot; : 80000, &quot;color&quot; : &quot;red&quot;, &quot;make&quot; : &quot;bmw&quot;, &quot;sold&quot; : &quot;2014-01-01&quot; }
+{ &quot;index&quot;: {}}
+{ &quot;price&quot; : 25000, &quot;color&quot; : &quot;blue&quot;, &quot;make&quot; : &quot;ford&quot;, &quot;sold&quot; : &quot;2014-02-12&quot; }
+</code></pre><blockquote>
+<p>备注：我们会建立一个也许对汽车交易商有所用处的聚合。数据是关于汽车交易的：汽车型号，制造商，销售价格，销售时间以及一些其他的相关数据</p>
+</blockquote>
+<h2 id="统计每个月文档数"><a href="#统计每个月文档数" class="headerlink" title="统计每个月文档数"></a>统计每个月文档数</h2><p> 按时间统计，每个月的文档数</p>
+<pre><code>GET /cars/transactions/_search
+{
+  &quot;aggs&quot;: {
+&quot;doc_count&quot;: {
+  &quot;date_histogram&quot;: {
+&quot;field&quot;: &quot;sold&quot;,
+&quot;interval&quot;: &quot;month&quot;
+  }
+}
+  }
+}
+</code></pre><p>返回结果：</p>
+<pre><code>&quot;aggregations&quot; : {
+&quot;articles_over_time&quot; : {
+  &quot;buckets&quot; : [
+{
+  &quot;key_as_string&quot; : &quot;2014-01-01T00:00:00.000Z&quot;,
+  &quot;key&quot; : 1388534400000,
+  &quot;doc_count&quot; : 1
+},
+{
+  &quot;key_as_string&quot; : &quot;2014-02-01T00:00:00.000Z&quot;,
+  &quot;key&quot; : 1391212800000,
+  &quot;doc_count&quot; : 1
+},
+</code></pre><h2 id="histogram"><a href="#histogram" class="headerlink" title="histogram"></a>histogram</h2><p>统计价格区间柱形图（Histogram Aggregation）</p>
+<p>Histogram做等间距划分，统计区间的price值，看他落在那个区间，数据间隔是5000</p>
+<pre><code>GET /cars/transactions/_search
+{
+   &quot;size&quot;: 0, 
+&quot;aggs&quot; : {
+&quot;prices&quot; : {
+&quot;histogram&quot; : {
+&quot;field&quot; : &quot;price&quot;,
+&quot;interval&quot; : 5000
+      }
+    }
+  }
+}  
+</code></pre><p>返回结果</p>
+<pre><code>&quot;aggregations&quot; : {
+&quot;prices&quot; : {
+  &quot;buckets&quot; : [
+{
+  &quot;key&quot; : 10000.0,
+  &quot;doc_count&quot; : 2
+},
+{
+  &quot;key&quot; : 15000.0,
+  &quot;doc_count&quot; : 1
+},
+</code></pre><h2 id="非数值类型的文档数统计"><a href="#非数值类型的文档数统计" class="headerlink" title="非数值类型的文档数统计"></a>非数值类型的文档数统计</h2><blockquote>
+<p>统计非数值类型的字段,类似sql中的select count(*) from table group by field</p>
+</blockquote>
+<p>如查看每种颜色的销量</p>
+<pre><code>GET /cars/transactions/_search
+{
+  &quot;size&quot;: 0, 
+&quot;aggs&quot; : {
+&quot;genres&quot; : {
+&quot;terms&quot; : { &quot;field&quot; : &quot;color&quot; }
+    }
+  }
+}
+</code></pre><blockquote>
+<p>说明:genres表示的是统计结果名，可以是任意合法字符串</p>
+<p>注意:会报如下错：</p>
+<p>“reason” : “Fielddata is disabled on text fields by default. Set fielddata=true on [color] in order to load fielddata in memory by uninverting the inverted index. Note that this can however use significant memory.”</p>
+</blockquote>
+<p>提示我们数据类型不对，我们修改一下mapping映射：</p>
+<pre><code>GET /cars/_mapping/transactions
+{
+   &quot;properties&quot;: {
+ &quot;color&quot;: {
+   &quot;type&quot;: &quot;text&quot;,
+   &quot;fielddata&quot;: true
+  }
+}
+ }
+{&quot;acknowledged&quot;:true}
+</code></pre><p>统计结果</p>
+<pre><code>   &quot;buckets&quot; : [
+{
+  &quot;key&quot; : &quot;red&quot;,
+  &quot;doc_count&quot; : 4
+},
+{
+  &quot;key&quot; : &quot;blue&quot;,
+  &quot;doc_count&quot; : 2
+},
+{
+  &quot;key&quot; : &quot;green&quot;,
+  &quot;doc_count&quot; : 2
+}
+</code></pre><h2 id="Metric"><a href="#Metric" class="headerlink" title="Metric"></a>Metric</h2><p>添加一个指标(Metric),相当于sql中的select count(*),avg(vi),max(vi)…from table group by field</p>
+<pre><code>GET /cars/transactions/_search
+{
+  &quot;size&quot;: 0, 
+&quot;aggs&quot; : {
+&quot;genres&quot; : {
+&quot;terms&quot; : { &quot;field&quot; : &quot;color&quot; },
+  &quot;aggs&quot;: {
+ &quot;avg_price&quot;: {
+&quot;avg&quot;: {
+  &quot;field&quot;: &quot;price&quot;
+  }
+}
+  }
+   }
+ }
+}
+</code></pre><blockquote>
+<p>注意:avg可以换成max,min,sum等。用stats就表示所有。</p>
+<p>用stats找出Metric的所有值。</p>
+</blockquote>
+<pre><code>GET /cars/transactions/_search
+{
+  &quot;size&quot;: 0, 
+&quot;aggs&quot; : {
+&quot;genres&quot; : {
+&quot;terms&quot; : { &quot;field&quot; : &quot;color&quot; }
+,
+  &quot;aggs&quot;: {
+ &quot;avg_price&quot;: {
+&quot;stats&quot;: {
+  &quot;field&quot;: &quot;price&quot;
+  }
+}
+  }
+   }
+ }
+}
+</code></pre><p>返回结果</p>
+<pre><code>&quot;buckets&quot; : [
+{
+  &quot;key&quot; : &quot;red&quot;,
+  &quot;doc_count&quot; : 4,
+  &quot;avg_price&quot; : {
+&quot;count&quot; : 4,
+&quot;min&quot; : 10000.0,
+&quot;max&quot; : 80000.0,
+&quot;avg&quot; : 32500.0,
+&quot;sum&quot; : 130000.0
+  }
+}
+</code></pre>
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-09-10T16:07:04.699Z" itemprop="dateUpdated">2017-09-11 00:07:04</time>
+</span><br>
+
+
+        
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2017/09/10/elasticsearch-12-aggs-query/" target="_blank" rel="external">http://dennis.pathto.top/2017/09/10/elasticsearch-12-aggs-query/</a>
+        
+    </div>
+    <footer>
+        <a href="http://dennis.pathto.top">
+            <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
+            Dennis
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elk/">elk</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/09/10/elasticsearch-12-aggs-query/&title=《12.elasticsearch聚合查询-demo》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/09/10/elasticsearch-12-aggs-query/&title=《12.elasticsearch聚合查询-demo》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/09/10/elasticsearch-12-aggs-query/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《12.elasticsearch聚合查询-demo》 — Dennis'Blog&url=http://dennis.pathto.top/2017/09/10/elasticsearch-12-aggs-query/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/09/10/elasticsearch-12-aggs-query/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2017/09/24/life-A-person-s-thinking/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">一个人的思维，决定了他在什么阶层</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/09/10/elasticsearch-11-severral-aggs/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">11.elasticsearch-几种聚合查询</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper">
+     <div id="articleComment" style="padding-left:5%;padding-right:5%;" ></div>
+    <!--<iframe height="900px" id="page_content_iframe" frameborder="0" marginheight="0" onload="dyniframesize('page_content_iframe');" width="100%" scrolling="auto" src="https://dennis-dzqapp.rhcloud.com/list_blog_commonts?p_id=2017/09/10/elasticsearch-12-aggs-query/" style="display: block;"></iframe>-->
+    </div>
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" data-alipay="http://otwbalpjp.bkt.clouddn.com/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Dennis &copy; 2015 - 2017</span>
+            <span>
+                
+                Power by <a href="http://116.196.88.117/" target="_blank">pathto.top</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/09/10/elasticsearch-12-aggs-query/&title=《12.elasticsearch聚合查询-demo》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/09/10/elasticsearch-12-aggs-query/&title=《12.elasticsearch聚合查询-demo》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/09/10/elasticsearch-12-aggs-query/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《12.elasticsearch聚合查询-demo》 — Dennis'Blog&url=http://dennis.pathto.top/2017/09/10/elasticsearch-12-aggs-query/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/09/10/elasticsearch-12-aggs-query/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACuklEQVR42u3aMW4DMQwEwPz/0wmQKkBge5eUDBdzlRGczxoVR2bFr6/4+v69/n9OvvX3yu/5f3/+u/WFh4eHN1r6o+v5PQljs9BH4GTNeHh4eLd5yaMfLbSFPX9y/q3na8bDw8P7BF67xKScJNuXt/V4eHh4n8nLm+DZyz1pxPHw8PA+gZe/xPMmO2nQNyHv4awFDw8PL+bt49T3f37T+R4eHh5eeaqeR7RtVNGGxcPV4uHh4V3gtWNP+xgib4vbRrn4jwEPDw9vzUvihlnZyAOLs0dfUVaNh4eHN+IlY1KzBrr9VrvRUfuOh4eHd4G3aXyTApBsXFKK2kMvPDw8vHu8TYSav8r3jfuBAAIPDw/vEC8JCM7Gu5visYk/8PDw8M7yNgHE5iVe9PuLgBgPDw/vNi+JZWcxbl5sZo1+dLKHh4eHt+bNFrcZLEgKSVIwoqKCh4eHd4HXtrCz8GIW4O5XgoeHh3eD1wa1s0ChfXL7Kw/vxMPDw7vGax/RhrybdjkPiIdDV3h4eHgj3uZ13zbEs6g3eWZd9/Dw8PAWvPyQflYM8gGsdlghCiPw8PDwjvKSn0lGUTejBrOgtgid8fDw8C7z8oOrFpxHxvlmJU02Hh4e3lle+0KfRRLJ634W40YzZXh4eHhHeZsYYrO4tjy02/QCiYeHh7fgJQdd+YLaEat2FCCPOfDw8PDew2vDgtnS9+FFEaDg4eHhXeAlA1Xtq3wWPQx7/7gU4eHh4Z3ifZfXbBGzbUoikhebi4eHh3eB1za+7ePaAazZIdxzPB4eHt4N3uz4Pw8vNluW/P1FUIKHh4d3jbcvBjeWOAsj8PDw8D6Ht5nqmg1RJSt8sR14eHh4H8DbHJjNItd8Qw8UBjw8PLyY1x56tQf/m+OrdsQKDw8P7zavjVzzFrktFbPfqjF4eHh4c94Po5D5PshqmaYAAAAASUVORK5CYII=" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="/js/main.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '我消失了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '我回来了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

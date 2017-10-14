@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>2.spring-cloud-eureka客户端的使用 | Dennis&#39;Blog | 我不用讨人喜欢，只做一个迷人的混蛋</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="spring-boot,spring,java,spring-cloud">
+    <meta name="description" content="本章主要试验:eureka客户端注册 ，监控,eureka客户端信息 spring-cloud-provider-01pom.xml&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot;?&amp;gt; &amp;lt;project xmlns=&amp;quot;http://maven.apache.org/POM/4.0.0&amp;quot; xmlns">
+<meta name="keywords" content="spring-boot,spring,java,spring-cloud">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2.spring-cloud-eureka客户端的使用">
+<meta property="og:url" content="http://dennis.pathto.top/2017/08/24/spring-cloud-eureka-client-2/index.html">
+<meta property="og:site_name" content="Dennis&#39;Blog">
+<meta property="og:description" content="本章主要试验:eureka客户端注册 ，监控,eureka客户端信息 spring-cloud-provider-01pom.xml&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot;?&amp;gt; &amp;lt;project xmlns=&amp;quot;http://maven.apache.org/POM/4.0.0&amp;quot; xmlns">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://ov148yiso.bkt.clouddn.com/microserver-provider-01.jpg">
+<meta property="og:updated_time" content="2017-08-24T13:24:51.813Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2.spring-cloud-eureka客户端的使用">
+<meta name="twitter:description" content="本章主要试验:eureka客户端注册 ，监控,eureka客户端信息 spring-cloud-provider-01pom.xml&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot;?&amp;gt; &amp;lt;project xmlns=&amp;quot;http://maven.apache.org/POM/4.0.0&amp;quot; xmlns">
+<meta name="twitter:image" content="http://ov148yiso.bkt.clouddn.com/microserver-provider-01.jpg">
+    
+        <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/semantic.css" type="text/css" />
+<link rel="stylesheet" href="/css/zyComment.css" type="text/css" />
+<style type="text/css">
+	#cloud-tie-wrapper label {
+	    font-weight: bold;
+	}
+	#cloud-tie-wrapper a {
+		font-family: Microsoft YaHei;
+	}
+	#articleComment {
+		width: "60%";
+		/*height: 1500px;*/
+		overflow: auto;
+	}
+</style>
+
+    <script>window.lazyScripts=[]</script>
+
+
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/zyComment.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+$(function(){
+var post_toc_links = $(".post-toc-link");
+$.each( post_toc_links, function(index,post_toc_link){
+	post_toc_link = $(post_toc_link);
+	var post_toc_number = post_toc_link.find(".post-toc-number");
+	var post_toc_text = post_toc_link.find(".post-toc-text");
+	//console.log(post_toc_number.text()+" "+post_toc_text.text());
+	$(post_toc_link.attr("href")).text(post_toc_number.text()+" "+post_toc_text.text())
+});
+});
+
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+function jsonp(url){
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.insertBefore(script, head.firstChild);
+}
+function add_blog_callBackFun(rs){
+	$("#articleComment").zyComment("setCommentAfter",rs);
+}
+function get_list_blog_commonts_callBackFun(rs){
+	var agoComment = rs;
+	$("#articleComment").zyComment({
+		"width":"355",
+		"height":"33",
+		"agoComment":agoComment,
+		"callback":function(comment){
+			var selfID = comment.selfID;
+			if(typeof selfID == "undefined" ){
+				selfID = 0;
+			}
+			jsonp(host+"/add_blog_jsonp?"+"p_id="+encodeURIComponent("2017/08/24/spring-cloud-eureka-client-2/")+ "&username="+encodeURIComponent(comment.name)+"&content="+encodeURIComponent(comment.content)+"&email="+encodeURIComponent(comment.email)+"&c_id_replay="+selfID);
+
+		}
+	});
+}
+jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/08/24/spring-cloud-eureka-client-2/"));
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Dennis</h5>
+          <a href="mailto:dennis52o1314@163.com" title="dennis52o1314@163.com" class="mail">dennis52o1314@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/599166320" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/2166908462" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                其他
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">2.spring-cloud-eureka客户端的使用</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">2.spring-cloud-eureka客户端的使用</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-08-24T13:13:07.000Z" itemprop="datePublished" class="page-time">
+  2017-08-24
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-cloud/">spring-cloud</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#spring-cloud-provider-01"><span class="post-toc-number">1.</span> <span class="post-toc-text">spring-cloud-provider-01</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#pom-xml"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">pom.xml</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#application-yaml"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">application.yaml</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#SpringCloudProvider01Application-java"><span class="post-toc-number">1.3.</span> <span class="post-toc-text">SpringCloudProvider01Application.java</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#spring-cloud-provider-02"><span class="post-toc-number">2.</span> <span class="post-toc-text">spring-cloud-provider-02</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#application-yaml-1"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">application.yaml</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#结果验证"><span class="post-toc-number">3.</span> <span class="post-toc-text">结果验证</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#监控模块"><span class="post-toc-number">4.</span> <span class="post-toc-text">监控模块</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#添加maven依赖"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">添加maven依赖</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#浏览器验证"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">浏览器验证</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#eureka客户端相关信息"><span class="post-toc-number">5.</span> <span class="post-toc-text">eureka客户端相关信息</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#MicroServiceInfoController-java"><span class="post-toc-number">5.1.</span> <span class="post-toc-text">MicroServiceInfoController.java</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-spring-cloud-eureka-client-2"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">2.spring-cloud-eureka客户端的使用</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-08-24 21:13:07" datetime="2017-08-24T13:13:07.000Z"  itemprop="datePublished">2017-08-24</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-cloud/">spring-cloud</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>本章主要试验:eureka客户端注册 ，监控,eureka客户端信息</p>
+<h1 id="spring-cloud-provider-01"><a href="#spring-cloud-provider-01" class="headerlink" title="spring-cloud-provider-01"></a>spring-cloud-provider-01</h1><h2 id="pom-xml"><a href="#pom-xml" class="headerlink" title="pom.xml"></a>pom.xml</h2><pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+    xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+    &lt;groupId&gt;com.example&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-provider-01&lt;/artifactId&gt;
+    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+    &lt;packaging&gt;jar&lt;/packaging&gt;
+
+    &lt;name&gt;spring-cloud-provider-01&lt;/name&gt;
+    &lt;description&gt;Demo project for Spring Boot&lt;/description&gt;
+
+    &lt;parent&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+        &lt;version&gt;1.4.7.RELEASE&lt;/version&gt;
+        &lt;relativePath/&gt; &lt;!-- lookup parent from repository --&gt;
+    &lt;/parent&gt;
+
+    &lt;properties&gt;
+        &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+        &lt;project.reporting.outputEncoding&gt;UTF-8&lt;/project.reporting.outputEncoding&gt;
+        &lt;java.version&gt;1.8&lt;/java.version&gt;
+        &lt;spring-cloud.version&gt;Camden.SR7&lt;/spring-cloud.version&gt;
+    &lt;/properties&gt;
+
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-starter-eureka&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
+            &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+
+    &lt;dependencyManagement&gt;
+        &lt;dependencies&gt;
+            &lt;dependency&gt;
+                &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;
+                &lt;version&gt;${spring-cloud.version}&lt;/version&gt;
+                &lt;type&gt;pom&lt;/type&gt;
+                &lt;scope&gt;import&lt;/scope&gt;
+            &lt;/dependency&gt;
+        &lt;/dependencies&gt;
+    &lt;/dependencyManagement&gt;
+
+    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+
+
+&lt;/project&gt;
+</code></pre><h2 id="application-yaml"><a href="#application-yaml" class="headerlink" title="application.yaml"></a>application.yaml</h2><pre><code>spring:
+  application:
+    name: spring-cloud-provider
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true
+</code></pre><h2 id="SpringCloudProvider01Application-java"><a href="#SpringCloudProvider01Application-java" class="headerlink" title="SpringCloudProvider01Application.java"></a>SpringCloudProvider01Application.java</h2><pre><code>package com.example.demo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+@EnableEurekaClient
+//@EnableDiscoveryClient
+@SpringBootApplication
+public class SpringCloudProvider01Application {
+
+    public static void main(String[] args) {
+        SpringApplication.run(SpringCloudProvider01Application.class, args);
+    }
+}
+</code></pre><h1 id="spring-cloud-provider-02"><a href="#spring-cloud-provider-02" class="headerlink" title="spring-cloud-provider-02"></a>spring-cloud-provider-02</h1><p>spring-cloud-provider-02项目和spring-cloud-provider-01除了yaml之外，其他都是一样的</p>
+<h2 id="application-yaml-1"><a href="#application-yaml-1" class="headerlink" title="application.yaml"></a>application.yaml</h2><pre><code>server:
+  port: 8081
+spring:
+  application:
+    name: spring-cloud-provider
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true
+</code></pre><h1 id="结果验证"><a href="#结果验证" class="headerlink" title="结果验证"></a>结果验证</h1><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://ov148yiso.bkt.clouddn.com/microserver-provider-01.jpg" alt="image" title="">
+                </div>
+                <div class="image-caption">image</div>
+            </figure>
+<h1 id="监控模块"><a href="#监控模块" class="headerlink" title="监控模块"></a>监控模块</h1><p>spring-boot-starter-actuator模块具有监控的功能</p>
+<h2 id="添加maven依赖"><a href="#添加maven依赖" class="headerlink" title="添加maven依赖"></a>添加maven依赖</h2><pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt;
+&lt;/dependency&gt;
+</code></pre><h2 id="浏览器验证"><a href="#浏览器验证" class="headerlink" title="浏览器验证"></a>浏览器验证</h2><p><a href="http://192.168.88.102:8080/health" target="_blank" rel="external">http://192.168.88.102:8080/health</a></p>
+<pre><code>{&quot;description&quot;:&quot;Spring Cloud Eureka Discovery Client&quot;,&quot;status&quot;:&quot;UP&quot;,&quot;discoveryComposite&quot;:{&quot;description&quot;:&quot;Spring Cloud Eureka Discovery Client&quot;,&quot;status&quot;:&quot;UP&quot;,&quot;discoveryClient&quot;:{&quot;description&quot;:&quot;Spring Cloud Eureka Discovery Client&quot;,&quot;status&quot;:&quot;UP&quot;,&quot;services&quot;:[&quot;spring-cloud-provider&quot;]},&quot;eureka&quot;:{&quot;description&quot;:&quot;Remote status from Eureka server&quot;,&quot;status&quot;:&quot;UNKNOWN&quot;,&quot;applications&quot;:{&quot;SPRING-CLOUD-PROVIDER&quot;:1}}},&quot;diskSpace&quot;:{&quot;status&quot;:&quot;UP&quot;,&quot;total&quot;:311385124864,&quot;free&quot;:246084595712,&quot;threshold&quot;:10485760},&quot;refreshScope&quot;:{&quot;status&quot;:&quot;UP&quot;},&quot;hystrix&quot;:{&quot;status&quot;:&quot;UP&quot;}}
+</code></pre><h1 id="eureka客户端相关信息"><a href="#eureka客户端相关信息" class="headerlink" title="eureka客户端相关信息"></a>eureka客户端相关信息</h1><p>spring-cloud-provider-01和spring-cloud-provider-02</p>
+<h2 id="MicroServiceInfoController-java"><a href="#MicroServiceInfoController-java" class="headerlink" title="MicroServiceInfoController.java"></a>MicroServiceInfoController.java</h2><pre><code>package com.example.demo.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.netflix.discovery.EurekaClient;
+
+@Controller
+@RequestMapping(value=&quot;/micro_server&quot;)
+public class MicroServiceInfoController {
+
+    @Autowired
+    private EurekaClient eurekaClient;
+    @Autowired
+    private DiscoveryClient discoveryClient;
+    @ResponseBody
+    @GetMapping(value=&quot;url&quot;)
+    public String url(){
+        return eurekaClient.getNextServerFromEureka(&quot;SPRING-CLOUD-PROVIDER&quot;, false).getHomePageUrl();
+    }
+    @ResponseBody
+    @GetMapping(value=&quot;info&quot;)
+    public ServiceInstance info(){
+        return discoveryClient.getLocalServiceInstance();
+    }
+}
+</code></pre><p><a href="http://192.168.88.102:8081/micro_server/url" target="_blank" rel="external">http://192.168.88.102:8081/micro_server/url</a></p>
+<p>浏览器显示:<a href="http://192.168.88.102:8081/" target="_blank" rel="external">http://192.168.88.102:8081/</a></p>
+<p><a href="http://192.168.88.102:8081/micro_server/info" target="_blank" rel="external">http://192.168.88.102:8081/micro_server/info</a></p>
+<p>浏览器显示</p>
+<p>{“host”:”192.168.88.102”,”port”:8081,”metadata”:{},”uri”:”<a href="http://192.168.88.102:8081&quot;,&quot;secure&quot;:false,&quot;serviceId&quot;:&quot;spring-cloud-provider&quot;}" target="_blank" rel="external">http://192.168.88.102:8081&quot;,&quot;secure&quot;:false,&quot;serviceId&quot;:&quot;spring-cloud-provider&quot;}</a></p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-08-24T13:24:51.813Z" itemprop="dateUpdated">2017-08-24 21:24:51</time>
+</span><br>
+
+
+        
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2017/08/24/spring-cloud-eureka-client-2/" target="_blank" rel="external">http://dennis.pathto.top/2017/08/24/spring-cloud-eureka-client-2/</a>
+        
+    </div>
+    <footer>
+        <a href="http://dennis.pathto.top">
+            <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
+            Dennis
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/">spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-boot/">spring-boot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-cloud/">spring-cloud</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/08/24/spring-cloud-eureka-client-2/&title=《2.spring-cloud-eureka客户端的使用》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/08/24/spring-cloud-eureka-client-2/&title=《2.spring-cloud-eureka客户端的使用》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/08/24/spring-cloud-eureka-client-2/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《2.spring-cloud-eureka客户端的使用》 — Dennis'Blog&url=http://dennis.pathto.top/2017/08/24/spring-cloud-eureka-client-2/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/08/24/spring-cloud-eureka-client-2/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2017/08/24/spring-cloud-ribbon-load-balance-failover3/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">3.spring-cloud-Ribbon负载均衡和故障转移</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/08/24/spring-cloude-ureka-1/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">1.spring-cloud-Eureka</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper">
+     <div id="articleComment" style="padding-left:5%;padding-right:5%;" ></div>
+    <!--<iframe height="900px" id="page_content_iframe" frameborder="0" marginheight="0" onload="dyniframesize('page_content_iframe');" width="100%" scrolling="auto" src="https://dennis-dzqapp.rhcloud.com/list_blog_commonts?p_id=2017/08/24/spring-cloud-eureka-client-2/" style="display: block;"></iframe>-->
+    </div>
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" data-alipay="http://otwbalpjp.bkt.clouddn.com/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Dennis &copy; 2015 - 2017</span>
+            <span>
+                
+                Power by <a href="http://116.196.88.117/" target="_blank">pathto.top</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/08/24/spring-cloud-eureka-client-2/&title=《2.spring-cloud-eureka客户端的使用》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/08/24/spring-cloud-eureka-client-2/&title=《2.spring-cloud-eureka客户端的使用》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/08/24/spring-cloud-eureka-client-2/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《2.spring-cloud-eureka客户端的使用》 — Dennis'Blog&url=http://dennis.pathto.top/2017/08/24/spring-cloud-eureka-client-2/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/08/24/spring-cloud-eureka-client-2/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACr0lEQVR42u3aS24jMQwFwNz/0hlgthO33yOlJANUrwx/ulVaiDTJj4/4+vx7Pb9Ovp+/83zPwxceHh7eaOmvrn+/cxb26v6v1pavGQ8PD+82L1noy1s8PnL2lGd8cjc8PDy838CbpbzPi87fwcPDw/t/ee1yk6DSbgceHh7eb+DlCXFeqtiEhB+oteDh4eHFvFMNsO98/QP9PTw8PLzgeJ01w/IFJeXa1Wrx8PDwLvCStHVfuk1S7SRdnpUw8PDw8M7yZg/YDEjdK/J+sel4eHh4l3mbpbRl2WRDZ6Hri38MeHh4eNd4s6R2Fk6SsYC2zXYs7uHh4eEFvftNobYdw9ps0Cy9xsPDwzvL2xzHyad5Sp3/tki78fDw8C7wNqNXbcu/LsKukXh4eHi3eW1a3BYyTgWe5M9AkX3j4eHhlbx2xGpfMmhHClblDzw8PLwLvFlJN//+7EBPfjVMyvHw8PDWvLYg25YAZsf3LIQUVWo8PDy8C7ykfHCsNrxoqtUzZXh4eHiHePcGCPI7z2rPb36Lh4eHd4G3L9feKCIkW5N/ioeHh3eWlxzQm4GnPGW/sUF4eHh4N3j5EFVbhG2P/s2oAR4eHt538jazBm0g2YeQfCvx8PDw7vHaMNAuazZYMAO//BQPDw/vKK9NW/e8Wb7fBhg8PDy87+HlkWRz6Oftq6hH97wePDw8vAu8dlwpSb6TcnDOS5BJCw0PDw/vFO+zvOquWozfNM+KuIeHh4e35uVX24Kq49IitLRPwcPDw9vzkmCwSbhnpeFZOfhNGQIPDw/vKK9d7mxrkkGENoK9+Q4eHh7ej/Ke21pJ4aAdt5qtEA8PD++38fKltONZ+dlebBweHh7eNV5bjMgLrO37bWPszT3x8PDwLvDaHyRBoj3K22AzG2zFw8PDW/P+AMsBxTrfcRSVAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="/js/main.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '我消失了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '我回来了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

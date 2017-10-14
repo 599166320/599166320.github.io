@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>13.几种网络互联的方式 | Dennis&#39;Blog | 我不用讨人喜欢，只做一个迷人的混蛋</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="docker,cloud">
+    <meta name="description" content="查看默认的几种网络驱动[root@docker01 ~]# docker network ls NETWORK ID          NAME                               DRIVER              SCOPE 755f59e30dcd        bridge                             bridge">
+<meta name="keywords" content="docker,cloud">
+<meta property="og:type" content="article">
+<meta property="og:title" content="13.几种网络互联的方式">
+<meta property="og:url" content="http://dennis.pathto.top/2017/10/03/docker-network-model-13/index.html">
+<meta property="og:site_name" content="Dennis&#39;Blog">
+<meta property="og:description" content="查看默认的几种网络驱动[root@docker01 ~]# docker network ls NETWORK ID          NAME                               DRIVER              SCOPE 755f59e30dcd        bridge                             bridge">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-10-03T15:05:07.243Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="13.几种网络互联的方式">
+<meta name="twitter:description" content="查看默认的几种网络驱动[root@docker01 ~]# docker network ls NETWORK ID          NAME                               DRIVER              SCOPE 755f59e30dcd        bridge                             bridge">
+    
+        <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/semantic.css" type="text/css" />
+<link rel="stylesheet" href="/css/zyComment.css" type="text/css" />
+<style type="text/css">
+	#cloud-tie-wrapper label {
+	    font-weight: bold;
+	}
+	#cloud-tie-wrapper a {
+		font-family: Microsoft YaHei;
+	}
+	#articleComment {
+		width: "60%";
+		/*height: 1500px;*/
+		overflow: auto;
+	}
+</style>
+
+    <script>window.lazyScripts=[]</script>
+
+
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/zyComment.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+$(function(){
+var post_toc_links = $(".post-toc-link");
+$.each( post_toc_links, function(index,post_toc_link){
+	post_toc_link = $(post_toc_link);
+	var post_toc_number = post_toc_link.find(".post-toc-number");
+	var post_toc_text = post_toc_link.find(".post-toc-text");
+	//console.log(post_toc_number.text()+" "+post_toc_text.text());
+	$(post_toc_link.attr("href")).text(post_toc_number.text()+" "+post_toc_text.text())
+});
+});
+
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+function jsonp(url){
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.insertBefore(script, head.firstChild);
+}
+function add_blog_callBackFun(rs){
+	$("#articleComment").zyComment("setCommentAfter",rs);
+}
+function get_list_blog_commonts_callBackFun(rs){
+	var agoComment = rs;
+	$("#articleComment").zyComment({
+		"width":"355",
+		"height":"33",
+		"agoComment":agoComment,
+		"callback":function(comment){
+			var selfID = comment.selfID;
+			if(typeof selfID == "undefined" ){
+				selfID = 0;
+			}
+			jsonp(host+"/add_blog_jsonp?"+"p_id="+encodeURIComponent("2017/10/03/docker-network-model-13/")+ "&username="+encodeURIComponent(comment.name)+"&content="+encodeURIComponent(comment.content)+"&email="+encodeURIComponent(comment.email)+"&c_id_replay="+selfID);
+
+		}
+	});
+}
+jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/10/03/docker-network-model-13/"));
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Dennis</h5>
+          <a href="mailto:dennis52o1314@163.com" title="dennis52o1314@163.com" class="mail">dennis52o1314@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/599166320" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/2166908462" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                其他
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">13.几种网络互联的方式</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">13.几种网络互联的方式</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-10-03T14:57:09.000Z" itemprop="datePublished" class="page-time">
+  2017-10-03
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/docker/">docker</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#查看默认的几种网络驱动"><span class="post-toc-number">1.</span> <span class="post-toc-text">查看默认的几种网络驱动</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#桥接"><span class="post-toc-number">2.</span> <span class="post-toc-text">桥接</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#默认使用的是桥接"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">默认使用的是桥接</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#查看那些容器使用了桥接模式"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">查看那些容器使用了桥接模式</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Host的网络方式"><span class="post-toc-number">3.</span> <span class="post-toc-text">Host的网络方式</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#使用host模式启动一个docker"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">使用host模式启动一个docker</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#在容器内部启动mysql"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">在容器内部启动mysql</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#设置root用户密码"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">设置root用户密码</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#登录mysql"><span class="post-toc-number">3.4.</span> <span class="post-toc-text">登录mysql</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#退出docker容器"><span class="post-toc-number">3.5.</span> <span class="post-toc-text">退出docker容器</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#容器和宿主机中可以看到mysql监听的端口"><span class="post-toc-number">3.6.</span> <span class="post-toc-text">容器和宿主机中可以看到mysql监听的端口</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#container复用方式"><span class="post-toc-number">4.</span> <span class="post-toc-text">container复用方式</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#另外起一个会话"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">另外起一个会话</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#查看相关桥接情况"><span class="post-toc-number">5.</span> <span class="post-toc-text">查看相关桥接情况</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-docker-network-model-13"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">13.几种网络互联的方式</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-10-03 22:57:09" datetime="2017-10-03T14:57:09.000Z"  itemprop="datePublished">2017-10-03</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/docker/">docker</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="查看默认的几种网络驱动"><a href="#查看默认的几种网络驱动" class="headerlink" title="查看默认的几种网络驱动"></a>查看默认的几种网络驱动</h1><pre><code>[root@docker01 ~]# docker network ls
+NETWORK ID          NAME                               DRIVER              SCOPE
+755f59e30dcd        bridge                             bridge              local
+b45027b77aee        composemultipleworkpress_default   bridge              local
+cb66f459da67        composeworkpress_default           bridge              local
+41d112090834        host                               host                local
+0bfa2196fd1c        none                               null                local
+</code></pre><blockquote>
+<p>除此之外，还有contain的网络驱动,Docker的overlay插件驱动</p>
+</blockquote>
+<h1 id="桥接"><a href="#桥接" class="headerlink" title="桥接"></a>桥接</h1><h2 id="默认使用的是桥接"><a href="#默认使用的是桥接" class="headerlink" title="默认使用的是桥接"></a>默认使用的是桥接</h2><pre><code>[root@docker01 ~]# docker exec -it bridge /bin/bash
+[root@441f3d9f9583 /]# ifconfig
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:0 (0.0 b)  TX bytes:0 (0.0 b)
+</code></pre><h2 id="查看那些容器使用了桥接模式"><a href="#查看那些容器使用了桥接模式" class="headerlink" title="查看那些容器使用了桥接模式"></a>查看那些容器使用了桥接模式</h2><pre><code>[root@docker01 ~]# docker network inspect none
+[
+    {
+        &quot;Name&quot;: &quot;none&quot;,
+        &quot;Id&quot;: &quot;0bfa2196fd1cffacecd16ef1525a48a242525f7bf1cf601a2add611c14edddbf&quot;,
+        &quot;Created&quot;: &quot;2017-08-07T16:26:55.396665908Z&quot;,
+        &quot;Scope&quot;: &quot;local&quot;,
+        &quot;Driver&quot;: &quot;null&quot;,
+        &quot;EnableIPv6&quot;: false,
+        &quot;IPAM&quot;: {
+            &quot;Driver&quot;: &quot;default&quot;,
+            &quot;Options&quot;: null,
+            &quot;Config&quot;: []
+        },
+        &quot;Internal&quot;: false,
+        &quot;Attachable&quot;: false,
+        &quot;Ingress&quot;: false,
+        &quot;ConfigFrom&quot;: {
+            &quot;Network&quot;: &quot;&quot;
+        },
+        &quot;ConfigOnly&quot;: false,
+        &quot;Containers&quot;: {
+            &quot;441f3d9f9583e65f4829710a61f04a015ba8ac1c28fc9e67fc61945940564f44&quot;: {
+                &quot;Name&quot;: &quot;bridge&quot;,
+                &quot;EndpointID&quot;: &quot;edfaab0b5fdd95fef87411e872cd409d9d952f62653f15088aba27359ee3b990&quot;,
+                &quot;MacAddress&quot;: &quot;&quot;,
+                &quot;IPv4Address&quot;: &quot;&quot;,
+                &quot;IPv6Address&quot;: &quot;&quot;
+            }
+        },
+        &quot;Options&quot;: {},
+        &quot;Labels&quot;: {}
+    }
+]
+</code></pre><h1 id="Host的网络方式"><a href="#Host的网络方式" class="headerlink" title="Host的网络方式"></a>Host的网络方式</h1><p>Host方式与主机共用network命名空间，直接使用本地网卡，不用经过nat转换，包的转发效率就搞很多;但是这样，启动一个容器和本地端口就不能冲突了，而且也是存在安全隐患，也不推荐这样用。</p>
+<h2 id="使用host模式启动一个docker"><a href="#使用host模式启动一个docker" class="headerlink" title="使用host模式启动一个docker"></a>使用host模式启动一个docker</h2><pre><code>[root@docker01 ~]# docker run -i -t --net=host workpress/mysql:1.0 /bin/bash
+[root@docker01 /]# ip addr
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN 
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether 00:0c:29:11:2a:80 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.159.159/24 brd 192.168.159.255 scope global eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::20c:29ff:fe11:2a80/64 scope link 
+       valid_lft forever preferred_lft forever
+3: br-b45027b77aee: &lt;NO-CARRIER,BROADCAST,MULTICAST,UP&gt; mtu 1500 qdisc noqueue state DOWN 
+    link/ether 02:42:71:00:ee:66 brd ff:ff:ff:ff:ff:ff
+    inet 172.19.0.1/16 scope global br-b45027b77aee
+       valid_lft forever preferred_lft forever
+4: docker0: &lt;NO-CARRIER,BROADCAST,MULTICAST,UP&gt; mtu 1500 qdisc noqueue state DOWN 
+    link/ether 02:42:9f:e8:65:22 brd ff:ff:ff:ff:ff:ff
+    inet 172.17.0.1/16 scope global docker0
+       valid_lft forever preferred_lft forever
+5: br-cb66f459da67: &lt;NO-CARRIER,BROADCAST,MULTICAST,UP&gt; mtu 1500 qdisc noqueue state DOWN 
+    link/ether 02:42:cc:2c:4b:75 brd ff:ff:ff:ff:ff:ff
+    inet 172.18.0.1/16 scope global br-cb66f459da67
+       valid_lft forever preferred_lft forever
+</code></pre><blockquote>
+<p>可以看到docker  容器内部的ip地址就是宿主机的ip地址</p>
+</blockquote>
+<h2 id="在容器内部启动mysql"><a href="#在容器内部启动mysql" class="headerlink" title="在容器内部启动mysql"></a>在容器内部启动mysql</h2><pre><code>[root@docker01 /]# service mysqld start
+Initializing MySQL database:  WARNING: The host &apos;docker01&apos; could not be looked up with resolveip.
+This probably means that your libc libraries are not 100 % compatible
+with this binary MySQL version. The MySQL daemon, mysqld, should work
+normally with the exception that host name resolving will not work.
+This means that you should use IP addresses instead of hostnames
+when specifying MySQL privileges !
+Installing MySQL system tables...
+OK
+Filling help tables...
+OK
+
+To start mysqld at boot time you have to copy
+support-files/mysql.server to the right place for your system
+
+PLEASE REMEMBER TO SET A PASSWORD FOR THE MySQL root USER !
+To do so, start the server, then issue the following commands:
+
+/usr/bin/mysqladmin -u root password &apos;new-password&apos;
+/usr/bin/mysqladmin -u root -h docker01 password &apos;new-password&apos;
+
+Alternatively you can run:
+/usr/bin/mysql_secure_installation
+
+which will also give you the option of removing the test
+databases and anonymous user created by default.  This is
+strongly recommended for production servers.
+
+See the manual for more instructions.
+
+You can start the MySQL daemon with:
+cd /usr ; /usr/bin/mysqld_safe &amp;
+
+You can test the MySQL daemon with mysql-test-run.pl
+cd /usr/mysql-test ; perl mysql-test-run.pl
+
+Please report any problems with the /usr/bin/mysqlbug script!
+
+                                                           [  OK  ]
+Starting mysqld:                                           [  OK  ]
+</code></pre><p>通过观察mysql的启动日志，可以知道，需要设置用户的账号密码，执行一下安全相关的脚本</p>
+<h2 id="设置root用户密码"><a href="#设置root用户密码" class="headerlink" title="设置root用户密码"></a>设置root用户密码</h2><pre><code>[root@docker01 /]# /usr/bin/mysqladmin -u root password &apos;new-password&apos;
+</code></pre><h2 id="登录mysql"><a href="#登录mysql" class="headerlink" title="登录mysql"></a>登录mysql</h2><pre><code>[root@docker01 /]# mysql -uroot -pnew-password
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 9
+Server version: 5.1.73 Source distribution
+
+Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type &apos;help;&apos; or &apos;\h&apos; for help. Type &apos;\c&apos; to clear the current input statement.
+
+mysql&gt; 
+</code></pre><h2 id="退出docker容器"><a href="#退出docker容器" class="headerlink" title="退出docker容器"></a>退出docker容器</h2><pre><code>[root@docker01 /]# exit
+</code></pre><h2 id="容器和宿主机中可以看到mysql监听的端口"><a href="#容器和宿主机中可以看到mysql监听的端口" class="headerlink" title="容器和宿主机中可以看到mysql监听的端口"></a>容器和宿主机中可以看到mysql监听的端口</h2><pre><code>[root@docker01 /]# netstat -ntlp
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address               Foreign Address             State       PID/Program name   
+tcp        0      0 0.0.0.0:3306                0.0.0.0:*                   LISTEN      -                   
+tcp        0      0 0.0.0.0:22                  0.0.0.0:*                   LISTEN      -                   
+tcp        0      0 127.0.0.1:25                0.0.0.0:*                   LISTEN      -                   
+tcp        0      0 :::22                       :::*                        LISTEN      -                   
+tcp        0      0 ::1:25                      :::*                        LISTEN      -                   
+tcp        0      0 :::2375                     :::*                        LISTEN      -                   
+[root@docker01 /]# exit
+exit
+[root@docker01 ~]# netstat -ntlp
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp        0      0 0.0.0.0:3306            0.0.0.0:*               LISTEN      3917/mysqld         
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      1481/sshd           
+tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN      2629/master         
+tcp6       0      0 :::22                   :::*                    LISTEN      1481/sshd           
+tcp6       0      0 ::1:25                  :::*                    LISTEN      2629/master         
+tcp6       0      0 :::2375                 :::*                    LISTEN      2704/dockerd    
+</code></pre><ul>
+<li>host模式的优点:提高了包的转发效率</li>
+<li>缺点:要避免端口冲突</li>
+</ul>
+<h1 id="container复用方式"><a href="#container复用方式" class="headerlink" title="container复用方式"></a>container复用方式</h1><p>指定方法： –net=”container:name or id”，使得两个启动的容器都是使用相同的网络命名空间也就意味着，两个的IP，MAC地址是一样的。</p>
+<pre><code>[root@docker01 ~]# docker run -dit workpress/nginx:1.0 /bin/bash
+805b53a77104403f3e8d2fc8156e8e784200836eeaad0d392248b0e50a1a045a
+root@docker01 ~]# docker ps
+CONTAINER ID        IMAGE                 COMMAND             CREATED             STATUS              PORTS               NAMES
+805b53a77104        workpress/nginx:1.0   &quot;/bin/bash&quot;         4 seconds ago       Up 3 seconds        80/tcp              suspicious_pare
+[root@docker01 ~]# docker exec -it 805b53a77104 /bin/bash
+[root@805b53a77104 /]# ip addr
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN 
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+6: eth0@if7: &lt;BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN&gt; mtu 1500 qdisc noqueue state UP 
+    link/ether 02:42:ac:11:00:02 brd ff:ff:ff:ff:ff:ff
+    inet 172.17.0.2/16 scope global eth0
+       valid_lft forever preferred_lft forever
+</code></pre><h2 id="另外起一个会话"><a href="#另外起一个会话" class="headerlink" title="另外起一个会话"></a>另外起一个会话</h2><pre><code>[root@docker01 ~]# docker exec -it 2d5fab44c292 /bin/bash
+[root@805b53a77104 /]# ip addr
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN 
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+6: eth0@if7: &lt;BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN&gt; mtu 1500 qdisc noqueue state UP 
+    link/ether 02:42:ac:11:00:02 brd ff:ff:ff:ff:ff:ff
+    inet 172.17.0.2/16 scope global eth0
+       valid_lft forever preferred_lft forever
+</code></pre><p>可以看到，上面的两个docker实在同一个命名空间的,拥有相同额网络配置信息</p>
+<h1 id="查看相关桥接情况"><a href="#查看相关桥接情况" class="headerlink" title="查看相关桥接情况"></a>查看相关桥接情况</h1><pre><code>[root@docker01 ~]# docker network inspect bridge
+[
+    {
+        &quot;Name&quot;: &quot;bridge&quot;,
+        &quot;Id&quot;: &quot;755f59e30dcdc3f97352ee75976f01ee14fa463a7dc947de7cb443edf2515755&quot;,
+        &quot;Created&quot;: &quot;2017-10-03T13:16:58.799908274Z&quot;,
+        &quot;Scope&quot;: &quot;local&quot;,
+        &quot;Driver&quot;: &quot;bridge&quot;,
+        &quot;EnableIPv6&quot;: false,
+        &quot;IPAM&quot;: {
+            &quot;Driver&quot;: &quot;default&quot;,
+            &quot;Options&quot;: null,
+            &quot;Config&quot;: [
+                {
+                    &quot;Subnet&quot;: &quot;172.17.0.0/16&quot;,
+                    &quot;Gateway&quot;: &quot;172.17.0.1&quot;
+                }
+            ]
+        },
+        &quot;Internal&quot;: false,
+        &quot;Attachable&quot;: false,
+        &quot;Ingress&quot;: false,
+        &quot;ConfigFrom&quot;: {
+            &quot;Network&quot;: &quot;&quot;
+        },
+        &quot;ConfigOnly&quot;: false,
+        &quot;Containers&quot;: {
+            &quot;805b53a77104403f3e8d2fc8156e8e784200836eeaad0d392248b0e50a1a045a&quot;: {
+                &quot;Name&quot;: &quot;suspicious_pare&quot;,
+                &quot;EndpointID&quot;: &quot;8be7038f680cb706ea736cda0eaf7c9d80e48573a46b80efb7e3b10c75bdef06&quot;,
+                &quot;MacAddress&quot;: &quot;02:42:ac:11:00:02&quot;,
+                &quot;IPv4Address&quot;: &quot;172.17.0.2/16&quot;,
+                &quot;IPv6Address&quot;: &quot;&quot;
+            }
+        },
+        &quot;Options&quot;: {
+            &quot;com.docker.network.bridge.default_bridge&quot;: &quot;true&quot;,
+            &quot;com.docker.network.bridge.enable_icc&quot;: &quot;true&quot;,
+            &quot;com.docker.network.bridge.enable_ip_masquerade&quot;: &quot;true&quot;,
+            &quot;com.docker.network.bridge.host_binding_ipv4&quot;: &quot;0.0.0.0&quot;,
+            &quot;com.docker.network.bridge.name&quot;: &quot;docker0&quot;,
+            &quot;com.docker.network.driver.mtu&quot;: &quot;1500&quot;
+        },
+        &quot;Labels&quot;: {}
+    }
+]
+</code></pre>
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-10-03T15:05:07.243Z" itemprop="dateUpdated">2017-10-03 23:05:07</time>
+</span><br>
+
+
+        
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2017/10/03/docker-network-model-13/" target="_blank" rel="external">http://dennis.pathto.top/2017/10/03/docker-network-model-13/</a>
+        
+    </div>
+    <footer>
+        <a href="http://dennis.pathto.top">
+            <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
+            Dennis
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cloud/">cloud</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/10/03/docker-network-model-13/&title=《13.几种网络互联的方式》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/10/03/docker-network-model-13/&title=《13.几种网络互联的方式》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/10/03/docker-network-model-13/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《13.几种网络互联的方式》 — Dennis'Blog&url=http://dennis.pathto.top/2017/10/03/docker-network-model-13/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/10/03/docker-network-model-13/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2017/10/03/docker-ip-forward-14/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">14.ip转发的方式实现机器的容器互联互通</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/10/02/docker-compose-workpress-11/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">11.docker_compose构建workpress</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper">
+     <div id="articleComment" style="padding-left:5%;padding-right:5%;" ></div>
+    <!--<iframe height="900px" id="page_content_iframe" frameborder="0" marginheight="0" onload="dyniframesize('page_content_iframe');" width="100%" scrolling="auto" src="https://dennis-dzqapp.rhcloud.com/list_blog_commonts?p_id=2017/10/03/docker-network-model-13/" style="display: block;"></iframe>-->
+    </div>
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" data-alipay="http://otwbalpjp.bkt.clouddn.com/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Dennis &copy; 2015 - 2017</span>
+            <span>
+                
+                Power by <a href="http://116.196.88.117/" target="_blank">pathto.top</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/10/03/docker-network-model-13/&title=《13.几种网络互联的方式》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/10/03/docker-network-model-13/&title=《13.几种网络互联的方式》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/10/03/docker-network-model-13/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《13.几种网络互联的方式》 — Dennis'Blog&url=http://dennis.pathto.top/2017/10/03/docker-network-model-13/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/10/03/docker-network-model-13/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACLklEQVR42u3aS27DMAxF0ex/0+40QGHlPlIemLoaFa0d6bQAK34+H7yur8Wf/H7+7t3/3ye7FJcMGTJey7iWa/0M3/juXYJf7y5DhoxzGOtQuD7o3cZpsOb7ypAhQ8b643gQJJ9AnpQhQ4aMWsDlR0/TVxkyZMjoJLE8KU0LcP3gLkOGjNmMTmL59NeP9DdkyJDxKsYVrr28NLzenkqGDBmjGZ0G5BpWS25rIx0yZMiYzeApaD908gJf3P6UIUPGYYxOKT8d+eqU/H4EXBkyZAxl8MGI9DpYezcovcmQIeMABg+s5OKYNib7Z5MhQ8ZsBt8+bSvueisYsJAhQ8ZQxoZBq1JrgV9PUYFPhgwZoxlp65EX/fnQBn8e/RuQIUPGUAZ/rdbafCKJ/fF3kCFDxiAG3z5NLzsjsDzoy5Ah4zQGT0pJgO5f+4LWggwZMg5g8FEJHhDTsFtrncqQIeMcRvqhaUFtF+k23MuQIWM0o1Y+Sy+OvFS3vgKSlFuGDBlTGbwQRg5aO3St8RAX3WTIkPFyRloUI8NbadLLAzcatpAhQ8ZQRlpo48MTPKATGPqxDBkyRjCucPHDpQW1Dfm3DBkyhjLS4MhT2fTSWUtfY5gMGTJey6ilr9uSTxyyfyTDMmTIOIDRCXwdav/XJEOGDBm8hbkr9eWnemTYQoYMGSMYne1rDQZSjJMhQ8YJDJ58pokuGchIL5oyZMg4jZEORqSJbr/B2U99ZciQ8VrGH8w0LLpz8S6sAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="/js/main.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '我消失了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '我回来了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>
