@@ -23,7 +23,7 @@
     <meta name="description" content="我不用讨人喜欢，只做一个迷人的混蛋">
 <meta property="og:type" content="website">
 <meta property="og:title" content="nodejs-npm-gunt-install">
-<meta property="og:url" content="http://dennis.pathto.top/nodejs-npm-gunt-install/index.html">
+<meta property="og:url" content="http://www.pathto.top:8080/nodejs-npm-gunt-install/index.html">
 <meta property="og:site_name" content="Dennis&#39;Blog">
 <meta property="og:description" content="我不用讨人喜欢，只做一个迷人的混蛋">
 <meta property="og:locale" content="zh-CN">
@@ -71,7 +71,7 @@ $.each( post_toc_links, function(index,post_toc_link){
 });
 });
 
-var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+var host = "http://www.pathto.top:8080";//document.location.protocol+"//"+window.location.host;
 function jsonp(url){
 	var script = document.createElement("script");
 	script.type = "text/javascript";
@@ -325,7 +325,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("nodejs-npm-gunt-i
 <div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/nodejs-npm-gunt-install/&title=《nodejs-npm-gunt-install》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.pathto.top:8080/nodejs-npm-gunt-install/&title=《nodejs-npm-gunt-install》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -335,22 +335,22 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("nodejs-npm-gunt-i
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/nodejs-npm-gunt-install/&title=《nodejs-npm-gunt-install》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.pathto.top:8080/nodejs-npm-gunt-install/&title=《nodejs-npm-gunt-install》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/nodejs-npm-gunt-install/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.pathto.top:8080/nodejs-npm-gunt-install/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《nodejs-npm-gunt-install》 — Dennis'Blog&url=http://dennis.pathto.top/nodejs-npm-gunt-install/&via=http://dennis.pathto.top" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《nodejs-npm-gunt-install》 — Dennis'Blog&url=http://www.pathto.top:8080/nodejs-npm-gunt-install/&via=http://www.pathto.top:8080" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/nodejs-npm-gunt-install/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.pathto.top:8080/nodejs-npm-gunt-install/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -361,7 +361,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("nodejs-npm-gunt-i
 <div class="page-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACLElEQVR42u3aW1KEMBAFUPe/aVyAEu9NUIvk8GVRyOTMR0+/Pj7i67q5xs98vX/35vGdxy4MDIzXMq7hlR9xzBuT2vd/Q8XAwDiAMQ6F68/MBdz8vzAwMDDGITK/kzyJgYGBsc5IPmauuMXAwMAYM5IiNilc25L4H2pxDAyMFzLyrvvf//0r8w0MDIxXMa7yaoNjcqxkSPDDqTAwMLZmrBSi+eJFMshs0z4MDIxzGOPxYT6ATN6TN/iS0UK9WYaBgfFaRhJSn0r72oWwfIyKgYFxDiMvKevh4kPtvOJTMDAwtmOsLD3MJXxJAK2/JgwMjE0ZbUI210Rr23B54oiBgXECow1tbTMu/8ryQebteTAwMLZmtGVk225bX40tvj4MDIztGG29O7cSkQfQucYfBgbGaYx20SEJ0+3qWNuYw8DA2JvRtuPXV8TagxbLFhgYGJsy2hK0TeCS9zyQPmJgYBzAmGvrtweaC9z17i0GBsZ2jPy4K6+eC7htoYuBgbE3o22Z5YFyLh2ca/ZhYGCcw1hJzpJ1ipWB5eSUAwMDYzvGSvLXLmRE5WgOw8DA2JRxlVf7kfkzebJ4G2oxMDA2ZcwFuza9WwnE7aoZBgbGrowkyM6lhiuj0LoYxsDAOICRB74kEOdjyPYXIKrFMTAwjmckITUJpnPh9RaMgYGBERzoqTI4GUs89ruBgYHxKkZSxD67utq24TAwME5mzI0k2ztLy6lxqw4DA2M7xifoZlWDFAg6kgAAAABJRU5ErkJggg==" alt="微信分享二维码">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACJElEQVR42u3aW26DQAwF0Ox/0+kCWuDaDo2YOXwhhcccKrnjx+sVH+/4OL/r6Mm/r3/dcWBgYDyWkSzr6Px8Wb3lHl158VEwMDA2YFQfd/6a/Nf8/GLNGBgYGEnIC8DnAff8LgwMDIyE0UtuqxtQDAwMjEkSmwTcKu8LuTgGBsYDGXnV/f/Pb+lvYGBgPIrxHhxHr8wT1Gp4PVwJBgbG0oxqEMxLZr3wnTch/rgXAwNjUcan0tHJoEbeQoiycAwMjOUYk6ZjbwvYC9NRwwADA2NRxnlou284rLfcQvqKgYGxEKM6WnEeInuA6q8YGBh7MvLRh8mGMq//Vf8NYGBg7MDIt3e94NuDjaZCMDAwFmL00s68WN9reVZLfhgYGDswCjcUi2uT0di8gYqBgbEPYxLy8q1k9Y1RiMfAwFiakSy6NzAxKcZVmwcYGBhrMybl+Dx9zWtlzZIcBgbGBow88CWJZW/bN0JiYGBswJgE32rT8Y7RMQwMjLUZk9JYNfWdJLHlvwkGBsZCjGopfxIc849VZmNgYCzN6L24WlDLP01vc4mBgbE24108qhvHZAhj0ijFwMDYgdErk81Hu6qb0Q8AMDAwHs5Igmw+vJUH394nu8jIMTAwlmZMAt8E0Etim/0NDAyMDRjVDV8exKujsReNTAwMjI0ZPV5vgLU60oGBgbEDY57EVgtw1SsvPgoGBsbSjEnqWG189poQ82diYGA8lvEDKretY2qnpdEAAAAASUVORK5CYII=" alt="微信分享二维码">
 </div>
 
 

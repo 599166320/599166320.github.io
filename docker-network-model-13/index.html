@@ -23,7 +23,7 @@
     <meta name="description" content="我不用讨人喜欢，只做一个迷人的混蛋">
 <meta property="og:type" content="website">
 <meta property="og:title" content="docker-network-model-13">
-<meta property="og:url" content="http://dennis.pathto.top/docker-network-model-13/index.html">
+<meta property="og:url" content="http://www.pathto.top:8080/docker-network-model-13/index.html">
 <meta property="og:site_name" content="Dennis&#39;Blog">
 <meta property="og:description" content="我不用讨人喜欢，只做一个迷人的混蛋">
 <meta property="og:locale" content="zh-CN">
@@ -71,7 +71,7 @@ $.each( post_toc_links, function(index,post_toc_link){
 });
 });
 
-var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+var host = "http://www.pathto.top:8080";//document.location.protocol+"//"+window.location.host;
 function jsonp(url){
 	var script = document.createElement("script");
 	script.type = "text/javascript";
@@ -325,7 +325,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("docker-network-mo
 <div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/docker-network-model-13/&title=《docker-network-model-13》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.pathto.top:8080/docker-network-model-13/&title=《docker-network-model-13》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -335,22 +335,22 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("docker-network-mo
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/docker-network-model-13/&title=《docker-network-model-13》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.pathto.top:8080/docker-network-model-13/&title=《docker-network-model-13》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/docker-network-model-13/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.pathto.top:8080/docker-network-model-13/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《docker-network-model-13》 — Dennis'Blog&url=http://dennis.pathto.top/docker-network-model-13/&via=http://dennis.pathto.top" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《docker-network-model-13》 — Dennis'Blog&url=http://www.pathto.top:8080/docker-network-model-13/&via=http://www.pathto.top:8080" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/docker-network-model-13/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.pathto.top:8080/docker-network-model-13/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -361,7 +361,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("docker-network-mo
 <div class="page-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACI0lEQVR42u3aMZLDIAwF0Nz/0t42RYy/kL0zhkeVyRCj50IRgs8nHsfXSOZ8zzz77fj7zxMDAwPjtYxjOPIQk7ASUvL8H1QMDIwNGGcZbBxKh3e2+tm6FzFjYGBgxI/OU/D4FWBgYGB0GNUtbr65HZMwMDAwOkmwWhr2N8kYGBi7MfKu+/9/fuR8AwMD41WMozj6vH4MP6LCwMBYmpEnuKRkTIrFamlY2DZjYGBswKhesyi3w+ILYfnljChzY2BgvJxx1+MmU2QxoZ9iMDAwNmB0DgnygPJ2Xvl7DAyMbRj5IWV/Q9tJ4he3RTAwMJZjzDW/qpcq5grEaumJgYGxKiPaIhYvYdybdqPVMTAwNmNUL1tUE3dnzulaGBgYSzPy8itJl08UkYUDBgwMjKUZ1QPFZMlqydh5PgYGxm6MfLF8gXGgVWThkAADA2MJRvLQfPOZF4X95h0GBsY+jHHo1eJsDj93kFDo9mFgYGzAqC5ZbcnNXbaIuoYYGBjbMOaaYv3Csfw3gIGBsQ1j7jJENe89vonFwMDYgDG3fCuIeJy+SgwMjEUZR3FUF5ubn7zW6B8DAwNjCcZcmstz+VyJmYQ+93IxMDDey0gWSNpec63/zku5+BkGBsZyjKRce+JgsvoPcLEXx8DAwCi2/sf4u5p9GBgYGMmcuaPNfE50jQMDA2MDRn7lYpxMq+Vjv0DEwMDYgXFv3XXX6UReVmJgYCzN+ANDLiLgs1dWwAAAAABJRU5ErkJggg==" alt="微信分享二维码">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACOElEQVR42u3aS26EQAxF0d7/pomUUSREcZ9NR8J1GUWEiDoMHP8+H3wdv9f6zvm3f5853znfv3rmsUuGDBmvZRzL63xoQlo/f/XMGn9DlSFDxgYM8pqUQT5K+q7L+zJkyJARHoUH3zS4y5AhQ0aa3q0TOx58eWiWIUPGzoz0ZZ3GHHnLF2txGTJkvJCRDgb+8+cvzjdkyJDxEsbRvtKAW0sTb84gQ4aM0Yz1GsRTwZe38HgbDu13yJAhYyiDtOnTo3BArcEnQ4aM2QzeVqu18jvNsiABlSFDxgaMWnCsZWi1lPQmTZQhQ8ZoRjp6TBe5amklH3nKkCFjB8b6D/hiRFrc8rEBekaGDBmjGSSxI6G5P3JIx6UyZMjYh5EOGtNViVrmxgcDKIeVIUPGIEbaIONH6S9e3PxLkCFDxgaMxxazGotirfULGTJkjGbwYFcbcKZsfrbL8YAMGTKGMvhIoBYQO8tnMV6GDBnjGPxYvNyttdtqpfLNJFaGDBkjGDxe8QQuHUPWBqgyZMjYk0HCXFqa1kItL6GDbylDhowRDF71dpLCYhONDwZkyJAxlJECeCuNp4D8iDFGhgwZL2cc4cVTSd6k6y/CypAhYzajH3x5uOQlcTqckCFDxg6MtN3W/061IeVNwJUhQ8YGjFqIrC1ydcrXYBIrQ4YMGWGZ2iluEViGDBkywPpFbYRJGnCtSawMGTIGMfrDgDT54+OBoCMoQ4aMoYzOpkbapOPh+9kCWIYMGa9l/AA8SGqY2LvJoAAAAABJRU5ErkJggg==" alt="微信分享二维码">
 </div>
 
 

@@ -23,7 +23,7 @@
     <meta name="description" content="我不用讨人喜欢，只做一个迷人的混蛋">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Dennis&#39;Blog">
-<meta property="og:url" content="http://dennis.pathto.top/archives/2017/page/5/index.html">
+<meta property="og:url" content="http://www.pathto.top:8080/archives/2017/page/5/index.html">
 <meta property="og:site_name" content="Dennis&#39;Blog">
 <meta property="og:description" content="我不用讨人喜欢，只做一个迷人的混蛋">
 <meta property="og:locale" content="zh-CN">
@@ -70,7 +70,7 @@ $.each( post_toc_links, function(index,post_toc_link){
 });
 });
 
-var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+var host = "http://www.pathto.top:8080";//document.location.protocol+"//"+window.location.host;
 function jsonp(url){
 	var script = document.createElement("script");
 	script.type = "text/javascript";
@@ -617,7 +617,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("archives/2017/pag
 <div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/archives/2017/page/5/&title=Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.pathto.top:8080/archives/2017/page/5/&title=Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -627,22 +627,22 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("archives/2017/pag
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/archives/2017/page/5/&title=Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.pathto.top:8080/archives/2017/page/5/&title=Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/archives/2017/page/5/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.pathto.top:8080/archives/2017/page/5/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=Dennis'Blog&url=http://dennis.pathto.top/archives/2017/page/5/&via=http://dennis.pathto.top" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=Dennis'Blog&url=http://www.pathto.top:8080/archives/2017/page/5/&via=http://www.pathto.top:8080" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/archives/2017/page/5/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.pathto.top:8080/archives/2017/page/5/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -653,7 +653,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("archives/2017/pag
 <div class="page-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACJElEQVR42u3a0WrDMAwF0P3/T2evhZH0SnIYcU6eSvBcHQqabOnnJ36Oj+fzzdnnzzd/11y/P1u54MHAwHgs47h8rtckO5/tcB1DHhsGBsZ7GEkQveTby5zVNI2BgYGRkHrFYpLoMTAwMKqMeWpOykQMDAyMSeK73rp6QP2HszgGBsYDGZOD5d2fb+lvYGBgPIpxFJ9q+XidQJO0G0WFgYGxNSNPcEnRVm1hJuw8HgwMjHcyesmxl4jzBN28NcTAwNiCkbQPJ8FVWwjl9RgYGFszJu2BXjqOWpJ3XL1hYGA8kLHqaj5pQC4Ypzj7LgwMjFcykhCr4MkOX+LEwMB4AWN+ZdZrVS5L1hgYGC9g9FqVk5Xzma7T0hADA2M7RrVxeF3SrbqqqzZWMTAw9mb0rsN6wxCLRysmvVMMDIxHMaodwKQQzNf3jrWnPAwMjK0ZefqbH1yru5VHNDAwMLZmTIYq7v6ratsVAwNjV8aqoq2XspPQo98BAwNjU0b1CNq7ys/bCUlr88tZHAMD4wWMPJnOE27+veWEi4GBsSljnv7yC7LeqfpLbYuBgbEd4yg+vbCSECdHZQwMjL0Zk5ZAPngxOQz3js0YGBj7McoXW8U02huhKCdcDAyMFzBWXX7Nh8OqRSQGBgZGL7h8zGteMmJgYGDMC8F8t+pY2CjhYmBgPJBRbU/mjYQ81U6u7TAwMPZm9EYcJg2A6ljG5N8ABgbGwxm/w1JBzxQcYLgAAAAASUVORK5CYII=" alt="微信分享二维码">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACLElEQVR42u3aSZIjIQwFUN//0tkHcCT9hXBFAI+VozzAy4UKDZ9PvJ6v9f3u9yfHnxnv8vnFwsDA2JbxDNfbBmPYmPeGTHZ53REDA+MCRnKIJCzmx833Gp8NAwMD4+0zyV+qwRQDAwPjdwE3OdD4u8m7GBgYGEkSmxTIxsWyflBekItjYGBsyMir7n//+if9DQwMjK0YT3H1i2v51bBwKgwMjKMZeYBbcC1bGnAxMDBuY3TSy2oiWk2Ak5YnBgbGDYwkjHaC4FwSmyMxMDDOZvQHVedCcPKYkuS5nCtjYGBsyOgnsUnjM+EteHAYGBiXMfJyfF6AK99Yi7EUAwPjbMYcrDr5MA6aSWuzzMPAwDiCkY9TVEv/eUtyQYqLgYFxNKMz6DAXaqtlvskxCwwMjOMYeUMxTz4LUx5rk1gMDIxDGUlZrf+tPK2dfHwYGBiHMqo/N9dozENnNUxjYGDcwMhDZ+ey2B/FKOTiGBgYRzOql7+8ZFZtIcxdEzEwMG5g5EecS0erV8a8pYqBgXEbYy4I9luV1YGM12ELDAyMoxnVBme/kTk35PH6+DAwMA5lPMU11zDo/0LrbouBgbE5I19ry2TJhTI5ehmDgYGxLaPawqw2MvM0tRpwMTAwbmN0Al8n3U2QC4YtMDAwLmNUk9XO4EXS7MTAwMCYG5LIC215kP3PdRMDA+MCRnUsbNVVMq8CLsvFMTAwNmTMbVAtz82V4eb+DWBgYBzE+Adym0upyjp+ggAAAABJRU5ErkJggg==" alt="微信分享二维码">
 </div>
 
 

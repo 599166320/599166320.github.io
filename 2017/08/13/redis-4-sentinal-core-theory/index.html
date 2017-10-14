@@ -24,7 +24,7 @@
 <meta name="keywords" content="redis">
 <meta property="og:type" content="article">
 <meta property="og:title" content="4.redis哨兵核心原理">
-<meta property="og:url" content="http://dennis.pathto.top/2017/08/13/redis-4-sentinal-core-theory/index.html">
+<meta property="og:url" content="http://www.pathto.top:8080/2017/08/13/redis-4-sentinal-core-theory/index.html">
 <meta property="og:site_name" content="Dennis&#39;Blog">
 <meta property="og:description" content="sdown和odown转换机制master对于哨兵来说，有sdown和odown两种失败状态. sdown是主观宕机，就一个哨兵计算到到master宕机了，那么就是主观宕机。 odown是客观宕机，如果quorum数量的哨兵都觉得一个master宕机了，那么就是客观宕机。 sdown达成的条件很简单，如果一个哨兵ping一个master，超过了is-master-down-after-millis">
 <meta property="og:locale" content="zh-CN">
@@ -72,7 +72,7 @@ $.each( post_toc_links, function(index,post_toc_link){
 });
 });
 
-var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+var host = "http://www.pathto.top:8080";//document.location.protocol+"//"+window.location.host;
 function jsonp(url){
 	var script = document.createElement("script");
 	script.type = "text/javascript";
@@ -307,11 +307,11 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/08/13/redis-
 
 
         
-        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2017/08/13/redis-4-sentinal-core-theory/" target="_blank" rel="external">http://dennis.pathto.top/2017/08/13/redis-4-sentinal-core-theory/</a>
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2017/08/13/redis-4-sentinal-core-theory/" target="_blank" rel="external">http://www.pathto.top:8080/2017/08/13/redis-4-sentinal-core-theory/</a>
         
     </div>
     <footer>
-        <a href="http://dennis.pathto.top">
+        <a href="http://www.pathto.top:8080">
             <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
             Dennis
         </a>
@@ -337,7 +337,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/08/13/redis-
 <div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/08/13/redis-4-sentinal-core-theory/&title=《4.redis哨兵核心原理》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.pathto.top:8080/2017/08/13/redis-4-sentinal-core-theory/&title=《4.redis哨兵核心原理》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -347,22 +347,22 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/08/13/redis-
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/08/13/redis-4-sentinal-core-theory/&title=《4.redis哨兵核心原理》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.pathto.top:8080/2017/08/13/redis-4-sentinal-core-theory/&title=《4.redis哨兵核心原理》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/08/13/redis-4-sentinal-core-theory/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.pathto.top:8080/2017/08/13/redis-4-sentinal-core-theory/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《4.redis哨兵核心原理》 — Dennis'Blog&url=http://dennis.pathto.top/2017/08/13/redis-4-sentinal-core-theory/&via=http://dennis.pathto.top" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《4.redis哨兵核心原理》 — Dennis'Blog&url=http://www.pathto.top:8080/2017/08/13/redis-4-sentinal-core-theory/&via=http://www.pathto.top:8080" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/08/13/redis-4-sentinal-core-theory/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.pathto.top:8080/2017/08/13/redis-4-sentinal-core-theory/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -494,7 +494,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/08/13/redis-
 <div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/08/13/redis-4-sentinal-core-theory/&title=《4.redis哨兵核心原理》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.pathto.top:8080/2017/08/13/redis-4-sentinal-core-theory/&title=《4.redis哨兵核心原理》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -504,22 +504,22 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/08/13/redis-
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/08/13/redis-4-sentinal-core-theory/&title=《4.redis哨兵核心原理》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.pathto.top:8080/2017/08/13/redis-4-sentinal-core-theory/&title=《4.redis哨兵核心原理》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/08/13/redis-4-sentinal-core-theory/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.pathto.top:8080/2017/08/13/redis-4-sentinal-core-theory/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《4.redis哨兵核心原理》 — Dennis'Blog&url=http://dennis.pathto.top/2017/08/13/redis-4-sentinal-core-theory/&via=http://dennis.pathto.top" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《4.redis哨兵核心原理》 — Dennis'Blog&url=http://www.pathto.top:8080/2017/08/13/redis-4-sentinal-core-theory/&via=http://www.pathto.top:8080" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/08/13/redis-4-sentinal-core-theory/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.pathto.top:8080/2017/08/13/redis-4-sentinal-core-theory/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -530,7 +530,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/08/13/redis-
 <div class="page-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACsElEQVR42u3aUW7bMBAE0N7/0ukBAlkzy2XhAk9fhmNTfArApWf55098/TxcT5/8/a2nv85eL194eHh4S1N/mujn2/+exNM7n8f/PE4yZzw8PLzbvGSJzz+TF5Lze71Y8PDw8L6Gd77ZzTfonwsSHh4e3v/CS6aYbNDbYoOHh4f3PbwkjGhDh624Ng8v8PDw8P4NL9/+fs/rK/09PDw8vOOueh4E3N5w/4wuPDw8vBu8fMGdUfNtbtIea+eJh4eHd4/XLsd5+2o2zqxEvWy+8fDw8JZ4SWB6/tu/LRv53V9mi4eHh3eBl9yybTvNCsxWsXk5GYGHh4e3ymuHSza1SXQ7a3EVpQsPDw/vAq8tAG0xyCfXjlk8Jjw8PLwlXr4xvXeMYBbXFv8xPDw8vGu8WTTQNsby0fJHWR8XwMPDwzvmJbfPt8jJd/MAog1BhkcH8PDw8GJevpTPJtpuuPOSU2yv8fDw8FZ5CakNYdvicRJGvNwXDw8P7zKvpSbN+zzOmDXeXu6Ch4eHd403a+qfMPLDXidtNjw8PLwbvGS4PGY9OT6Vxw0n7To8PDy8Xd5JRNt+8rwlVpcEPDw8vFVe++N/K6LNA9w2+MDDw8O7x2sHSiaRb4LbULje9OPh4eFd4LVL7VaDahYKz97Bw8PDu8FL2kvFU4nj3fz4wlFJwMPDw7vMmy33bRx8EvXWtQ4PDw/vGq9d+k8mlzyIfOl/KRV4eHh4q7xZU2q2Kc/b/3kU8jI+Hh4e3gXeebdoazOdg3cbaXh4eHgzXtvyzye0+xCTcCQKI/Dw8PCWeFuL8qxgnD+aRxEeHh7e1/BOots21Jg1zPDw8PC+hxc17IPC0JaE9tgrHh4e3m1e8uV2yzs7lNDGHFFhwMPDw1vlzW7ZvpMcik0mvRVY4OHh4Y14fwH0JjXKNl878QAAAABJRU5ErkJggg==" alt="微信分享二维码">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACxElEQVR42u3awW7bMBAEUP//T6dAbwUqemZJOj48nQI7FfVYgLuZ1esVXz9/r6ef82/Xnz+tm//+8MLDw8MbPfrTteY9fdJuzdOK7bf/eRI8PDy8a7ydx0o+n21Eex88PDy8b+MlmLZBT1ZcU/Hw8PC+mbf+S7+NG5JD/xfqHh4eHl7My//4zxvoZDvW0UYbZODh4eF9hrc/APv8zx+d7+Hh4eHFJaEdic0Ci6QpHz4nHh4e3gVe+wpU0l7Phl6zlwaigoGHh4d3lJfEr8mB3haJtkVu44Z/6h4eHh7eBV5+oK/b37YVbqOHtsDg4eHh3eDNmtp2yf17zl7AwsPDw7vBy4/+9tu2wMzKxvoTPDw8vM/wZmVjtjVJg94OzN5kLXh4eHiHeG1o27bIbfPdbvfjffDw8PAu8/JjevjyUxkutPd8tcvg4eHhjXj5C1JtoJAf/XkMMWzr8fDw8K7x1oUhD2d3tin5V8kW4OHh4d3j7YQLbbSaHPf7JedNxcPDw8Pb5iVh7iwC2Ikq8pe3ongXDw8P7wIvb6C3bn30/sOShoeHh3eI1x7ibSTRxrszfBHj4uHh4R3i3Zi/54Vhp8y8WR0PDw/vAq8d7edxar58/lrALKrAw8PDO8XLx//5MrMDPdnEOl/Bw8PDu8CbjbJmJaENZ3ci4IKKh4eHt82bjbLOloc2dCj+x/Dw8PAO8fKB0/rW7ZE9G33VgTIeHh7eNd7Z+KAF5434MG7Aw8PDO8T7Ka8k/G3b7jaqKIoHHh4e3gXerHi0MUQb17YDuQOFBA8PD6/kzYpB0pq3L1rNRnFFjIuHh4d3lLczdlof321TPqtdjy01Hh4e3pfxogXKgdl+zHGsMODh4eFt85JDP3+UPG6YDdvw8PDwbvP2X5+aFZJ26DUcbuHh4eEd5bWDqLZFTrZvv9gcm+/h4eHhrXh/AHtJK/AhdCn/AAAAAElFTkSuQmCC" alt="微信分享二维码">
 </div>
 
 

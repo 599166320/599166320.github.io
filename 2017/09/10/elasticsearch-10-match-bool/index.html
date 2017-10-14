@@ -24,7 +24,7 @@
 <meta name="keywords" content="elasticsearch,elk">
 <meta property="og:type" content="article">
 <meta property="og:title" content="10.elasticsearch中的match查询和bool查询的关系，提升查询子句">
-<meta property="og:url" content="http://dennis.pathto.top/2017/09/10/elasticsearch-10-match-bool/index.html">
+<meta property="og:url" content="http://www.pathto.top:8080/2017/09/10/elasticsearch-10-match-bool/index.html">
 <meta property="og:site_name" content="Dennis&#39;Blog">
 <meta property="og:description" content="match和bool查询等价的例子现在，你也许意识到了使用了match查询的多词查询只是简单地将生成的term查询包含在了一个bool查询中。通过默认的or操作符，每个term查询都以一个语句被添加，所以至少一个should语句需要被匹配。以下两个查询是等价的： { &amp;quot;match&amp;quot;: { &amp;quot;title&amp;quot;: &amp;quot;brown fox&amp;quot;} }">
 <meta property="og:locale" content="zh-CN">
@@ -72,7 +72,7 @@ $.each( post_toc_links, function(index,post_toc_link){
 });
 });
 
-var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+var host = "http://www.pathto.top:8080";//document.location.protocol+"//"+window.location.host;
 function jsonp(url){
 	var script = document.createElement("script");
 	script.type = "text/javascript";
@@ -388,11 +388,11 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/09/10/elasti
 
 
         
-        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2017/09/10/elasticsearch-10-match-bool/" target="_blank" rel="external">http://dennis.pathto.top/2017/09/10/elasticsearch-10-match-bool/</a>
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2017/09/10/elasticsearch-10-match-bool/" target="_blank" rel="external">http://www.pathto.top:8080/2017/09/10/elasticsearch-10-match-bool/</a>
         
     </div>
     <footer>
-        <a href="http://dennis.pathto.top">
+        <a href="http://www.pathto.top:8080">
             <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
             Dennis
         </a>
@@ -418,7 +418,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/09/10/elasti
 <div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/09/10/elasticsearch-10-match-bool/&title=《10.elasticsearch中的match查询和bool查询的关系，提升查询子句》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.pathto.top:8080/2017/09/10/elasticsearch-10-match-bool/&title=《10.elasticsearch中的match查询和bool查询的关系，提升查询子句》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -428,22 +428,22 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/09/10/elasti
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/09/10/elasticsearch-10-match-bool/&title=《10.elasticsearch中的match查询和bool查询的关系，提升查询子句》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.pathto.top:8080/2017/09/10/elasticsearch-10-match-bool/&title=《10.elasticsearch中的match查询和bool查询的关系，提升查询子句》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/09/10/elasticsearch-10-match-bool/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.pathto.top:8080/2017/09/10/elasticsearch-10-match-bool/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《10.elasticsearch中的match查询和bool查询的关系，提升查询子句》 — Dennis'Blog&url=http://dennis.pathto.top/2017/09/10/elasticsearch-10-match-bool/&via=http://dennis.pathto.top" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《10.elasticsearch中的match查询和bool查询的关系，提升查询子句》 — Dennis'Blog&url=http://www.pathto.top:8080/2017/09/10/elasticsearch-10-match-bool/&via=http://www.pathto.top:8080" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/09/10/elasticsearch-10-match-bool/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.pathto.top:8080/2017/09/10/elasticsearch-10-match-bool/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -466,18 +466,18 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/09/10/elasti
 <nav class="post-nav flex-row flex-justify-between">
   
     <div class="waves-block waves-effect prev">
-      <a href="/2017/09/10/elasticsearch-11-severral-aggs/" id="post-prev" class="post-nav-link">
+      <a href="/2017/09/10/elasticsearch-normal-api/" id="post-prev" class="post-nav-link">
         <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
-        <h4 class="title">11.elasticsearch-几种聚合查询</h4>
+        <h4 class="title">9.elasticsearch-查询demo</h4>
       </a>
     </div>
   
 
   
     <div class="waves-block waves-effect next">
-      <a href="/2017/09/10/elasticsearch-normal-api/" id="post-next" class="post-nav-link">
+      <a href="/2017/09/09/elasticsearch-8-several-query/" id="post-next" class="post-nav-link">
         <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
-        <h4 class="title">9.elasticsearch-查询demo</h4>
+        <h4 class="title">8.elasticsearch几种查询</h4>
       </a>
     </div>
   
@@ -575,7 +575,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/09/10/elasti
 <div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/09/10/elasticsearch-10-match-bool/&title=《10.elasticsearch中的match查询和bool查询的关系，提升查询子句》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.pathto.top:8080/2017/09/10/elasticsearch-10-match-bool/&title=《10.elasticsearch中的match查询和bool查询的关系，提升查询子句》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -585,22 +585,22 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/09/10/elasti
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/09/10/elasticsearch-10-match-bool/&title=《10.elasticsearch中的match查询和bool查询的关系，提升查询子句》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.pathto.top:8080/2017/09/10/elasticsearch-10-match-bool/&title=《10.elasticsearch中的match查询和bool查询的关系，提升查询子句》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/09/10/elasticsearch-10-match-bool/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.pathto.top:8080/2017/09/10/elasticsearch-10-match-bool/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《10.elasticsearch中的match查询和bool查询的关系，提升查询子句》 — Dennis'Blog&url=http://dennis.pathto.top/2017/09/10/elasticsearch-10-match-bool/&via=http://dennis.pathto.top" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《10.elasticsearch中的match查询和bool查询的关系，提升查询子句》 — Dennis'Blog&url=http://www.pathto.top:8080/2017/09/10/elasticsearch-10-match-bool/&via=http://www.pathto.top:8080" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/09/10/elasticsearch-10-match-bool/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.pathto.top:8080/2017/09/10/elasticsearch-10-match-bool/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -611,7 +611,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/09/10/elasti
 <div class="page-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACuElEQVR42u3a0W4iMQwFUP7/p7uvu+pC77UThKozT4iBdE4qxcb24xFfX39dz97/fvfZZzbX48aFh4eHt3j0Z8sl73xfM3/9eitfv/PDFuDh4eFd4+WP+Ozua0YbQhLw62fGw8PD+xxesXSw5utvvQ5UeHh4eL+JlwSSvJKw2mI8PDy8a7ykGJGnv2fT5TfVWvDw8PAudJE+5/WV/h4eHh7euqueNMPaMNBu32b4AA8PD+8Gry2/5sf3pj222Sw8PDy89/DODgTkKyR/tw0SP/zD8PDw8I7y2jQ6L+POUuRZtaEuTODh4eGVvKTBnx/3eZNs1txqwwMeHh7ePV7+I38WTtrOVFv2nVYm8PDw8Ca8POU9VfDNA0kbkOroh4eHh7fg5WdpftyfapvNVh6GCjw8PLwRrz2aZxlsWyw+FsDw8PDw1rx2oba31pYYZh28p0+Oh4eHd4E3G346VbrdtNnyZB0PDw/vBu91UbUtHMzGC/JCcLI1UXTCw8PDW/A2rf0bB3o7wlUj8fDw8Ba8Wd03Z89CxaYh98+aeHh4eNd4bbtrVvZN7ubNswSJh4eHd4/3OHQlpE14aLcGDw8P7x4vL9e2n9kXFGZp93/iHh4eHt4hXn3UBjMIs7S4DVHFTAQeHh7eBd6sbT8LA/mWzRpp9ZQEHh4e3oi3T51nra+8nXZsDgIPDw/vLbw2VNSxqCxJ1BEPDw8P7zIvGaWaATYJ96oJh4eHh3eU91Ve+aYkwaNN4pOtjMZV8fDw8Ba89sBtC7J5s6pttp0dF8PDw8Nree3hnh/KmwS9LW1EPT08PDy8o7yzw1WrBPdoAMPDw8P7NF7+6HmpYhYGfmiA4eHh4X0AL/n8Pk2fNerw8PDw3sNrB5s2Q1r5d9sRhOFkBB4eHt78u/Wh3zbM8mP9wEPj4eHhnef9AQAmVLn1zlO4AAAAAElFTkSuQmCC" alt="微信分享二维码">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACr0lEQVR42u3awa7bMAwEwPz/T7fXAoXdXVF8SIHxKQgcW6ODqCz1+cTXr4fr6Z78Ccn15xM+GxceHh7epaH//ej89cnn9pt2PHh4eHjbvKcVNRni+6/aSXkvPPmY8fDw8L6Hl3+T488mDg8PD+9/4SXsfKBJeoCHh4f3nbyzoKEtJO+xQltCLmcteHh4eDEv7yJ9z+eV/h4eHh7euKs+CVWTAwSTohKNFg8PD2+B18av7Yvf70nCi7Yw4OHh4W3z8oghX4gnBeN9Quv34uHh4S3w2iAgX8TbOKMNYYtf4eHh4a3x2iU7eU47KbeaYXh4eHjbvAnyfWvbBhxnra/ojXh4eHgLvHYhTgKLecHIi8ToPwQeHh5ezGsbUclSnh8LyJ+Tx831bh0PDw/vEi9vYrUFI5+y9qAAHh4e3s/z8mU336e3ba2zbf3jnXh4eHgLvHyBnh8paHORWxt0PDw8vLu8dkG/2x47a5sVDTA8PDy8H+QVf/jj7W8bTFwoM3h4eHhrvDZaTQrJGSPfQEcHufDw8PAWeO3GOt/4zgd6Fubi4eHhbfPyBfosMmhLxeTtj0cH8PDw8BZ4eYiQL/2T6+zJ/wgj8PDw8C7x8ijhVkk4e3LeSCt+jIeHh3eV1x4jSMLffFucF6QLXT48PDy8Aa9tdM0j3fYAa9tsw8PDw9vmzQ8K5NHtrck9rHt4eHh4V3n5EahJIy3fcE9CEDw8PLwN3uFSWxaDpLTk8UdRbPDw8PAWeO2C2wYHyUTkUzBpyOHh4eHd5SVDzyOGSYiQt9PyQoWHh4e3x8sX9DaMSJ5zq449Zi14eHh4X8BrN9l5ycnfHgUceHh4eF/DS4KDZCOeT81hLIKHh4e3xrsVEOT3zGOOaILw8PDwFnjtn/x2+W6/yQ8TXAsy8PDw8FLeb+vINcrc57k8AAAAAElFTkSuQmCC" alt="微信分享二维码">
 </div>
 
 

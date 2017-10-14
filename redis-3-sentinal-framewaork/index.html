@@ -23,7 +23,7 @@
     <meta name="description" content="我不用讨人喜欢，只做一个迷人的混蛋">
 <meta property="og:type" content="website">
 <meta property="og:title" content="redis-3-sentinal-framewaork">
-<meta property="og:url" content="http://dennis.pathto.top/redis-3-sentinal-framewaork/index.html">
+<meta property="og:url" content="http://www.pathto.top:8080/redis-3-sentinal-framewaork/index.html">
 <meta property="og:site_name" content="Dennis&#39;Blog">
 <meta property="og:description" content="我不用讨人喜欢，只做一个迷人的混蛋">
 <meta property="og:locale" content="zh-CN">
@@ -71,7 +71,7 @@ $.each( post_toc_links, function(index,post_toc_link){
 });
 });
 
-var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+var host = "http://www.pathto.top:8080";//document.location.protocol+"//"+window.location.host;
 function jsonp(url){
 	var script = document.createElement("script");
 	script.type = "text/javascript";
@@ -325,7 +325,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("redis-3-sentinal-
 <div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/redis-3-sentinal-framewaork/&title=《redis-3-sentinal-framewaork》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.pathto.top:8080/redis-3-sentinal-framewaork/&title=《redis-3-sentinal-framewaork》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -335,22 +335,22 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("redis-3-sentinal-
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/redis-3-sentinal-framewaork/&title=《redis-3-sentinal-framewaork》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.pathto.top:8080/redis-3-sentinal-framewaork/&title=《redis-3-sentinal-framewaork》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/redis-3-sentinal-framewaork/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.pathto.top:8080/redis-3-sentinal-framewaork/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《redis-3-sentinal-framewaork》 — Dennis'Blog&url=http://dennis.pathto.top/redis-3-sentinal-framewaork/&via=http://dennis.pathto.top" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《redis-3-sentinal-framewaork》 — Dennis'Blog&url=http://www.pathto.top:8080/redis-3-sentinal-framewaork/&via=http://www.pathto.top:8080" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/redis-3-sentinal-framewaork/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.pathto.top:8080/redis-3-sentinal-framewaork/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -361,7 +361,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("redis-3-sentinal-
 <div class="page-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACL0lEQVR42u3aO3LDMAwFwNz/0k6bmcTMA0AXIleVJ7EprQoMfl9f8fX6db3778+//P7Ou5OTb264MDAwHst4La/kO2vk+kVM7ouBgXEbYx0K10EwCcR5GE3ui4GBgbE+rheO81QSAwMDY1fAXcOSMnX9OjAwMDB6RWzvEZMzk+C+rRbHwMB4IGNSWH7680fmGxgYGI9i9Nr964DYSytHT4WBgXE0Iw9w68ZZXqDmDbvy82BgYBzNmD969QbVgcEo58XAwDiCkad6PVI+POglkRgYGPcweph8hDBv5/0zlsDAwLiAUQ2XefDthe/CmgUGBsYFjKQpP1+n6KWPzQULDAyMgxj5ulVOyl9Q7+Q/PmNgYBzNSNpt1bHl5FF6LwUDA+NsRl4o5jfLH7FaEpcXwjAwMC5gJDfOMb2mXnkGi4GBcRxjMobMf9UbCSQJZTSJxcDAeDij+oNJ8M1L0yRMFzp5GBgYRzB66xF5qN2w8rV+KRgYGEczeo22DbOIYroZFbEYGBhHM/IfzxfLNixVrHuHGBgYRzPyYjJfI5s37/K7YGBg3MCYNMXm51RDOQYGxj2MV/GapIB5b798JgYGxtGMebCrDg8maeWGMhsDA+OxjHydorqusQ7TkxWQQoaLgYFxEKPaMuslkVFVHSeRhe0MDAyMyxjVcFwdeTbPxMDAwBi3wyYLZFFwx8DAuICRFLHVHl715GqCiIGBcQ9jMmLME8G8nbd34QwDA+PhjG+txNsZf+7wigAAAABJRU5ErkJggg==" alt="微信分享二维码">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACIUlEQVR42u3aQY7DMAgF0N7/0p3tSNOkH2hGCn1eVVFi87pANvjxiMfz1/j75Gicf5us8uGBgYFxW0YvlF4Qyfz5n4WBgfFtjKMlj95JnhzNk6fjZE4MDAyMJOjzdFkNFwMDA+NqxhVHZQwMDIz8EDtJr3mh7fKzOAYGxg0ZeSr8/9+X9DcwMDBuxXgWR3W2JKzneGBgYOxm5AluElySxJPnb+bHwMBYzUjCzZNp7/hana1Zt8PAwLg54/yDT6XOpGyXtzzf1A4xMDBWMKoXtnrBJX9QznuxLgYGxmpGrxlQfad3JK5uMTEwMLYyzj/OL2HMWwK97SMGBsY3MJqbrXFY15XnMDAwtjKSZapbuvxgnBTdoqohBgbGUka1BDbqjg6CfvMtBgbGakae1JJD7Lza12uFYmBg7GYkibXaAEiSeL7dLGwNMTAwljLyJDtJkb3ZRs0ADAyMRYxeUT7fCF5x5evFDBgYGKsZ1VDylkB+fJ00EgppFwMDYzUjv+6QJNZeKo/+IAwMjK9hJM2AXhqtnkBHR1kMDIyljORJkkYn17x6xUEMDIzdjGdxVK9N9K55ldfFwMBYzchHb5v4qUZmtcCHgYGxj1FNsr2N4OTCBwYGBka1ATCpcfVKclEBDgMDA6P1TrUlMNrPYmBgYLSS73XNgMMLrBgYGKsZySG2ejFici2svEHEwMBYzaimvPMkWG0wVNsMo6YmBgbG/Rg/x44XpcQqGEoAAAAASUVORK5CYII=" alt="微信分享二维码">
 </div>
 
 

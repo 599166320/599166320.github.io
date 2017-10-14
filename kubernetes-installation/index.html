@@ -23,7 +23,7 @@
     <meta name="description" content="我不用讨人喜欢，只做一个迷人的混蛋">
 <meta property="og:type" content="website">
 <meta property="og:title" content="kubernetes-installation">
-<meta property="og:url" content="http://dennis.pathto.top/kubernetes-installation/index.html">
+<meta property="og:url" content="http://www.pathto.top:8080/kubernetes-installation/index.html">
 <meta property="og:site_name" content="Dennis&#39;Blog">
 <meta property="og:description" content="我不用讨人喜欢，只做一个迷人的混蛋">
 <meta property="og:locale" content="zh-CN">
@@ -71,7 +71,7 @@ $.each( post_toc_links, function(index,post_toc_link){
 });
 });
 
-var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+var host = "http://www.pathto.top:8080";//document.location.protocol+"//"+window.location.host;
 function jsonp(url){
 	var script = document.createElement("script");
 	script.type = "text/javascript";
@@ -325,7 +325,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("kubernetes-instal
 <div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/kubernetes-installation/&title=《kubernetes-installation》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.pathto.top:8080/kubernetes-installation/&title=《kubernetes-installation》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -335,22 +335,22 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("kubernetes-instal
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/kubernetes-installation/&title=《kubernetes-installation》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.pathto.top:8080/kubernetes-installation/&title=《kubernetes-installation》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/kubernetes-installation/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.pathto.top:8080/kubernetes-installation/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《kubernetes-installation》 — Dennis'Blog&url=http://dennis.pathto.top/kubernetes-installation/&via=http://dennis.pathto.top" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《kubernetes-installation》 — Dennis'Blog&url=http://www.pathto.top:8080/kubernetes-installation/&via=http://www.pathto.top:8080" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/kubernetes-installation/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.pathto.top:8080/kubernetes-installation/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -361,7 +361,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("kubernetes-instal
 <div class="page-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACIklEQVR42u3aQW7DMAwF0dz/0u62QGp5PqkGCDVaGUYE62VBUCRfL7yuX+v9PXl+3/v+y7s325YMGTK+lnEtF2Hc7eIk8t31V2TIkHECYx0Ka4B+wOW7ZMiQIYMkcLUwTQKuDBkyZPQZPOCud8mQIUPGmkEusaQcVrsSf/QuLkOGjC9k8Kr755//pb8hQ4aMr2Jc4Ur3pgG6eCoZMmSMZvAAt+twaWoYDH/IkCFjNKOfZfHSW6dhEIyOyZAhYxCDW/kgV38gjKeYf2S4MmTIGMfYNTyR8lBLEryXIUPGCYxaca12lDRLJbtkyJBxGqM/MEGakekYBwrcMmTIOJjBA+veElvarpAhQ8ZsRhp2O0khCdwkSX3oxMqQIWM0o0biqR4/4oZ6oQwZMoYy+Cd5w/JDEyIyZMg4gEESwU4yt95bK8w9DFvIkCFjKCO9fPKVpoP99FGGDBmTGLXhrVp43VvCkyFDxjmMNCnkF+B+0pmmkjJkyDiBkR46bVvubUXcBlwZMmSMZtTK/emH+4H79o0MGTIOYKSX2H7TMS3ePYRyGTJkDGVc4UoTRM5IL64PhTYZMmQMYtSCXe03vD2ZJqMyZMg4gcGDLC/fkyJa5zKM+hsyZMgYx6gFPr6XsHno3zCdIUOGjNEMXnpLd6V/kAwZMmTwclg6hJFeg8nfIUOGjBMY/9EM6IyRxWAZMmSMZqRXx3VA5M/koGmpToYMGeMYP/S9IuBNqeYAAAAAAElFTkSuQmCC" alt="微信分享二维码">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACKElEQVR42u3aXXKDMAxF4ex/03QBLc65kukM8vFThwTijwfV+vl88Lpu1vo7v6/fXVlf37ZkyJDxWsa1XGSLZHMcsP7dW6oMGTIOYNxFsNp2ebAmr2a9NxkyZMhIH80PheT5MmTIkFFjrLNIkmPyg6MMGTJkpEks/+F14YxgHszFZciQ8UIGr7r//9+P9DdkyJDxKsYVrlpA5EfG2pIhQ8ZsRpqg8sNZJ+lN9yNDhowTGOlBjXyaNjh3PU2GDBnzGGmLsVPwIgNhxRcqQ4aM0YzaqER6iEzLeV8Of+T/hgwZMgYxaqX5WqE/fUHFaREZMmSMY5Ab+uOqPByTZxardzJkyHgto3iKDNPaGix4sgwZMg5g8LCbti35Xemr/GNmRIYMGQcwOg3Izl1paQ9Ni8iQIWMQgxzy0iudfJqHXRkyZJzD4CGPl8nIGNneoTEZMmTMZuxqZ6bhmCNbjUwZMmSMYHRGUfvHxLR4d/sEGTJkjGaQVJZsojZCwYM7P0rKkCFjKmO9uefAafsTFd1kyJAxmkG+mrYk0zS4NqAmQ4aMcxidsMgbAOkL4q1WGTJkTGVc4UoLcCSUp8fKOP+WIUPGyxlpM4A3LPu84rCFDBkyhjJ4+YxvLn1bfbAMGTJOYKSDYnzTaZguFgdlyJAho5RA8pbAhl+UIUOGDFy4TwN3bYe3/Q0ZMmSMZqRjXuldnaIeCdYyZMiYzWiljpvGJnbtRIYMGeMYP2LvxgT9wLnEAAAAAElFTkSuQmCC" alt="微信分享二维码">
 </div>
 
 

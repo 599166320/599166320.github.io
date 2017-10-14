@@ -23,7 +23,7 @@
     <meta name="description" content="我不用讨人喜欢，只做一个迷人的混蛋">
 <meta property="og:type" content="website">
 <meta property="og:title" content="spring-boot-properties-problem">
-<meta property="og:url" content="http://dennis.pathto.top/spring-boot-properties-problem/index.html">
+<meta property="og:url" content="http://www.pathto.top:8080/spring-boot-properties-problem/index.html">
 <meta property="og:site_name" content="Dennis&#39;Blog">
 <meta property="og:description" content="我不用讨人喜欢，只做一个迷人的混蛋">
 <meta property="og:locale" content="zh-CN">
@@ -71,7 +71,7 @@ $.each( post_toc_links, function(index,post_toc_link){
 });
 });
 
-var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+var host = "http://www.pathto.top:8080";//document.location.protocol+"//"+window.location.host;
 function jsonp(url){
 	var script = document.createElement("script");
 	script.type = "text/javascript";
@@ -325,7 +325,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("spring-boot-prope
 <div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/spring-boot-properties-problem/&title=《spring-boot-properties-problem》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.pathto.top:8080/spring-boot-properties-problem/&title=《spring-boot-properties-problem》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -335,22 +335,22 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("spring-boot-prope
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/spring-boot-properties-problem/&title=《spring-boot-properties-problem》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.pathto.top:8080/spring-boot-properties-problem/&title=《spring-boot-properties-problem》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/spring-boot-properties-problem/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.pathto.top:8080/spring-boot-properties-problem/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《spring-boot-properties-problem》 — Dennis'Blog&url=http://dennis.pathto.top/spring-boot-properties-problem/&via=http://dennis.pathto.top" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《spring-boot-properties-problem》 — Dennis'Blog&url=http://www.pathto.top:8080/spring-boot-properties-problem/&via=http://www.pathto.top:8080" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/spring-boot-properties-problem/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.pathto.top:8080/spring-boot-properties-problem/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -361,7 +361,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("spring-boot-prope
 <div class="page-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACKElEQVR42u3aQW4CMQwF0N7/0lTqqlI18H8yrYrzskIIJnksjB374yNej6919fr7unr/aj1//s0LAwPjbRntNvlzfr6/tu/zz2BgYJzDyINsu0HynPzzl+9jYGBglEGzPdDatzAwMDDawjXaLC5xMTAwMHaKyfbuKylxk0B/Wy2OgYHxhoz9xsDvvf7T/gYGBsa/ZDyWVhKC87J2f2FgYMxm7KR9baBsE766jYqBgTGUkbQe2zGI/AfKC90X38XAwDiG0bYK2kGK5Ij1f0XSX8XAwHhzRlJw7h/uOTIfFHvBw8DAGMrIQ21eyq5Fwp0EFAMDYzZjbeO7kr880VwL8RgYGDMYRYNwadohD+VbzVEMDIzRjOQRydVbG+OTg7YXfxgYGFMZ+8Ne7ZXcWsFc/G9gYGCMZuTDFs+Dcl7W5qH5RSDGwMAYzWiTvHyoqx3UuKEkxsDAGMpYG3TYaU8myWI9uoGBgXEMY625WM+glYzoJ8DAwBjNyI/SbtCmlWs/1iUGAwNjHKPdeOeKvz16MQKCgYFxGKPdJn/aThsgynMxMDCGMtomQR5S96/V1opkDAyMSYxHudbajWvla56wYmBgzGbk697rs/xwGBgYGG3jML9Eawcy2hIXAwPjTMZOQduWvm35Wl+xYWBgYASpYVsAJ6VsNAqGgYFxPCM/aN5uXEtGMTAwzmTkw6ntAERerK6NtGJgYJzA2BmhaNlt4pjviIGBMZTxCXcoYL7NJZEZAAAAAElFTkSuQmCC" alt="微信分享二维码">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACFklEQVR42u3aSXLDMAwEQP//084HImUAUKkS2Tq5vIhsHWBi+Xzi67v0Su78eeLCwMB4LSNZ8v7W95u7WiVh5I8DAwPjBMb95q42mrzON5qse/k+BgYGRrBwdbt5wMXAwMDIGUkIzg+U93koBgYGRi+JvT8g3n+zmso+mItjYGC8kJGHwv9//Uh/AwMD41WMXusxT0SriWuzIYqBgbE1o9fCnKep1QZAlMpiYGBsyshbj/ORi2pKnKyFgYFxGmOeZCaFsEKhP2+jYmBgbM2YlPiTb/aaBKPaIQYGxnaMPDgmB8dJ3b56xPwlC8fAwNiUcRUWJ4tVw+WyUTMMDIytGfkC+eEvL7RNSm8RCQMD4+WMfCQiD7LJO3mojfJWDAyMrRnVwJoH5WqJrTd8hoGBcQJjVQKZA1Y1JzAwMM5h9I5r/zPqioGBgdFrFs7HJkZnWAwMjIMZzR/HAxmrind//GNgYGBsyrj/waqxiV5qWkZiYGAcwEgK90kwnYxNjEI2BgbGAYxVzchqIJ6PvWJgYJzASG6ap7u9+8wPoBgYGLsyvsVrMiqRf1ptjmJgYOzN6A09rB3OmJftMDAwTmDkw17Vwn2eJFcDbvSkMTAwtmMkga8auZ8rtF1m4RgYGBhxUprfedmDw8DAwGgVv/L2Zw7AwMA4mdFLLKsluWpamzdKMTAw9mZMJjUmy1cPf5PUFwMD47WMH3ntHfNi9x/7AAAAAElFTkSuQmCC" alt="微信分享二维码">
 </div>
 
 

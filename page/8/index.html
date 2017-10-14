@@ -23,7 +23,7 @@
     <meta name="description" content="我不用讨人喜欢，只做一个迷人的混蛋">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Dennis&#39;Blog">
-<meta property="og:url" content="http://dennis.pathto.top/page/8/index.html">
+<meta property="og:url" content="http://www.pathto.top:8080/page/8/index.html">
 <meta property="og:site_name" content="Dennis&#39;Blog">
 <meta property="og:description" content="我不用讨人喜欢，只做一个迷人的混蛋">
 <meta property="og:locale" content="zh-CN">
@@ -70,7 +70,7 @@ $.each( post_toc_links, function(index,post_toc_link){
 });
 });
 
-var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+var host = "http://www.pathto.top:8080";//document.location.protocol+"//"+window.location.host;
 function jsonp(url){
 	var script = document.createElement("script");
 	script.type = "text/javascript";
@@ -673,7 +673,7 @@ OpenStack Swift 开源项目提供了弹性可伸缩、高可用的分布式对�
 <div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/page/8/&title=Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.pathto.top:8080/page/8/&title=Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -683,22 +683,22 @@ OpenStack Swift 开源项目提供了弹性可伸缩、高可用的分布式对�
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/page/8/&title=Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.pathto.top:8080/page/8/&title=Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/page/8/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.pathto.top:8080/page/8/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=Dennis'Blog&url=http://dennis.pathto.top/page/8/&via=http://dennis.pathto.top" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=Dennis'Blog&url=http://www.pathto.top:8080/page/8/&via=http://www.pathto.top:8080" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/page/8/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.pathto.top:8080/page/8/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -709,7 +709,7 @@ OpenStack Swift 开源项目提供了弹性可伸缩、高可用的分布式对�
 <div class="page-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK4AAACuCAAAAACKZ2kyAAAByElEQVR42u3awa4CIQwFUP//p+dtXzIRb1tBTQ4ro8xwcNG0hccjHtdt/P9+/VTv19HAxcUdc6/luM+5L5YsnL//2RxcXNzz3HWguc9JQltCzA24uLjfzM2XnIdCXFzcX+HmicszKC4u7q9w83RkHZiqRc7GWg0XF3fAzbuU+z5v6e/i4uK2uFdxJIFsnh49XR0XF/cIt3cQUk2P8rdFM3FxcTdze6XLuozJGy55gHvkpzS4uLhv4s5bnPNQGDVhcXFxD3J7QSc/gMk3/yKA4uLiHuHOm5vV6xe9LeHi4p7nTq5nrb+pNkEKyRMuLu5mbrJkr50xuX5RiLu4uLgbuNXmab5MtYGSXwvDxcXdx60uU10sT4mip3BxcY9w5w3QeUqUF0K4uLgnudVD1rzBUW2mlPu7uLi4m7nvKmnyVCY/VsHFxf0st9fOyNHVwNds9eDi4g64V3G8q8GaJDe4uLif4lYLmGqhsg5kSZhrbgYXF3fMrQagPDXJt1fYDC4u7kFuUszkrEmzdU3HxcX9fm41SPXKpOZpMC4u7kFuUiDlRVHynlEgw8XFHXCTsJIvkz9b/rNwcXGPcHuXq6qHrJOGCC4u7kHuH5JIuWgMQbAmAAAAAElFTkSuQmCC" alt="微信分享二维码">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK4AAACuCAAAAACKZ2kyAAABwklEQVR42u3aQY7DIAwF0Ln/pTsHaJN+28BEo8cqqgJ5dGFhm5+feLzexvvvV7Ounq9mLRi4uLhj7ut23L+Tr59v+8tXcHFxD3KrYegqJCUB637WFxsuLu4jufk798EOFxf3/3GT8HQftnBxcZ/PTZKfZOlqErUxV8PFxR1we6WNtc9b6ru4uLgt7qs4Vm2jN3Bxcc9w84CSJzD3m6wGMlxc3PPcvO2Rt0snuC8r4+LiHuQm5ctJXpWsHAVEXFzcI9zqUSYPWL0Ca3UFXFzcfdxe0lL9JYdGuRouLu42brW9ura7UU6ZcHFxD3Kj61DBcWdSVI2OO7i4uI/h5vR8A8nh6cMsXFzc49z7patJUbWAUg5kuLi427i9Rkiz+hJ/ZdTCwcXFXcSdFDJyVjXMleu7uLi427iTpSdtlULKhIuLe5zbI04uYZRPYbi4uJu5q1qkvXWSPwgXF/c8t1ocydGjaxaD8gouLu4qbu96Vn6ISdoz+SZxcXFPcqufqSY8k6PMh0CGi4v7MG6vRJKXVhcHMlxc3CPcamF0fhNkcdzFxcWNudWrk722SvVIhIuL+1fcXuOz2pTtUUb1XVxc3A73FzxiCwnXLHQ0AAAAAElFTkSuQmCC" alt="微信分享二维码">
 </div>
 
 

@@ -23,7 +23,7 @@
     <meta name="description" content="我不用讨人喜欢，只做一个迷人的混蛋">
 <meta property="og:type" content="website">
 <meta property="og:title" content="elasticsearch-2-installation">
-<meta property="og:url" content="http://dennis.pathto.top/elasticsearch-2-installation/index.html">
+<meta property="og:url" content="http://www.pathto.top:8080/elasticsearch-2-installation/index.html">
 <meta property="og:site_name" content="Dennis&#39;Blog">
 <meta property="og:description" content="我不用讨人喜欢，只做一个迷人的混蛋">
 <meta property="og:locale" content="zh-CN">
@@ -71,7 +71,7 @@ $.each( post_toc_links, function(index,post_toc_link){
 });
 });
 
-var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+var host = "http://www.pathto.top:8080";//document.location.protocol+"//"+window.location.host;
 function jsonp(url){
 	var script = document.createElement("script");
 	script.type = "text/javascript";
@@ -325,7 +325,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("elasticsearch-2-i
 <div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/elasticsearch-2-installation/&title=《elasticsearch-2-installation》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.pathto.top:8080/elasticsearch-2-installation/&title=《elasticsearch-2-installation》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -335,22 +335,22 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("elasticsearch-2-i
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/elasticsearch-2-installation/&title=《elasticsearch-2-installation》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.pathto.top:8080/elasticsearch-2-installation/&title=《elasticsearch-2-installation》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/elasticsearch-2-installation/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.pathto.top:8080/elasticsearch-2-installation/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《elasticsearch-2-installation》 — Dennis'Blog&url=http://dennis.pathto.top/elasticsearch-2-installation/&via=http://dennis.pathto.top" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《elasticsearch-2-installation》 — Dennis'Blog&url=http://www.pathto.top:8080/elasticsearch-2-installation/&via=http://www.pathto.top:8080" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/elasticsearch-2-installation/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.pathto.top:8080/elasticsearch-2-installation/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -361,7 +361,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("elasticsearch-2-i
 <div class="page-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACJklEQVR42u3aUXLDIAwE0N7/0ukFWncXOW3Bz1+ZBBweHxpJ8PERP6/L57vx19+0I294MDAwtmUkS0yW3v5L8muxfRgYGA9gXIfCnJQH5STg5mEaAwMDY42UBN8k4GJgYGC0jDztSwrd6/EYGBgYbRE7ab2173xjLY6BgbEhI0/mfv/zW843MDAwtmK8ymdSmrbttmJVGBgYRzPyADc/1EyK1cmWYWBgnM2YTFgL0JMG3A3pIwYGxlaMpAWWkNqmWz43WQ8GBsbZjEn/6i5eu2U3t+EwMDD+PWMtpcuX+w520TXEwMA4gpEnZ3kCd9fhaP1+DAyMQxnJBaz813cE34iHgYHxAEYO+Kso90OSioGBcTSjPTjMTwzzMWsNuC/mYmBgPICRT84X2rb+R0UyBgbGoYy1P56MX0s0ozsjGBgYhzLaIjNJ8tYSvrW3FVcuMDAwNme0jfi2lZ+klfmFsFEpi4GBsS3jrsPIeVstOVT4dqMxMDAewJgnbWuwtc36oYjFwMA4lNEGzeSP86J03trDwMB4AiMPqYuN+7hUXuynYWBgHMp4lU++N22QXbtYVtwHwcDA2JbRhrlk8lqi2W7N6IATAwNjQ0Z7OTUpZecJ5W3XwjAwMA5irKVu7ch5QRvdFsHAwMAog3Ieskf5LAYGBsbgumpbvubJ5Sg1xMDA2JCRlJp5K+36+2RWnSBiYGAczWivOCSvbjH5AcPoIBMDA2M/xie89dsZuQOy7wAAAABJRU5ErkJggg==" alt="微信分享二维码">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACJ0lEQVR42u3azXLCMAxGUd7/pdMtnTbw/bh0LF+vMiENPixUydLjIa/raT3fubt+vuM+8/P+sgUDBoxtGdfLpTxz98XKe9z7t98IAwaMAxh3m1DC5d31661kb7u9DwMGDBhCGtdjYMCAAWMtwy10+1IZBgwYMPSAaJeXwoHaR2txGDBgbMjQQ+Hnr/+kvwEDBoytGJe59CalnuplTYhvfwUDBozRjFUFql5qhgWqkmLCgAHjAEY25uU2Bvr2g3TcBgMGjEGM7ADrf0fEfsHAgAFjNEM/UMvCovJpkybCgAHjHEYzbNEPtmap5OKZERgwYGzICI/mi7aomz7ar4MBA8bmDDcJcw/j3PGy6t8ADBgwxjGykdNsOKMJqW9CMwwYMEYz9HI0O3rLPg2LWBgwYBzG0Mcd3GHWrAI13gYDBoyhDHcTSlhURjTc90vDYTBgwDiAoRz9642ErJGZDZnBgAFjNqNvQCoFsHu41hS6MGDAmMdYmwjqpCwEh0UsDBgwhjKUkNoPuTZDGFLAhQEDxlCGWy66oxV9w+BNLQ4DBozRDD3I9m3LLOk0BsJgwIAxgnGZS+e5iWOTesKAAWM2w20DuElktrlw2AIGDBijGVm4dJ9x00Q74MKAAeMAhltkZiFY/wnCUhYGDBgwhDCabSg7gKsCLgwYMI5hZOmdEqyXdWJhwIAxiKEUse4zbhhtgjUMGDBmM9yQ1wfTZnRjWfoIAwaMPRhfQoxVg5S1oNIAAAAASUVORK5CYII=" alt="微信分享二维码">
 </div>
 
 

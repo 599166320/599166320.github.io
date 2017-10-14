@@ -23,7 +23,7 @@
     <meta name="description" content="我不用讨人喜欢，只做一个迷人的混蛋">
 <meta property="og:type" content="website">
 <meta property="og:title" content="elasticsearch-1-instroduce">
-<meta property="og:url" content="http://dennis.pathto.top/elasticsearch-1-instroduce/index.html">
+<meta property="og:url" content="http://www.pathto.top:8080/elasticsearch-1-instroduce/index.html">
 <meta property="og:site_name" content="Dennis&#39;Blog">
 <meta property="og:description" content="我不用讨人喜欢，只做一个迷人的混蛋">
 <meta property="og:locale" content="zh-CN">
@@ -71,7 +71,7 @@ $.each( post_toc_links, function(index,post_toc_link){
 });
 });
 
-var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+var host = "http://www.pathto.top:8080";//document.location.protocol+"//"+window.location.host;
 function jsonp(url){
 	var script = document.createElement("script");
 	script.type = "text/javascript";
@@ -325,7 +325,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("elasticsearch-1-i
 <div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/elasticsearch-1-instroduce/&title=《elasticsearch-1-instroduce》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.pathto.top:8080/elasticsearch-1-instroduce/&title=《elasticsearch-1-instroduce》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -335,22 +335,22 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("elasticsearch-1-i
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/elasticsearch-1-instroduce/&title=《elasticsearch-1-instroduce》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.pathto.top:8080/elasticsearch-1-instroduce/&title=《elasticsearch-1-instroduce》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/elasticsearch-1-instroduce/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.pathto.top:8080/elasticsearch-1-instroduce/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《elasticsearch-1-instroduce》 — Dennis'Blog&url=http://dennis.pathto.top/elasticsearch-1-instroduce/&via=http://dennis.pathto.top" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《elasticsearch-1-instroduce》 — Dennis'Blog&url=http://www.pathto.top:8080/elasticsearch-1-instroduce/&via=http://www.pathto.top:8080" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/elasticsearch-1-instroduce/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.pathto.top:8080/elasticsearch-1-instroduce/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -361,7 +361,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("elasticsearch-1-i
 <div class="page-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACO0lEQVR42u3aS27DMAxF0ex/0+60QGrnPlINIOp6VDSupeMCDD96vfB13Vy/P32///k36Z0LLhkyZGzLuB6v93tqi909+flTsjcZMmScw3gOhWm4vF0sDLh8XRkyZMh4DoLkOSR8p8+UIUOGjGdGmtilCaIMGTJk1IpYwuDlKw+4i2txGTJkbMjgzbLv//wv8w0ZMmRsxbjCqz9OqDXsPqwlQ4aM0Qwe4NJkkYRsXtyS/ciQIWM2I12s39zvjBDQi5MhQ8Y4Rm0Z3nTjLbb04MWH7w0ZMmQMYqw6ZlE7Ipa+lGU9QhkyZGzCSA898BFjbYsp+4+uoQwZMsYxOoEvTdQ6w8vg20OGDBlDGbUWf1rQrip9US0uQ4aMcYw0Kawd8+Lb5Uc0ZMiQcRoj3WJavpIwTVLP4v9BhgwZ2zI6TTROIttacEJEhgwZQxnFW/Hfrno1QYNPhgwZ4xh8TMiHi514SIJv/BZlyJAxgsFb8HwYUEsfCQCdGZEhQ8YgBskcOwlc2lZLj6Oh/pwMGTIGMfhwMd0uKUR56+3DmREZMmSMZqxqpaUxMA36t0+WIUPGAQweXtOCk28uHULIkCHjBMYVXrXOfDow4OVxMMeQIUPGtow0zPEQ3BlM8q3HGBkyZGzLIEE2Linx+DNtwMmQIeNkRhr40jFnLXwHZbMMGTJktLPLThmMVpQhQ4aM9iHXWtuOJ68yZMg4gcE30UkleckaJ4gyZMgYzagdcUgHn7Wx6KrSV4YMGdsyfgDGzQPx6z51LQAAAABJRU5ErkJggg==" alt="微信分享二维码">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACM0lEQVR42u3awY6DMAxFUf7/p5ntSNPAfTZFk+SyqmghOV1Yju3jwNf56/p7Z3Sf37m+/9glQ4aMaRnn5UU2XXtz+qeMfiNDhox9GKNNjD5ff0swtbcN78uQIUMGSOP48vxZGTJkyOgweDDtH5VlyJAhgx8y06fQ8u+fxWXIkDEhg4fC9z9/pb8hQ4aMqRhnePGkkLQqeXP0ZlcyZMhYmsEDHNkQSQSLB1SyHxkyZCzK4A900sdn2w8ffilDhowNGLWNkmIZKfp3RtA+ZLgyZMhYjvFsUZ4D0mfRUzJkyFiaQRZLC2QkseukkkOeDBkyFmWkRfnayZEX48gfdPB/WoYMGZMzakNgZIHOeFlcnpMhQ8bSjNohtpZKpow0NMuQIWNtBm8ZpofS2nv6xTsZMmSsxCDLX39OAZ0WaTBsIUOGjOUYaQLXOXymoTaYGZEhQ8bSjFpjIE0uSehMBztkyJCxA6M2TkEA74dmGTJk7MCojWJ0gm9nxXjIQ4YMGZMz+BBYZ5yCNwz4+286sTJkyFiUQSIYKtaDNkOadN60EGTIkLEBgzcga2X99Jck0bxpZMqQIWMJxhleaTJXK/HH528ZMmQszUhLYKQxyRsMncGLVu1QhgwZEzLSchsvgb0acGXIkLEBox9G+22ANPQPz+IyZMjYnlErnKWY1lSIDBkyZIBl4lGJcIdfCbgyZMj49wxyiH1geKsUM1H5T4YMGUszns27+JgXbw/0j74yZMiYlvED6g5LqV02GXAAAAAASUVORK5CYII=" alt="微信分享二维码">
 </div>
 
 
