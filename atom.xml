@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://dennis.pathto.top/"/>
-  <updated>2017-11-16T15:10:37.249Z</updated>
+  <updated>2017-11-16T15:10:37.252Z</updated>
   <id>http://dennis.pathto.top/</id>
   
   <author>
@@ -14,6 +14,44 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>How to Install Oracle Java 8 on Ubuntu 12.04 LTS</title>
+    <link href="http://dennis.pathto.top/2017/11/16/ubuntu-0-ubuntu-install-jdk8/"/>
+    <id>http://dennis.pathto.top/2017/11/16/ubuntu-0-ubuntu-install-jdk8/</id>
+    <published>2017-11-16T15:10:37.000Z</published>
+    <updated>2017-11-16T15:10:37.252Z</updated>
+    
+    <content type="html"><![CDATA[<p>Step #1: Install Capability to Manage Repositories<br>python-software-properties allows for easy management of your distribution and independent repositories:</p>
+<pre><code>sudo apt-get install python-software-properties
+</code></pre><p>Step #2: Add the WebUpd8 Team Personal Package Archive (PPA)<br>Add the PPA:</p>
+<pre><code>sudo apt-add-repository ppa:webupd8team/java
+</code></pre><p>Step #3: The Installation<br>As a matter of best practice we’ll update our packages:</p>
+<pre><code>sudo apt-get update
+</code></pre><p>then let’s install Oracle Java 8 with the PPA installer:</p>
+<pre><code>sudo apt-get install oracle-java8-installer
+</code></pre><p>tep #4: Verify Installation<br>Now verify that Java is installed and is of version 1.8.x:</p>
+<pre><code>java -version
+</code></pre><p>Your result should be similar to:</p>
+<pre><code>java version &quot;1.8.0_45&quot;
+Java(TM) SE Runtime Environment (build 1.8.0_45-b14)
+Java HotSpot(TM) 64-Bit Server VM (build 25.45-b02, mixed mode)
+</code></pre>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Step #1: Install Capability to Manage Repositories&lt;br&gt;python-software-properties allows for easy management of your distribution and inde
+    
+    </summary>
+    
+      <category term="ubuntu" scheme="http://dennis.pathto.top/categories/ubuntu/"/>
+    
+    
+      <category term="linux" scheme="http://dennis.pathto.top/tags/linux/"/>
+    
+      <category term="ubuntu" scheme="http://dennis.pathto.top/tags/ubuntu/"/>
+    
+  </entry>
   
   <entry>
     <title>16.springboot + mybatis + 多数据源 （AOP实现）</title>
@@ -138,44 +176,6 @@ import org.spring
       <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
       <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How to Install Oracle Java 8 on Ubuntu 12.04 LTS</title>
-    <link href="http://dennis.pathto.top/2017/11/16/ubuntu-0-ubuntu-install-jdk8/"/>
-    <id>http://dennis.pathto.top/2017/11/16/ubuntu-0-ubuntu-install-jdk8/</id>
-    <published>2017-11-16T15:10:37.000Z</published>
-    <updated>2017-11-16T15:10:37.252Z</updated>
-    
-    <content type="html"><![CDATA[<p>Step #1: Install Capability to Manage Repositories<br>python-software-properties allows for easy management of your distribution and independent repositories:</p>
-<pre><code>sudo apt-get install python-software-properties
-</code></pre><p>Step #2: Add the WebUpd8 Team Personal Package Archive (PPA)<br>Add the PPA:</p>
-<pre><code>sudo apt-add-repository ppa:webupd8team/java
-</code></pre><p>Step #3: The Installation<br>As a matter of best practice we’ll update our packages:</p>
-<pre><code>sudo apt-get update
-</code></pre><p>then let’s install Oracle Java 8 with the PPA installer:</p>
-<pre><code>sudo apt-get install oracle-java8-installer
-</code></pre><p>tep #4: Verify Installation<br>Now verify that Java is installed and is of version 1.8.x:</p>
-<pre><code>java -version
-</code></pre><p>Your result should be similar to:</p>
-<pre><code>java version &quot;1.8.0_45&quot;
-Java(TM) SE Runtime Environment (build 1.8.0_45-b14)
-Java HotSpot(TM) 64-Bit Server VM (build 25.45-b02, mixed mode)
-</code></pre>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;Step #1: Install Capability to Manage Repositories&lt;br&gt;python-software-properties allows for easy management of your distribution and inde
-    
-    </summary>
-    
-      <category term="ubuntu" scheme="http://dennis.pathto.top/categories/ubuntu/"/>
-    
-    
-      <category term="linux" scheme="http://dennis.pathto.top/tags/linux/"/>
-    
-      <category term="ubuntu" scheme="http://dennis.pathto.top/tags/ubuntu/"/>
     
   </entry>
   
