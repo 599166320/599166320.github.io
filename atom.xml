@@ -4,9 +4,9 @@
   <subtitle>我不用讨人喜欢，只做一个迷人的混蛋</subtitle>
   <link href="/atom.xml" rel="self"/>
   
-  <link href="http://www.pathto.top:8080/"/>
-  <updated>2017-10-05T09:50:53.394Z</updated>
-  <id>http://www.pathto.top:8080/</id>
+  <link href="http://dennis.pathto.top/"/>
+  <updated>2017-11-16T15:10:37.249Z</updated>
+  <id>http://dennis.pathto.top/</id>
   
   <author>
     <name>Dennis</name>
@@ -16,9 +16,653 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>16.springboot + mybatis + 多数据源 （AOP实现）</title>
+    <link href="http://dennis.pathto.top/2017/11/16/spring-boot-16-multi-source-aop/"/>
+    <id>http://dennis.pathto.top/2017/11/16/spring-boot-16-multi-source-aop/</id>
+    <published>2017-11-16T15:10:37.000Z</published>
+    <updated>2017-11-16T15:10:37.249Z</updated>
+    
+    <content type="html"><![CDATA[<p>1、ShopDao</p>
+<pre><code>package com.xxx.firstboot.dao;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import com.xxx.firstboot.domain.Shop;
+import com.xxx.firstboot.mapper.ShopMapper;
+
+@Repository
+public class ShopDao {
+    @Autowired
+    private ShopMapper mapper;
+
+    /**
+     * 获取shop
+     */
+    public Shop getShop(int id) {
+        return mapper.getShop(id);
+    }
+}
+</code></pre><p>说明：只是去掉了设置数据源key的那一句代码</p>
+<p>2、DataSourceAspect</p>
+<pre><code>package com.xxx.firstboot.common.datasource;
+
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.springframework.stereotype.Component;
+
+import com.xxx.firstboot.dao.ShopDao;
+
+@Aspect
+@Component
+public class DataSourceAspect {
+
+    @Before(&quot;execution(* com.xxx.firstboot.dao.*.*(..))&quot;)
+    public void setDataSourceKey(JoinPoint point){
+        //连接点所属的类实例是ShopDao
+        if(point.getTarget() instanceof ShopDao){
+            DatabaseContextHolder.setDatabaseType(DatabaseType.mytestdb2);
+        }else{//连接点所属的类实例是UserDao（当然，这一步也可以不写，因为defaultTargertDataSource就是该类所用的mytestdb）
+            DatabaseContextHolder.setDatabaseType(DatabaseType.mytestdb);
+        }
+    }
+
+//    @Around(&quot;execution(* com.xxx.firstboot.dao.*.*(..))&quot;)
+//    public Object setDataSourceKeyByAround(ProceedingJoinPoint point) throws Throwable{
+//        if(point.getTarget() instanceof ShopDao){
+//            DatabaseContextHolder.setDatabaseType(DatabaseType.mytestdb2);
+//        }else{//连接点所属的类实例是UserDao（当然，这一步也可以不写，因为defaultTargertDataSource就是该类所用的mytestdb）
+//            DatabaseContextHolder.setDatabaseType(DatabaseType.mytestdb);
+//        }
+//        return point.proceed();//执行目标方法
+//    }
+
+}
+</code></pre><p>说明：列出了两种切面方法，在这里推荐使用前者，原因：</p>
+<p>@Around：需要写执行目标方法的那一行代码，而这一行代码可能会抛异常，还需要抛出或捕获</p>
+<p>对于切点表达式，可以抽取出来，进行重复利用。如上代码可以改为如下：</p>
+<pre><code>package com.xxx.firstboot.common.datasource;
+
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.stereotype.Component;
+
+import com.xxx.firstboot.dao.ShopDao;
+
+@Aspect
+@Component
+public class DataSourceAspect {
+
+    /**
+     * 使用空方法定义切点表达式
+     */
+    @Pointcut(&quot;execution(* com.xxx.firstboot.dao.*.*(..))&quot;)
+    public void declareJointPointExpression() {
+    }
+
+    /**
+     * 使用定义切点表达式的方法进行切点表达式的引入
+     */
+    @Before(&quot;declareJointPointExpression()&quot;)
+    public void setDataSourceKey(JoinPoint point) {
+        // 连接点所属的类实例是ShopDao
+        if (point.getTarget() instanceof ShopDao) {
+            DatabaseContextHolder.setDatabaseType(DatabaseType.mytestdb2);
+        } else {// 连接点所属的类实例是UserDao（当然，这一步也可以不写，因为defaultTargertDataSource就是该类所用的mytestdb）
+            DatabaseContextHolder.setDatabaseType(DatabaseType.mytestdb);
+        }
+    }
+
+}
+</code></pre><p>注意：该切点表达式也可以用在其他切面类中，引入的时候使用”全类名.切点方法名()”，例：@Before(“com.xxx.firstboot.common.datasource.DataSourceAspect.declareJointPointExpression()”)</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;1、ShopDao&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;package com.xxx.firstboot.dao;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.spring
+    
+    </summary>
+    
+      <category term="spring-boot" scheme="http://dennis.pathto.top/categories/spring-boot/"/>
+    
+    
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
+    
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
+    
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to Install Oracle Java 8 on Ubuntu 12.04 LTS</title>
+    <link href="http://dennis.pathto.top/2017/11/16/ubuntu-0-ubuntu-install-jdk8/"/>
+    <id>http://dennis.pathto.top/2017/11/16/ubuntu-0-ubuntu-install-jdk8/</id>
+    <published>2017-11-16T15:10:37.000Z</published>
+    <updated>2017-11-16T15:10:37.252Z</updated>
+    
+    <content type="html"><![CDATA[<p>Step #1: Install Capability to Manage Repositories<br>python-software-properties allows for easy management of your distribution and independent repositories:</p>
+<pre><code>sudo apt-get install python-software-properties
+</code></pre><p>Step #2: Add the WebUpd8 Team Personal Package Archive (PPA)<br>Add the PPA:</p>
+<pre><code>sudo apt-add-repository ppa:webupd8team/java
+</code></pre><p>Step #3: The Installation<br>As a matter of best practice we’ll update our packages:</p>
+<pre><code>sudo apt-get update
+</code></pre><p>then let’s install Oracle Java 8 with the PPA installer:</p>
+<pre><code>sudo apt-get install oracle-java8-installer
+</code></pre><p>tep #4: Verify Installation<br>Now verify that Java is installed and is of version 1.8.x:</p>
+<pre><code>java -version
+</code></pre><p>Your result should be similar to:</p>
+<pre><code>java version &quot;1.8.0_45&quot;
+Java(TM) SE Runtime Environment (build 1.8.0_45-b14)
+Java HotSpot(TM) 64-Bit Server VM (build 25.45-b02, mixed mode)
+</code></pre>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Step #1: Install Capability to Manage Repositories&lt;br&gt;python-software-properties allows for easy management of your distribution and inde
+    
+    </summary>
+    
+      <category term="ubuntu" scheme="http://dennis.pathto.top/categories/ubuntu/"/>
+    
+    
+      <category term="linux" scheme="http://dennis.pathto.top/tags/linux/"/>
+    
+      <category term="ubuntu" scheme="http://dennis.pathto.top/tags/ubuntu/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Ubuntu 安装 端口转发工具rinetd</title>
+    <link href="http://dennis.pathto.top/2017/11/16/ubuntu-0-port-forward/"/>
+    <id>http://dennis.pathto.top/2017/11/16/ubuntu-0-port-forward/</id>
+    <published>2017-11-16T15:10:37.000Z</published>
+    <updated>2017-11-16T15:10:37.252Z</updated>
+    
+    <content type="html"><![CDATA[<p>1.下载 第一中方式 用 <code>apt-get install rinetd</code> 或者从官网下载</p>
+<p>2.配置，端口转发的配置在 <code>/etc/rinetd.conf</code><br>配置规则</p>
+<pre><code>0.0.0.0 8080 172.19.94.3 8080
+0.0.0.0 2222 192.168.0.103 3389
+1.2.3.4 80 192.168.0.10 80
+</code></pre><p>说明一下（0.0.0.0表示本机绑定所有可用地址）</p>
+<p>将所有发往本机8080端口的请求转发到172.19.94.3的8080端口</p>
+<p>将所有发往本机2222端口的请求转发到192.168.0.103的3389端口</p>
+<p>将所有发往1.2.3.4的80端口请求转发到192.168.0.10的80端口</p>
+<p>命令格式是</p>
+<pre><code>bindaddress bindport connectaddress connectport
+
+绑定的地址 绑定的端口 连接的地址 连接的端口
+或
+
+[Source Address] [Source Port] [Destination Address] [Destination Port]
+源地址 源端口 目的地址 目的端口
+</code></pre><p>3.打开</p>
+<p>启动程序</p>
+<pre><code>pkill rinetd ##关闭进程
+rinetd -c /etc/rinetd.conf ##启动转发
+把这条命令加到/etc/rc.local里面就可以开机自动运行 好像不添加也行
+rj.baidu.com/soft/detail/10203.html
+</code></pre>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;1.下载 第一中方式 用 &lt;code&gt;apt-get install rinetd&lt;/code&gt; 或者从官网下载&lt;/p&gt;
+&lt;p&gt;2.配置，端口转发的配置在 &lt;code&gt;/etc/rinetd.conf&lt;/code&gt;&lt;br&gt;配置规则&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;0.0.0.
+    
+    </summary>
+    
+      <category term="ubuntu" scheme="http://dennis.pathto.top/categories/ubuntu/"/>
+    
+    
+      <category term="linux" scheme="http://dennis.pathto.top/tags/linux/"/>
+    
+      <category term="ubuntu" scheme="http://dennis.pathto.top/tags/ubuntu/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>15.spring-boot多数据源</title>
+    <link href="http://dennis.pathto.top/2017/11/16/spring-boot-15-multi-source/"/>
+    <id>http://dennis.pathto.top/2017/11/16/spring-boot-15-multi-source/</id>
+    <published>2017-11-16T15:10:33.000Z</published>
+    <updated>2017-11-16T15:10:33.127Z</updated>
+    
+    <content type="html"><![CDATA[<p>在实际开发中，我们一个项目可能会用到多个数据库，通常一个数据库对应一个数据源。</p>
+<p>代码结构：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://images2015.cnblogs.com/blog/866881/201604/866881-20160420170534570-1081086745.png" alt="image" title="">
+                </div>
+                <div class="image-caption">image</div>
+            </figure>
+<p>简要原理：</p>
+<p>1）DatabaseType列出所有的数据源的key—key</p>
+<p>2）DatabaseContextHolder是一个线程安全的DatabaseType容器，并提供了向其中设置和获取DatabaseType的方法</p>
+<p>3）DynamicDataSource继承AbstractRoutingDataSource并重写其中的方法determineCurrentLookupKey()，在该方法中使用DatabaseContextHolder获取当前线程的DatabaseType</p>
+<p>4）MyBatisConfig中生成2个数据源DataSource的bean—value</p>
+<p>5）MyBatisConfig中将1）和4）组成的key-value对写入到DynamicDataSource动态数据源的targetDataSources属性（当然，同时也会设置2个数据源其中的一个为DynamicDataSource的defaultTargetDataSource属性中）</p>
+<p>6）将DynamicDataSource作为primary数据源注入到SqlSessionFactory的dataSource属性中去，并且该dataSource作为transactionManager的入参来构造DataSourceTransactionManager</p>
+<p>7）使用的时候，在dao层或service层先使用DatabaseContextHolder设置将要使用的数据源key，然后再调用mapper层进行相应的操作，建议放在dao层去做（当然也可以使用spring aop+自定注解去做）</p>
+<p>注意：在mapper层进行操作的时候，会先调用determineCurrentLookupKey()方法获取一个数据源（获取数据源：先根据设置去targetDataSources中去找，若没有，则选择defaultTargetDataSource），之后在进行数据库操作。</p>
+<p>1、假设有两个数据库，配置如下</p>
+<p>application.properties</p>
+<pre><code>#the first datasource
+jdbc.driverClassName = com.mysql.jdbc.Driver
+jdbc.url = jdbc:mysql://xxx:3306/mytestdb?zeroDateTimeBehavior=convertToNull&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf-8
+jdbc.username = root
+jdbc.password = 123
+
+#the second datasource
+jdbc2.driverClassName = com.mysql.jdbc.Driver
+jdbc2.url = jdbc:mysql://xxx:3306/mytestdb2?zeroDateTimeBehavior=convertToNull&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf-8
+jdbc2.username = root
+jdbc2.password = 123
+</code></pre><p>说明：在之前的配置的基础上，只增加了上述的第二个数据源。</p>
+<p>2、DatabaseType</p>
+<pre><code>package com.xxx.firstboot.common.datasource;
+
+/**
+ * 列出所有的数据源key（常用数据库名称来命名）
+ * 注意：
+ * 1）这里数据源与数据库是一对一的
+ * 2）DatabaseType中的变量名称就是数据库的名称
+ */
+public enum DatabaseType {
+    mytestdb,mytestdb2
+}
+</code></pre><p>作用：列举数据源的key。</p>
+<p>3、DatabaseContextHolder</p>
+<pre><code>package com.xxx.firstboot.common.datasource;
+
+/**
+ * 作用：
+ * 1、保存一个线程安全的DatabaseType容器
+ */
+public class DatabaseContextHolder {
+    private static final ThreadLocal&lt;DatabaseType&gt; contextHolder = new ThreadLocal&lt;&gt;();
+
+    public static void setDatabaseType(DatabaseType type){
+        contextHolder.set(type);
+    }
+
+    public static DatabaseType getDatabaseType(){
+        return contextHolder.get();
+    }
+}
+</code></pre><p>作用：构建一个DatabaseType容器，并提供了向其中设置和获取DatabaseType的方法</p>
+<p>4、DynamicDataSource</p>
+<pre><code>package com.xxx.firstboot.common.datasource;
+
+import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
+
+/**
+ * 动态数据源（需要继承AbstractRoutingDataSource）
+ */
+public class DynamicDataSource extends AbstractRoutingDataSource {
+    protected Object determineCurrentLookupKey() {
+        return DatabaseContextHolder.getDatabaseType();
+    }
+}
+</code></pre><p>作用：使用DatabaseContextHolder获取当前线程的DatabaseType</p>
+<p>5、MyBatisConfig</p>
+<pre><code>package com.xxx.firstboot.common;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+
+import com.alibaba.druid.pool.DruidDataSourceFactory;
+import com.xxx.firstboot.common.datasource.DatabaseType;
+import com.xxx.firstboot.common.datasource.DynamicDataSource;
+
+/**
+ * springboot集成mybatis的基本入口 1）创建数据源(如果采用的是默认的tomcat-jdbc数据源，则不需要)
+ * 2）创建SqlSessionFactory 3）配置事务管理器，除非需要使用事务，否则不用配置
+ */
+@Configuration // 该注解类似于spring配置文件
+@MapperScan(basePackages = &quot;com.xxx.firstboot.mapper&quot;)
+public class MyBatisConfig {
+
+    @Autowired
+    private Environment env;
+
+    /**
+     * 创建数据源(数据源的名称：方法名可以取为XXXDataSource(),XXX为数据库名称,该名称也就是数据源的名称)
+     */
+    @Bean
+    public DataSource myTestDbDataSource() throws Exception {
+        Properties props = new Properties();
+        props.put(&quot;driverClassName&quot;, env.getProperty(&quot;jdbc.driverClassName&quot;));
+        props.put(&quot;url&quot;, env.getProperty(&quot;jdbc.url&quot;));
+        props.put(&quot;username&quot;, env.getProperty(&quot;jdbc.username&quot;));
+        props.put(&quot;password&quot;, env.getProperty(&quot;jdbc.password&quot;));
+        return DruidDataSourceFactory.createDataSource(props);
+    }
+
+    @Bean
+    public DataSource myTestDb2DataSource() throws Exception {
+        Properties props = new Properties();
+        props.put(&quot;driverClassName&quot;, env.getProperty(&quot;jdbc2.driverClassName&quot;));
+        props.put(&quot;url&quot;, env.getProperty(&quot;jdbc2.url&quot;));
+        props.put(&quot;username&quot;, env.getProperty(&quot;jdbc2.username&quot;));
+        props.put(&quot;password&quot;, env.getProperty(&quot;jdbc2.password&quot;));
+        return DruidDataSourceFactory.createDataSource(props);
+    }
+
+    /**
+     * @Primary 该注解表示在同一个接口有多个实现类可以注入的时候，默认选择哪一个，而不是让@autowire注解报错
+     * @Qualifier 根据名称进行注入，通常是在具有相同的多个类型的实例的一个注入（例如有多个DataSource类型的实例）
+     */
+    @Bean
+    @Primary
+    public DynamicDataSource dataSource(@Qualifier(&quot;myTestDbDataSource&quot;) DataSource myTestDbDataSource,
+            @Qualifier(&quot;myTestDb2DataSource&quot;) DataSource myTestDb2DataSource) {
+        Map&lt;Object, Object&gt; targetDataSources = new HashMap&lt;&gt;();
+        targetDataSources.put(DatabaseType.mytestdb, myTestDbDataSource);
+        targetDataSources.put(DatabaseType.mytestdb2, myTestDb2DataSource);
+
+        DynamicDataSource dataSource = new DynamicDataSource();
+        dataSource.setTargetDataSources(targetDataSources);// 该方法是AbstractRoutingDataSource的方法
+        dataSource.setDefaultTargetDataSource(myTestDbDataSource);// 默认的datasource设置为myTestDbDataSource
+
+        return dataSource;
+    }
+
+    /**
+     * 根据数据源创建SqlSessionFactory
+     */
+    @Bean
+    public SqlSessionFactory sqlSessionFactory(DynamicDataSource ds) throws Exception {
+        SqlSessionFactoryBean fb = new SqlSessionFactoryBean();
+        fb.setDataSource(ds);// 指定数据源(这个必须有，否则报错)
+        // 下边两句仅仅用于*.xml文件，如果整个持久层操作不需要使用到xml文件的话（只用注解就可以搞定），则不加
+        fb.setTypeAliasesPackage(env.getProperty(&quot;mybatis.typeAliasesPackage&quot;));// 指定基包
+        fb.setMapperLocations(
+                new PathMatchingResourcePatternResolver().getResources(env.getProperty(&quot;mybatis.mapperLocations&quot;)));//
+
+        return fb.getObject();
+    }
+
+    /**
+     * 配置事务管理器
+     */
+    @Bean
+    public DataSourceTransactionManager transactionManager(DynamicDataSource dataSource) throws Exception {
+        return new DataSourceTransactionManager(dataSource);
+    }
+
+}
+</code></pre><p>作用：</p>
+<p>通过读取application.properties文件生成两个数据源（myTestDbDataSource、myTestDb2DataSource）</p>
+<p>使用以上生成的两个数据源构造动态数据源dataSource</p>
+<p>@Primary：指定在同一个接口有多个实现类可以注入的时候，默认选择哪一个，而不是让@Autowire注解报错（一般用于多数据源的情况下）</p>
+<p>@Qualifier：指定名称的注入，当一个接口有多个实现类的时候使用（在本例中，有两个DataSource类型的实例，需要指定名称注入）</p>
+<p>@Bean：生成的bean实例的名称是方法名（例如上边的@Qualifier注解中使用的名称是前边两个数据源的方法名，而这两个数据源也是使用@Bean注解进行注入的）</p>
+<p>通过动态数据源构造SqlSessionFactory和事务管理器（如果不需要事务，后者可以去掉）</p>
+<p>6、使用</p>
+<p>ShopMapper:</p>
+<pre><code>package com.xxx.firstboot.mapper;
+
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
+import org.apache.ibatis.annotations.Select;
+
+import com.xxx.firstboot.domain.Shop;
+
+public interface ShopMapper {
+
+    @Select(&quot;SELECT * FROM t_shop WHERE id = #{id}&quot;)
+    @Results(value = { @Result(id = true, column = &quot;id&quot;, property = &quot;id&quot;),
+                       @Result(column = &quot;shop_name&quot;, property = &quot;shopName&quot;) })
+    public Shop getShop(@Param(&quot;id&quot;) int id);
+
+}
+</code></pre><p>ShopDao:</p>
+<pre><code>package com.xxx.firstboot.dao;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import com.xxx.firstboot.common.datasource.DatabaseContextHolder;
+import com.xxx.firstboot.common.datasource.DatabaseType;
+import com.xxx.firstboot.domain.Shop;
+import com.xxx.firstboot.mapper.ShopMapper;
+
+@Repository
+public class ShopDao {
+    @Autowired
+    private ShopMapper mapper;
+
+    /**
+     * 获取shop
+     */
+    public Shop getShop(int id) {
+        DatabaseContextHolder.setDatabaseType(DatabaseType.mytestdb2);
+        return mapper.getShop(id);
+    }
+}
+</code></pre><p>注意：首先设置了数据源的key，然后调用mapper（在mapper中会首先根据该key从动态数据源中查询出相应的数据源，之后取出连接进行数据库操作）</p>
+<p>ShopService:</p>
+<pre><code>package com.xxx.firstboot.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.xxx.firstboot.dao.ShopDao;
+import com.xxx.firstboot.domain.Shop;
+
+@Service
+public class ShopService {
+
+    @Autowired
+    private ShopDao dao;
+
+    public Shop getShop(int id) {
+        return dao.getShop(id);
+    }
+}
+</code></pre><p>ShopController:</p>
+<pre><code>package com.xxx.firstboot.web;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.xxx.firstboot.domain.Shop;
+import com.xxx.firstboot.service.ShopService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+@RestController
+@RequestMapping(&quot;/shop&quot;)
+@Api(&quot;shopController相关api&quot;)
+public class ShopController {
+
+    @Autowired
+    private ShopService service;
+
+    @ApiOperation(&quot;获取shop信息,测试多数据源&quot;)
+    @RequestMapping(value = &quot;/getShop&quot;, method = RequestMethod.GET)
+    public Shop getShop(@RequestParam(&quot;id&quot;) int id) {
+        return service.getShop(id);
+    }
+
+}
+</code></pre><p>补：其实DatabaseContextHolder和DynamicDataSource完全可以合为一个类</p>
+<p>遗留：在实际开发中，一个dao类只会用到一个数据源，如果dao类中的方法很多的话，每一个方法前边都要添加一个设置数据源的一句话，代码有些冗余，可以使用AOP切面。</p>
+<p>具体的实现方式见 第九章 springboot + mybatis + 多数据源 （AOP实现）</p>
+<p>很多朋友反映遇到数据源循环依赖的问题，可以试一下将MyBatisConfig中的相关代码换成这样试试</p>
+<pre><code>@Bean
+public SqlSessionFactory sqlSessionFactory(@Qualifier(&quot;myTestDbDataSource&quot;) DataSource myTestDbDataSource,
+                                           @Qualifier(&quot;myTestDb2DataSource&quot;) DataSource myTestDb2DataSource) throws Exception{
+    SqlSessionFactoryBean fb = new SqlSessionFactoryBean();
+    fb.setDataSource(this.dataSource(myTestDbDataSource, myTestDb2DataSource));
+    fb.setTypeAliasesPackage(env.getProperty(&quot;mybatis.typeAliasesPackage&quot;));
+    fb.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(env.getProperty(&quot;mybatis.mapperLocations&quot;)));
+    return fb.getObject();
+}
+</code></pre>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;在实际开发中，我们一个项目可能会用到多个数据库，通常一个数据库对应一个数据源。&lt;/p&gt;
+&lt;p&gt;代码结构：&lt;/p&gt;
+&lt;figure class=&quot;image-bubble&quot;&gt;
+                &lt;div class=&quot;img-lightbox&quot;&gt;
+       
+    
+    </summary>
+    
+      <category term="spring-boot" scheme="http://dennis.pathto.top/categories/spring-boot/"/>
+    
+    
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
+    
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
+    
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>14.spring-boot后台运行进程</title>
+    <link href="http://dennis.pathto.top/2017/11/16/spring-boot-14-background-job/"/>
+    <id>http://dennis.pathto.top/2017/11/16/spring-boot-14-background-job/</id>
+    <published>2017-11-16T15:10:28.000Z</published>
+    <updated>2017-11-16T15:10:28.954Z</updated>
+    
+    <content type="html"><![CDATA[<p>在pom.xml中添加Spring Boot的插件，并注意设置executable配置</p>
+<pre><code>&lt;build&gt;   
+  &lt;plugins&gt;   
+    &lt;plugin&gt;   
+      &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;    
+      &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;    
+      &lt;configuration&gt;   
+        &lt;executable&gt;true&lt;/executable&gt;   
+      &lt;/configuration&gt;   
+    &lt;/plugin&gt;   
+  &lt;/plugins&gt;   
+&lt;/build&gt;  
+</code></pre><p>在完成上述配置后，构建一个可执行的jar包</p>
+<pre><code>mvn package
+chmod 777 yourapp.jar
+</code></pre><p>创建软连接到/etc/init.d/目录下</p>
+<pre><code>sudo ln -s /var/yourapp/yourapp.jar /etc/init.d/yourapp  
+</code></pre><p>在完成软连接创建之后，我们就可以通过如下命令对yourapp.jar应用来控制启动、停止、重启操作了</p>
+<pre><code>/etc/init.d/yourapp start|stop|restart  
+</code></pre><p>自定义配置文件</p>
+<p>在jar包所在的目录下有下面的文件</p>
+<pre><code>[root@dennis yourapp]# cat yourapp.conf 
+JAVA_HOME=/usr/local/jdk1.8.0_144
+LOG_FOLDER=/usr/local/yourapp/log
+</code></pre><p>注意conf文件的名字一定要和jar的名字一样，否则配置文件不起作用</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;在pom.xml中添加Spring Boot的插件，并注意设置executable配置&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;build&amp;gt;   
+  &amp;lt;plugins&amp;gt;   
+    &amp;lt;plugin&amp;gt;   
+      &amp;lt;groupId&amp;
+    
+    </summary>
+    
+      <category term="spring-boot" scheme="http://dennis.pathto.top/categories/spring-boot/"/>
+    
+    
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
+    
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
+    
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>ubuntu-防火墙访问控制</title>
+    <link href="http://dennis.pathto.top/2017/11/08/ubuntu-firewalld/"/>
+    <id>http://dennis.pathto.top/2017/11/08/ubuntu-firewalld/</id>
+    <published>2017-11-08T15:37:54.000Z</published>
+    <updated>2017-11-16T14:36:09.292Z</updated>
+    
+    <content type="html"><![CDATA[<p>Ubuntu默认防火墙安装、启用、配置、端口、查看状态相关信息</p>
+<p>Ubuntu附带了一个相对iptables简单很多的防火墙 配置工具：ufw</p>
+<p>ufw防火墙 即uncomplicated firewall，不复杂的防火墙，繁琐部分的设置还是需要去到iptables</p>
+<p>查看防火墙状态</p>
+<pre><code>sudo ufw status
+</code></pre><p>防火墙版本</p>
+<pre><code>sudo ufw version
+</code></pre><p>安装</p>
+<pre><code>sudo apt-get install ufw
+</code></pre><p>启用　　</p>
+<pre><code>sudo ufw enable
+sudo ufw default deny
+</code></pre><p>运行以上两条命令后，开启了防火墙，并在系统启动时自动开启。</p>
+<p>关闭所有外部对本机的访问，但本机访问外部正常。</p>
+<p>开启/禁用</p>
+<pre><code>sudo ufw allow|deny [service]
+</code></pre><p>打开或关闭某个端口</p>
+<p>开启/关闭防火墙 (默认设置是’disable’)</p>
+<pre><code>sudo ufw enable|disable　
+　　
+
+eg:
+
+sudo  ufw allow  3306
+</code></pre><p>为了使mysql可以远程访问，开启mysql的3306端口　</p>
+<p>指定协议</p>
+<pre><code>ufw allow 80/tcp
+</code></pre>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Ubuntu默认防火墙安装、启用、配置、端口、查看状态相关信息&lt;/p&gt;
+&lt;p&gt;Ubuntu附带了一个相对iptables简单很多的防火墙 配置工具：ufw&lt;/p&gt;
+&lt;p&gt;ufw防火墙 即uncomplicated firewall，不复杂的防火墙，繁琐部分的设置还是需要去到
+    
+    </summary>
+    
+      <category term="ubuntu" scheme="http://dennis.pathto.top/categories/ubuntu/"/>
+    
+    
+      <category term="linux" scheme="http://dennis.pathto.top/tags/linux/"/>
+    
+      <category term="ubuntu" scheme="http://dennis.pathto.top/tags/ubuntu/"/>
+    
+  </entry>
+  
+  <entry>
     <title>linux-shell文件问题</title>
-    <link href="http://www.pathto.top:8080/2017/10/05/linux-0-shell-file-problem/"/>
-    <id>http://www.pathto.top:8080/2017/10/05/linux-0-shell-file-problem/</id>
+    <link href="http://dennis.pathto.top/2017/10/05/linux-0-shell-file-problem/"/>
+    <id>http://dennis.pathto.top/2017/10/05/linux-0-shell-file-problem/</id>
     <published>2017-10-05T09:50:53.000Z</published>
     <updated>2017-10-05T09:50:53.394Z</updated>
     
@@ -60,19 +704,19 @@ dos2unix: converting file test.sh to UNIX format ...
     
     </summary>
     
-      <category term="linux" scheme="http://www.pathto.top:8080/categories/linux/"/>
+      <category term="linux" scheme="http://dennis.pathto.top/categories/linux/"/>
     
     
-      <category term="linux" scheme="http://www.pathto.top:8080/tags/linux/"/>
+      <category term="linux" scheme="http://dennis.pathto.top/tags/linux/"/>
     
-      <category term="shell" scheme="http://www.pathto.top:8080/tags/shell/"/>
+      <category term="shell" scheme="http://dennis.pathto.top/tags/shell/"/>
     
   </entry>
   
   <entry>
     <title>subversion+centos7</title>
-    <link href="http://www.pathto.top:8080/2017/10/05/svn-0-centos7/"/>
-    <id>http://www.pathto.top:8080/2017/10/05/svn-0-centos7/</id>
+    <link href="http://dennis.pathto.top/2017/10/05/svn-0-centos7/"/>
+    <id>http://dennis.pathto.top/2017/10/05/svn-0-centos7/</id>
     <published>2017-10-05T09:34:57.000Z</published>
     <updated>2017-10-05T09:34:57.523Z</updated>
     
@@ -197,17 +841,17 @@ info.php
     
     </summary>
     
-      <category term="svn" scheme="http://www.pathto.top:8080/categories/svn/"/>
+      <category term="svn" scheme="http://dennis.pathto.top/categories/svn/"/>
     
     
-      <category term="svn" scheme="http://www.pathto.top:8080/tags/svn/"/>
+      <category term="svn" scheme="http://dennis.pathto.top/tags/svn/"/>
     
   </entry>
   
   <entry>
     <title>CentOS 7下用firewall-cmd控制端口与端口转发</title>
-    <link href="http://www.pathto.top:8080/2017/10/05/linux-0-firewalld/"/>
-    <id>http://www.pathto.top:8080/2017/10/05/linux-0-firewalld/</id>
+    <link href="http://dennis.pathto.top/2017/10/05/linux-0-firewalld/"/>
+    <id>http://dennis.pathto.top/2017/10/05/linux-0-firewalld/</id>
     <published>2017-10-05T09:17:19.000Z</published>
     <updated>2017-10-05T09:17:19.871Z</updated>
     
@@ -244,19 +888,19 @@ firewall-cmd --add-forward-port=port=80:proto=tcp:toaddr=192.168.0.1:toport=8080
     
     </summary>
     
-      <category term="linux" scheme="http://www.pathto.top:8080/categories/linux/"/>
+      <category term="linux" scheme="http://dennis.pathto.top/categories/linux/"/>
     
     
-      <category term="linux" scheme="http://www.pathto.top:8080/tags/linux/"/>
+      <category term="linux" scheme="http://dennis.pathto.top/tags/linux/"/>
     
-      <category term="centos7" scheme="http://www.pathto.top:8080/tags/centos7/"/>
+      <category term="centos7" scheme="http://dennis.pathto.top/tags/centos7/"/>
     
   </entry>
   
   <entry>
     <title>15.不同主机的容器使用openvswitch互联</title>
-    <link href="http://www.pathto.top:8080/2017/10/03/docker-openvswitch-15/"/>
-    <id>http://www.pathto.top:8080/2017/10/03/docker-openvswitch-15/</id>
+    <link href="http://dennis.pathto.top/2017/10/03/docker-openvswitch-15/"/>
+    <id>http://dennis.pathto.top/2017/10/03/docker-openvswitch-15/</id>
     <published>2017-10-03T14:58:26.000Z</published>
     <updated>2017-10-03T16:27:04.502Z</updated>
     
@@ -407,19 +1051,19 @@ rtt min/avg/max/mdev = 0.815/1.213/1.684/0.342 ms
     
     </summary>
     
-      <category term="docker" scheme="http://www.pathto.top:8080/categories/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/categories/docker/"/>
     
     
-      <category term="docker" scheme="http://www.pathto.top:8080/tags/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/tags/docker/"/>
     
-      <category term="cloud" scheme="http://www.pathto.top:8080/tags/cloud/"/>
+      <category term="cloud" scheme="http://dennis.pathto.top/tags/cloud/"/>
     
   </entry>
   
   <entry>
     <title>14.ip转发的方式实现机器的容器互联互通</title>
-    <link href="http://www.pathto.top:8080/2017/10/03/docker-ip-forward-14/"/>
-    <id>http://www.pathto.top:8080/2017/10/03/docker-ip-forward-14/</id>
+    <link href="http://dennis.pathto.top/2017/10/03/docker-ip-forward-14/"/>
+    <id>http://dennis.pathto.top/2017/10/03/docker-ip-forward-14/</id>
     <published>2017-10-03T14:57:45.000Z</published>
     <updated>2017-10-03T15:05:35.514Z</updated>
     
@@ -522,19 +1166,19 @@ rtt min/avg/max/mdev = 0.746/1.489/2.233/0.744 ms
     
     </summary>
     
-      <category term="docker" scheme="http://www.pathto.top:8080/categories/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/categories/docker/"/>
     
     
-      <category term="docker" scheme="http://www.pathto.top:8080/tags/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/tags/docker/"/>
     
-      <category term="cloud" scheme="http://www.pathto.top:8080/tags/cloud/"/>
+      <category term="cloud" scheme="http://dennis.pathto.top/tags/cloud/"/>
     
   </entry>
   
   <entry>
     <title>13.几种网络互联的方式</title>
-    <link href="http://www.pathto.top:8080/2017/10/03/docker-network-model-13/"/>
-    <id>http://www.pathto.top:8080/2017/10/03/docker-network-model-13/</id>
+    <link href="http://dennis.pathto.top/2017/10/03/docker-network-model-13/"/>
+    <id>http://dennis.pathto.top/2017/10/03/docker-network-model-13/</id>
     <published>2017-10-03T14:57:09.000Z</published>
     <updated>2017-10-03T15:05:07.243Z</updated>
     
@@ -783,19 +1427,19 @@ CONTAINER ID        IMAGE                 COMMAND             CREATED           
     
     </summary>
     
-      <category term="docker" scheme="http://www.pathto.top:8080/categories/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/categories/docker/"/>
     
     
-      <category term="docker" scheme="http://www.pathto.top:8080/tags/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/tags/docker/"/>
     
-      <category term="cloud" scheme="http://www.pathto.top:8080/tags/cloud/"/>
+      <category term="cloud" scheme="http://dennis.pathto.top/tags/cloud/"/>
     
   </entry>
   
   <entry>
     <title>11.docker_compose构建workpress</title>
-    <link href="http://www.pathto.top:8080/2017/10/02/docker-compose-workpress-11/"/>
-    <id>http://www.pathto.top:8080/2017/10/02/docker-compose-workpress-11/</id>
+    <link href="http://dennis.pathto.top/2017/10/02/docker-compose-workpress-11/"/>
+    <id>http://dennis.pathto.top/2017/10/02/docker-compose-workpress-11/</id>
     <published>2017-10-02T15:07:01.000Z</published>
     <updated>2017-10-02T16:14:32.146Z</updated>
     
@@ -1036,19 +1680,19 @@ Creating composemultipleworkpress_nginx_1
     
     </summary>
     
-      <category term="docker" scheme="http://www.pathto.top:8080/categories/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/categories/docker/"/>
     
     
-      <category term="docker" scheme="http://www.pathto.top:8080/tags/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/tags/docker/"/>
     
-      <category term="cloud" scheme="http://www.pathto.top:8080/tags/cloud/"/>
+      <category term="cloud" scheme="http://dennis.pathto.top/tags/cloud/"/>
     
   </entry>
   
   <entry>
     <title>10.docker push问题</title>
-    <link href="http://www.pathto.top:8080/2017/10/02/docker-push-error-10/"/>
-    <id>http://www.pathto.top:8080/2017/10/02/docker-push-error-10/</id>
+    <link href="http://dennis.pathto.top/2017/10/02/docker-push-error-10/"/>
+    <id>http://dennis.pathto.top/2017/10/02/docker-push-error-10/</id>
     <published>2017-10-02T15:06:56.000Z</published>
     <updated>2017-10-02T16:07:57.749Z</updated>
     
@@ -1088,19 +1732,19 @@ The push refers to a repository [192.168.159.159:5000/nginx]
     
     </summary>
     
-      <category term="docker" scheme="http://www.pathto.top:8080/categories/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/categories/docker/"/>
     
     
-      <category term="docker" scheme="http://www.pathto.top:8080/tags/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/tags/docker/"/>
     
-      <category term="cloud" scheme="http://www.pathto.top:8080/tags/cloud/"/>
+      <category term="cloud" scheme="http://dennis.pathto.top/tags/cloud/"/>
     
   </entry>
   
   <entry>
     <title>9.docker本地仓库</title>
-    <link href="http://www.pathto.top:8080/2017/10/02/docker-local-dockerhub-9/"/>
-    <id>http://www.pathto.top:8080/2017/10/02/docker-local-dockerhub-9/</id>
+    <link href="http://dennis.pathto.top/2017/10/02/docker-local-dockerhub-9/"/>
+    <id>http://dennis.pathto.top/2017/10/02/docker-local-dockerhub-9/</id>
     <published>2017-10-02T15:06:51.000Z</published>
     <updated>2017-10-02T16:07:57.749Z</updated>
     
@@ -1142,19 +1786,19 @@ Us
     
     </summary>
     
-      <category term="docker" scheme="http://www.pathto.top:8080/categories/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/categories/docker/"/>
     
     
-      <category term="docker" scheme="http://www.pathto.top:8080/tags/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/tags/docker/"/>
     
-      <category term="cloud" scheme="http://www.pathto.top:8080/tags/cloud/"/>
+      <category term="cloud" scheme="http://dennis.pathto.top/tags/cloud/"/>
     
   </entry>
   
   <entry>
     <title>8.使用Dockerfile搭建自己的博客</title>
-    <link href="http://www.pathto.top:8080/2017/10/02/docker-dockerfile-workpress-8/"/>
-    <id>http://www.pathto.top:8080/2017/10/02/docker-dockerfile-workpress-8/</id>
+    <link href="http://dennis.pathto.top/2017/10/02/docker-dockerfile-workpress-8/"/>
+    <id>http://dennis.pathto.top/2017/10/02/docker-dockerfile-workpress-8/</id>
     <published>2017-10-02T15:06:46.000Z</published>
     <updated>2017-10-02T16:07:57.733Z</updated>
     
@@ -1486,19 +2130,19 @@ docker run -dit --name mysql -p 3306:3306 -v /opt/data:/var/lib/mysql workpress/
     
     </summary>
     
-      <category term="docker" scheme="http://www.pathto.top:8080/categories/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/categories/docker/"/>
     
     
-      <category term="docker" scheme="http://www.pathto.top:8080/tags/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/tags/docker/"/>
     
-      <category term="cloud" scheme="http://www.pathto.top:8080/tags/cloud/"/>
+      <category term="cloud" scheme="http://dennis.pathto.top/tags/cloud/"/>
     
   </entry>
   
   <entry>
     <title>7.dockerfile</title>
-    <link href="http://www.pathto.top:8080/2017/10/02/docker-dockerfile-7/"/>
-    <id>http://www.pathto.top:8080/2017/10/02/docker-dockerfile-7/</id>
+    <link href="http://dennis.pathto.top/2017/10/02/docker-dockerfile-7/"/>
+    <id>http://dennis.pathto.top/2017/10/02/docker-dockerfile-7/</id>
     <published>2017-10-02T15:06:41.000Z</published>
     <updated>2017-10-02T16:07:57.733Z</updated>
     
@@ -1640,19 +2284,19 @@ CMD supervisord -c /etc/supervisor/supervisord.conf
     
     </summary>
     
-      <category term="docker" scheme="http://www.pathto.top:8080/categories/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/categories/docker/"/>
     
     
-      <category term="docker" scheme="http://www.pathto.top:8080/tags/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/tags/docker/"/>
     
-      <category term="cloud" scheme="http://www.pathto.top:8080/tags/cloud/"/>
+      <category term="cloud" scheme="http://dennis.pathto.top/tags/cloud/"/>
     
   </entry>
   
   <entry>
     <title>6.docker-存储</title>
-    <link href="http://www.pathto.top:8080/2017/10/02/docker-storagy-6/"/>
-    <id>http://www.pathto.top:8080/2017/10/02/docker-storagy-6/</id>
+    <link href="http://dennis.pathto.top/2017/10/02/docker-storagy-6/"/>
+    <id>http://dennis.pathto.top/2017/10/02/docker-storagy-6/</id>
     <published>2017-10-02T15:06:36.000Z</published>
     <updated>2017-10-02T16:07:57.733Z</updated>
     
@@ -1756,19 +2400,19 @@ root@7087d6e9db40:/#
     
     </summary>
     
-      <category term="docker" scheme="http://www.pathto.top:8080/categories/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/categories/docker/"/>
     
     
-      <category term="docker" scheme="http://www.pathto.top:8080/tags/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/tags/docker/"/>
     
-      <category term="cloud" scheme="http://www.pathto.top:8080/tags/cloud/"/>
+      <category term="cloud" scheme="http://dennis.pathto.top/tags/cloud/"/>
     
   </entry>
   
   <entry>
     <title>5.docker容器</title>
-    <link href="http://www.pathto.top:8080/2017/10/02/docker-container-5/"/>
-    <id>http://www.pathto.top:8080/2017/10/02/docker-container-5/</id>
+    <link href="http://dennis.pathto.top/2017/10/02/docker-container-5/"/>
+    <id>http://dennis.pathto.top/2017/10/02/docker-container-5/</id>
     <published>2017-10-02T15:06:31.000Z</published>
     <updated>2017-10-02T16:07:57.717Z</updated>
     
@@ -1800,19 +2444,19 @@ CONTAINER ID        IMAGE               COMMAND                  CREATED        
     
     </summary>
     
-      <category term="docker" scheme="http://www.pathto.top:8080/categories/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/categories/docker/"/>
     
     
-      <category term="docker" scheme="http://www.pathto.top:8080/tags/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/tags/docker/"/>
     
-      <category term="cloud" scheme="http://www.pathto.top:8080/tags/cloud/"/>
+      <category term="cloud" scheme="http://dennis.pathto.top/tags/cloud/"/>
     
   </entry>
   
   <entry>
     <title>4.镜像管理</title>
-    <link href="http://www.pathto.top:8080/2017/10/02/docker-image-management-4/"/>
-    <id>http://www.pathto.top:8080/2017/10/02/docker-image-management-4/</id>
+    <link href="http://dennis.pathto.top/2017/10/02/docker-image-management-4/"/>
+    <id>http://dennis.pathto.top/2017/10/02/docker-image-management-4/</id>
     <published>2017-10-02T15:06:26.000Z</published>
     <updated>2017-10-02T16:07:57.717Z</updated>
     
@@ -2137,19 +2781,19 @@ drwx------.  2 root root   25 10月  1 19:42 volumes #数据卷相关信息
     
     </summary>
     
-      <category term="docker" scheme="http://www.pathto.top:8080/categories/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/categories/docker/"/>
     
     
-      <category term="docker" scheme="http://www.pathto.top:8080/tags/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/tags/docker/"/>
     
-      <category term="cloud" scheme="http://www.pathto.top:8080/tags/cloud/"/>
+      <category term="cloud" scheme="http://dennis.pathto.top/tags/cloud/"/>
     
   </entry>
   
   <entry>
     <title>3.docker常用的简单管理命令</title>
-    <link href="http://www.pathto.top:8080/2017/10/02/docker-management-cmd-3/"/>
-    <id>http://www.pathto.top:8080/2017/10/02/docker-management-cmd-3/</id>
+    <link href="http://dennis.pathto.top/2017/10/02/docker-management-cmd-3/"/>
+    <id>http://dennis.pathto.top/2017/10/02/docker-management-cmd-3/</id>
     <published>2017-10-02T15:06:21.000Z</published>
     <updated>2017-10-02T16:07:57.702Z</updated>
     
@@ -2178,19 +2822,19 @@ centos6: Pulling from library/centos
     
     </summary>
     
-      <category term="docker" scheme="http://www.pathto.top:8080/categories/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/categories/docker/"/>
     
     
-      <category term="docker" scheme="http://www.pathto.top:8080/tags/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/tags/docker/"/>
     
-      <category term="cloud" scheme="http://www.pathto.top:8080/tags/cloud/"/>
+      <category term="cloud" scheme="http://dennis.pathto.top/tags/cloud/"/>
     
   </entry>
   
   <entry>
     <title>2.安装docker</title>
-    <link href="http://www.pathto.top:8080/2017/10/02/docker-installation-2/"/>
-    <id>http://www.pathto.top:8080/2017/10/02/docker-installation-2/</id>
+    <link href="http://dennis.pathto.top/2017/10/02/docker-installation-2/"/>
+    <id>http://dennis.pathto.top/2017/10/02/docker-installation-2/</id>
     <published>2017-10-02T15:06:16.000Z</published>
     <updated>2017-10-02T16:07:57.702Z</updated>
     
@@ -2302,19 +2946,19 @@ REPOSITORY          TAG                 IMAGE ID            CREATED             
     
     </summary>
     
-      <category term="docker" scheme="http://www.pathto.top:8080/categories/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/categories/docker/"/>
     
     
-      <category term="docker" scheme="http://www.pathto.top:8080/tags/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/tags/docker/"/>
     
-      <category term="cloud" scheme="http://www.pathto.top:8080/tags/cloud/"/>
+      <category term="cloud" scheme="http://dennis.pathto.top/tags/cloud/"/>
     
   </entry>
   
   <entry>
     <title>13.Spring Boot 热部署</title>
-    <link href="http://www.pathto.top:8080/2017/09/24/spring-boot-hot-deploy-13/"/>
-    <id>http://www.pathto.top:8080/2017/09/24/spring-boot-hot-deploy-13/</id>
+    <link href="http://dennis.pathto.top/2017/09/24/spring-boot-hot-deploy-13/"/>
+    <id>http://dennis.pathto.top/2017/09/24/spring-boot-hot-deploy-13/</id>
     <published>2017-09-24T11:05:12.000Z</published>
     <updated>2017-09-24T11:07:55.252Z</updated>
     
@@ -2336,21 +2980,21 @@ REPOSITORY          TAG                 IMAGE ID            CREATED             
     
     </summary>
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/categories/spring-boot/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/categories/spring-boot/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
   </entry>
   
   <entry>
     <title>12.spring-boot-properties问题</title>
-    <link href="http://www.pathto.top:8080/2017/09/24/spring-boot-properties-problem-12/"/>
-    <id>http://www.pathto.top:8080/2017/09/24/spring-boot-properties-problem-12/</id>
+    <link href="http://dennis.pathto.top/2017/09/24/spring-boot-properties-problem-12/"/>
+    <id>http://dennis.pathto.top/2017/09/24/spring-boot-properties-problem-12/</id>
     <published>2017-09-24T11:05:08.000Z</published>
     <updated>2017-09-24T11:19:35.955Z</updated>
     
@@ -2370,21 +3014,21 @@ REPOSITORY          TAG                 IMAGE ID            CREATED             
     
     </summary>
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/categories/spring-boot/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/categories/spring-boot/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
   </entry>
   
   <entry>
     <title>11.spring-boot-Thymeleaf和context path</title>
-    <link href="http://www.pathto.top:8080/2017/09/24/spring-boot-Thymeleaf-context-path-11/"/>
-    <id>http://www.pathto.top:8080/2017/09/24/spring-boot-Thymeleaf-context-path-11/</id>
+    <link href="http://dennis.pathto.top/2017/09/24/spring-boot-Thymeleaf-context-path-11/"/>
+    <id>http://dennis.pathto.top/2017/09/24/spring-boot-Thymeleaf-context-path-11/</id>
     <published>2017-09-24T11:03:30.000Z</published>
     <updated>2017-09-24T11:07:55.236Z</updated>
     
@@ -2406,21 +3050,21 @@ REPOSITORY          TAG                 IMAGE ID            CREATED             
     
     </summary>
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/categories/spring-boot/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/categories/spring-boot/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
   </entry>
   
   <entry>
     <title>10.spring-boot使用新特性开发生产者和消费者程序</title>
-    <link href="http://www.pathto.top:8080/2017/09/24/spring-boot-new-feature-consumer-product-10/"/>
-    <id>http://www.pathto.top:8080/2017/09/24/spring-boot-new-feature-consumer-product-10/</id>
+    <link href="http://dennis.pathto.top/2017/09/24/spring-boot-new-feature-consumer-product-10/"/>
+    <id>http://dennis.pathto.top/2017/09/24/spring-boot-new-feature-consumer-product-10/</id>
     <published>2017-09-24T11:03:25.000Z</published>
     <updated>2017-09-24T11:07:55.236Z</updated>
     
@@ -2531,21 +3175,21 @@ public class UserController {
     
     </summary>
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/categories/spring-boot/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/categories/spring-boot/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
   </entry>
   
   <entry>
     <title>一个人的思维，决定了他在什么阶层</title>
-    <link href="http://www.pathto.top:8080/2017/09/24/life-A-person-s-thinking/"/>
-    <id>http://www.pathto.top:8080/2017/09/24/life-A-person-s-thinking/</id>
+    <link href="http://dennis.pathto.top/2017/09/24/life-A-person-s-thinking/"/>
+    <id>http://dennis.pathto.top/2017/09/24/life-A-person-s-thinking/</id>
     <published>2017-09-23T16:14:24.000Z</published>
     <updated>2017-09-24T10:52:07.334Z</updated>
     
@@ -2679,19 +3323,19 @@ public class UserController {
     
     </summary>
     
-      <category term="life" scheme="http://www.pathto.top:8080/categories/life/"/>
+      <category term="life" scheme="http://dennis.pathto.top/categories/life/"/>
     
     
-      <category term="life" scheme="http://www.pathto.top:8080/tags/life/"/>
+      <category term="life" scheme="http://dennis.pathto.top/tags/life/"/>
     
-      <category term="thinking" scheme="http://www.pathto.top:8080/tags/thinking/"/>
+      <category term="thinking" scheme="http://dennis.pathto.top/tags/thinking/"/>
     
   </entry>
   
   <entry>
     <title>12.elasticsearch聚合查询-demo</title>
-    <link href="http://www.pathto.top:8080/2017/09/10/elasticsearch-12-aggs-query/"/>
-    <id>http://www.pathto.top:8080/2017/09/10/elasticsearch-12-aggs-query/</id>
+    <link href="http://dennis.pathto.top/2017/09/10/elasticsearch-12-aggs-query/"/>
+    <id>http://dennis.pathto.top/2017/09/10/elasticsearch-12-aggs-query/</id>
     <published>2017-09-10T15:35:29.000Z</published>
     <updated>2017-09-10T16:07:04.699Z</updated>
     
@@ -2973,19 +3617,19 @@ public class UserController {
     
     </summary>
     
-      <category term="elasticsearch" scheme="http://www.pathto.top:8080/categories/elasticsearch/"/>
+      <category term="elasticsearch" scheme="http://dennis.pathto.top/categories/elasticsearch/"/>
     
     
-      <category term="elasticsearch" scheme="http://www.pathto.top:8080/tags/elasticsearch/"/>
+      <category term="elasticsearch" scheme="http://dennis.pathto.top/tags/elasticsearch/"/>
     
-      <category term="elk" scheme="http://www.pathto.top:8080/tags/elk/"/>
+      <category term="elk" scheme="http://dennis.pathto.top/tags/elk/"/>
     
   </entry>
   
   <entry>
     <title>11.elasticsearch-几种聚合查询</title>
-    <link href="http://www.pathto.top:8080/2017/09/10/elasticsearch-11-severral-aggs/"/>
-    <id>http://www.pathto.top:8080/2017/09/10/elasticsearch-11-severral-aggs/</id>
+    <link href="http://dennis.pathto.top/2017/09/10/elasticsearch-11-severral-aggs/"/>
+    <id>http://dennis.pathto.top/2017/09/10/elasticsearch-11-severral-aggs/</id>
     <published>2017-09-10T13:35:29.000Z</published>
     <updated>2017-10-02T16:14:18.531Z</updated>
     
@@ -3355,19 +3999,19 @@ public class UserController {
     
     </summary>
     
-      <category term="elasticsearch" scheme="http://www.pathto.top:8080/categories/elasticsearch/"/>
+      <category term="elasticsearch" scheme="http://dennis.pathto.top/categories/elasticsearch/"/>
     
     
-      <category term="elasticsearch" scheme="http://www.pathto.top:8080/tags/elasticsearch/"/>
+      <category term="elasticsearch" scheme="http://dennis.pathto.top/tags/elasticsearch/"/>
     
-      <category term="elk" scheme="http://www.pathto.top:8080/tags/elk/"/>
+      <category term="elk" scheme="http://dennis.pathto.top/tags/elk/"/>
     
   </entry>
   
   <entry>
     <title>9.elasticsearch-查询demo</title>
-    <link href="http://www.pathto.top:8080/2017/09/10/elasticsearch-normal-api/"/>
-    <id>http://www.pathto.top:8080/2017/09/10/elasticsearch-normal-api/</id>
+    <link href="http://dennis.pathto.top/2017/09/10/elasticsearch-normal-api/"/>
+    <id>http://dennis.pathto.top/2017/09/10/elasticsearch-normal-api/</id>
     <published>2017-09-10T13:25:29.000Z</published>
     <updated>2017-09-10T16:07:04.687Z</updated>
     
@@ -4167,19 +4811,19 @@ public class UserController {
     
     </summary>
     
-      <category term="elasticsearch" scheme="http://www.pathto.top:8080/categories/elasticsearch/"/>
+      <category term="elasticsearch" scheme="http://dennis.pathto.top/categories/elasticsearch/"/>
     
     
-      <category term="elasticsearch" scheme="http://www.pathto.top:8080/tags/elasticsearch/"/>
+      <category term="elasticsearch" scheme="http://dennis.pathto.top/tags/elasticsearch/"/>
     
-      <category term="elk" scheme="http://www.pathto.top:8080/tags/elk/"/>
+      <category term="elk" scheme="http://dennis.pathto.top/tags/elk/"/>
     
   </entry>
   
   <entry>
     <title>10.elasticsearch中的match查询和bool查询的关系，提升查询子句</title>
-    <link href="http://www.pathto.top:8080/2017/09/10/elasticsearch-10-match-bool/"/>
-    <id>http://www.pathto.top:8080/2017/09/10/elasticsearch-10-match-bool/</id>
+    <link href="http://dennis.pathto.top/2017/09/10/elasticsearch-10-match-bool/"/>
+    <id>http://dennis.pathto.top/2017/09/10/elasticsearch-10-match-bool/</id>
     <published>2017-09-10T13:25:29.000Z</published>
     <updated>2017-09-10T16:07:04.692Z</updated>
     
@@ -4307,19 +4951,19 @@ public class UserController {
     
     </summary>
     
-      <category term="elasticsearch" scheme="http://www.pathto.top:8080/categories/elasticsearch/"/>
+      <category term="elasticsearch" scheme="http://dennis.pathto.top/categories/elasticsearch/"/>
     
     
-      <category term="elasticsearch" scheme="http://www.pathto.top:8080/tags/elasticsearch/"/>
+      <category term="elasticsearch" scheme="http://dennis.pathto.top/tags/elasticsearch/"/>
     
-      <category term="elk" scheme="http://www.pathto.top:8080/tags/elk/"/>
+      <category term="elk" scheme="http://dennis.pathto.top/tags/elk/"/>
     
   </entry>
   
   <entry>
     <title>8.elasticsearch几种查询</title>
-    <link href="http://www.pathto.top:8080/2017/09/09/elasticsearch-8-several-query/"/>
-    <id>http://www.pathto.top:8080/2017/09/09/elasticsearch-8-several-query/</id>
+    <link href="http://dennis.pathto.top/2017/09/09/elasticsearch-8-several-query/"/>
+    <id>http://dennis.pathto.top/2017/09/09/elasticsearch-8-several-query/</id>
     <published>2017-09-09T13:25:29.000Z</published>
     <updated>2017-09-10T16:07:04.676Z</updated>
     
@@ -4604,19 +5248,19 @@ public class UserController {
     
     </summary>
     
-      <category term="elasticsearch" scheme="http://www.pathto.top:8080/categories/elasticsearch/"/>
+      <category term="elasticsearch" scheme="http://dennis.pathto.top/categories/elasticsearch/"/>
     
     
-      <category term="elasticsearch" scheme="http://www.pathto.top:8080/tags/elasticsearch/"/>
+      <category term="elasticsearch" scheme="http://dennis.pathto.top/tags/elasticsearch/"/>
     
-      <category term="elk" scheme="http://www.pathto.top:8080/tags/elk/"/>
+      <category term="elk" scheme="http://dennis.pathto.top/tags/elk/"/>
     
   </entry>
   
   <entry>
     <title>7.elasticsearch-简单集群管理</title>
-    <link href="http://www.pathto.top:8080/2017/09/08/elasticsearch-7-cluster-management/"/>
-    <id>http://www.pathto.top:8080/2017/09/08/elasticsearch-7-cluster-management/</id>
+    <link href="http://dennis.pathto.top/2017/09/08/elasticsearch-7-cluster-management/"/>
+    <id>http://dennis.pathto.top/2017/09/08/elasticsearch-7-cluster-management/</id>
     <published>2017-09-08T13:25:29.000Z</published>
     <updated>2017-09-10T16:07:04.670Z</updated>
     
@@ -4671,17 +5315,17 @@ green  open   .monitoring-es-2-2017.08.04     3ge5x25mTb2__tr6Sleqhg   1   1    
     
     </summary>
     
-      <category term="elasticsearch" scheme="http://www.pathto.top:8080/categories/elasticsearch/"/>
+      <category term="elasticsearch" scheme="http://dennis.pathto.top/categories/elasticsearch/"/>
     
     
-      <category term="elasticsearch" scheme="http://www.pathto.top:8080/tags/elasticsearch/"/>
+      <category term="elasticsearch" scheme="http://dennis.pathto.top/tags/elasticsearch/"/>
     
   </entry>
   
   <entry>
     <title>6.elasticsearch-x-pack和klibana安装</title>
-    <link href="http://www.pathto.top:8080/2017/09/07/elasticsearch-6-xpack-kibana/"/>
-    <id>http://www.pathto.top:8080/2017/09/07/elasticsearch-6-xpack-kibana/</id>
+    <link href="http://dennis.pathto.top/2017/09/07/elasticsearch-6-xpack-kibana/"/>
+    <id>http://dennis.pathto.top/2017/09/07/elasticsearch-6-xpack-kibana/</id>
     <published>2017-09-07T13:25:29.000Z</published>
     <updated>2017-09-10T16:07:04.664Z</updated>
     
@@ -4719,17 +5363,17 @@ elasticsearch.password: &quot;changeme&quot;    ##x-pack默认超级用户的登
     
     </summary>
     
-      <category term="elasticsearch" scheme="http://www.pathto.top:8080/categories/elasticsearch/"/>
+      <category term="elasticsearch" scheme="http://dennis.pathto.top/categories/elasticsearch/"/>
     
     
-      <category term="elasticsearch" scheme="http://www.pathto.top:8080/tags/elasticsearch/"/>
+      <category term="elasticsearch" scheme="http://dennis.pathto.top/tags/elasticsearch/"/>
     
   </entry>
   
   <entry>
     <title>5.elasticsearch-IK分词器安装</title>
-    <link href="http://www.pathto.top:8080/2017/09/05/elasticsearch-5-ik/"/>
-    <id>http://www.pathto.top:8080/2017/09/05/elasticsearch-5-ik/</id>
+    <link href="http://dennis.pathto.top/2017/09/05/elasticsearch-5-ik/"/>
+    <id>http://dennis.pathto.top/2017/09/05/elasticsearch-5-ik/</id>
     <published>2017-09-05T13:25:29.000Z</published>
     <updated>2017-09-10T16:07:04.657Z</updated>
     
@@ -4748,17 +5392,17 @@ unzip elasticsearch-analysis-ik-5.2.0.zip
     
     </summary>
     
-      <category term="elasticsearch" scheme="http://www.pathto.top:8080/categories/elasticsearch/"/>
+      <category term="elasticsearch" scheme="http://dennis.pathto.top/categories/elasticsearch/"/>
     
     
-      <category term="elasticsearch" scheme="http://www.pathto.top:8080/tags/elasticsearch/"/>
+      <category term="elasticsearch" scheme="http://dennis.pathto.top/tags/elasticsearch/"/>
     
   </entry>
   
   <entry>
     <title>3.elasticsearch运行系统参数优化</title>
-    <link href="http://www.pathto.top:8080/2017/09/03/elasticsearch-3-installation-problem/"/>
-    <id>http://www.pathto.top:8080/2017/09/03/elasticsearch-3-installation-problem/</id>
+    <link href="http://dennis.pathto.top/2017/09/03/elasticsearch-3-installation-problem/"/>
+    <id>http://dennis.pathto.top/2017/09/03/elasticsearch-3-installation-problem/</id>
     <published>2017-09-03T13:25:29.000Z</published>
     <updated>2017-09-10T16:07:04.645Z</updated>
     
@@ -4844,17 +5488,17 @@ java.lang.IllegalArgumentException: Custom Analyzer [ik] failed to find tokenize
     
     </summary>
     
-      <category term="elasticsearch" scheme="http://www.pathto.top:8080/categories/elasticsearch/"/>
+      <category term="elasticsearch" scheme="http://dennis.pathto.top/categories/elasticsearch/"/>
     
     
-      <category term="elasticsearch" scheme="http://www.pathto.top:8080/tags/elasticsearch/"/>
+      <category term="elasticsearch" scheme="http://dennis.pathto.top/tags/elasticsearch/"/>
     
   </entry>
   
   <entry>
     <title>2.elasticsearch安装</title>
-    <link href="http://www.pathto.top:8080/2017/09/02/elasticsearch-2-installation/"/>
-    <id>http://www.pathto.top:8080/2017/09/02/elasticsearch-2-installation/</id>
+    <link href="http://dennis.pathto.top/2017/09/02/elasticsearch-2-installation/"/>
+    <id>http://dennis.pathto.top/2017/09/02/elasticsearch-2-installation/</id>
     <published>2017-09-02T13:25:29.000Z</published>
     <updated>2017-09-10T16:07:04.639Z</updated>
     
@@ -5129,17 +5773,17 @@ discovery.zen.minimum_master_nodes: 1
     
     </summary>
     
-      <category term="elasticsearch" scheme="http://www.pathto.top:8080/categories/elasticsearch/"/>
+      <category term="elasticsearch" scheme="http://dennis.pathto.top/categories/elasticsearch/"/>
     
     
-      <category term="elasticsearch" scheme="http://www.pathto.top:8080/tags/elasticsearch/"/>
+      <category term="elasticsearch" scheme="http://dennis.pathto.top/tags/elasticsearch/"/>
     
   </entry>
   
   <entry>
     <title>1.elasticsearch介绍</title>
-    <link href="http://www.pathto.top:8080/2017/09/01/elasticsearch-1-instroduce/"/>
-    <id>http://www.pathto.top:8080/2017/09/01/elasticsearch-1-instroduce/</id>
+    <link href="http://dennis.pathto.top/2017/09/01/elasticsearch-1-instroduce/"/>
+    <id>http://dennis.pathto.top/2017/09/01/elasticsearch-1-instroduce/</id>
     <published>2017-09-01T13:25:29.000Z</published>
     <updated>2017-09-10T16:07:04.631Z</updated>
     
@@ -5198,17 +5842,17 @@ discovery.zen.minimum_master_nodes: 1
     
     </summary>
     
-      <category term="elasticsearch" scheme="http://www.pathto.top:8080/categories/elasticsearch/"/>
+      <category term="elasticsearch" scheme="http://dennis.pathto.top/categories/elasticsearch/"/>
     
     
-      <category term="elasticsearch" scheme="http://www.pathto.top:8080/tags/elasticsearch/"/>
+      <category term="elasticsearch" scheme="http://dennis.pathto.top/tags/elasticsearch/"/>
     
   </entry>
   
   <entry>
     <title>14.spring-cloud-zuul配置</title>
-    <link href="http://www.pathto.top:8080/2017/08/24/spring-cloud-zuul-configuration-14/"/>
-    <id>http://www.pathto.top:8080/2017/08/24/spring-cloud-zuul-configuration-14/</id>
+    <link href="http://dennis.pathto.top/2017/08/24/spring-cloud-zuul-configuration-14/"/>
+    <id>http://dennis.pathto.top/2017/08/24/spring-cloud-zuul-configuration-14/</id>
     <published>2017-08-24T13:13:40.000Z</published>
     <updated>2017-08-24T13:24:51.844Z</updated>
     
@@ -5273,23 +5917,23 @@ ribbon:
     
     </summary>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/categories/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/categories/spring-cloud/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/tags/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/tags/spring-cloud/"/>
     
   </entry>
   
   <entry>
     <title>13.spring-cloud-zuul入门</title>
-    <link href="http://www.pathto.top:8080/2017/08/24/spring-cloud-zuul-13/"/>
-    <id>http://www.pathto.top:8080/2017/08/24/spring-cloud-zuul-13/</id>
+    <link href="http://dennis.pathto.top/2017/08/24/spring-cloud-zuul-13/"/>
+    <id>http://dennis.pathto.top/2017/08/24/spring-cloud-zuul-13/</id>
     <published>2017-08-24T13:13:37.000Z</published>
     <updated>2017-08-24T13:29:33.063Z</updated>
     
@@ -5407,23 +6051,23 @@ public class SpringCloudZuulApplication {
     
     </summary>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/categories/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/categories/spring-cloud/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/tags/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/tags/spring-cloud/"/>
     
   </entry>
   
   <entry>
     <title>12.spring-cloud-turbine监控微服务</title>
-    <link href="http://www.pathto.top:8080/2017/08/24/spring-cloud-hystrix-turbine-monitor-12/"/>
-    <id>http://www.pathto.top:8080/2017/08/24/spring-cloud-hystrix-turbine-monitor-12/</id>
+    <link href="http://dennis.pathto.top/2017/08/24/spring-cloud-hystrix-turbine-monitor-12/"/>
+    <id>http://dennis.pathto.top/2017/08/24/spring-cloud-hystrix-turbine-monitor-12/</id>
     <published>2017-08-24T13:13:35.000Z</published>
     <updated>2017-08-24T13:31:43.119Z</updated>
     
@@ -5511,23 +6155,23 @@ public class SpringCloudHystrixTurbineApplication {
     
     </summary>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/categories/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/categories/spring-cloud/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/tags/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/tags/spring-cloud/"/>
     
   </entry>
   
   <entry>
     <title>11.spring-cloud-hystrix监控微服务</title>
-    <link href="http://www.pathto.top:8080/2017/08/24/spring-cloud-hystrix-monitor-11/"/>
-    <id>http://www.pathto.top:8080/2017/08/24/spring-cloud-hystrix-monitor-11/</id>
+    <link href="http://dennis.pathto.top/2017/08/24/spring-cloud-hystrix-monitor-11/"/>
+    <id>http://dennis.pathto.top/2017/08/24/spring-cloud-hystrix-monitor-11/</id>
     <published>2017-08-24T13:13:32.000Z</published>
     <updated>2017-08-24T13:24:51.844Z</updated>
     
@@ -5596,23 +6240,23 @@ public User[] listFallBack(){
     
     </summary>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/categories/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/categories/spring-cloud/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/tags/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/tags/spring-cloud/"/>
     
   </entry>
   
   <entry>
     <title>10.spring-cloud-指定某些feignClient无需Hystrix的支持</title>
-    <link href="http://www.pathto.top:8080/2017/08/24/spring-cloud-feign-without-hystrix-10/"/>
-    <id>http://www.pathto.top:8080/2017/08/24/spring-cloud-feign-without-hystrix-10/</id>
+    <link href="http://dennis.pathto.top/2017/08/24/spring-cloud-feign-without-hystrix-10/"/>
+    <id>http://dennis.pathto.top/2017/08/24/spring-cloud-feign-without-hystrix-10/</id>
     <published>2017-08-24T13:13:29.000Z</published>
     <updated>2017-08-24T13:24:51.844Z</updated>
     
@@ -5654,23 +6298,23 @@ public class FeignClientWithoutHystrixConfig {
     
     </summary>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/categories/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/categories/spring-cloud/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/tags/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/tags/spring-cloud/"/>
     
   </entry>
   
   <entry>
     <title>9.spring-cloud-hystrix和feign整合</title>
-    <link href="http://www.pathto.top:8080/2017/08/24/spring-cloud-feign-hystrix-feign-9/"/>
-    <id>http://www.pathto.top:8080/2017/08/24/spring-cloud-feign-hystrix-feign-9/</id>
+    <link href="http://dennis.pathto.top/2017/08/24/spring-cloud-feign-hystrix-feign-9/"/>
+    <id>http://dennis.pathto.top/2017/08/24/spring-cloud-feign-hystrix-feign-9/</id>
     <published>2017-08-24T13:13:27.000Z</published>
     <updated>2017-08-24T13:33:35.047Z</updated>
     
@@ -5774,23 +6418,23 @@ public class UserFeignClientFactory implements FallbackFactory&lt;UserFeignClien
     
     </summary>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/categories/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/categories/spring-cloud/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/tags/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/tags/spring-cloud/"/>
     
   </entry>
   
   <entry>
     <title>8.spring-cloud-hystrix入门</title>
-    <link href="http://www.pathto.top:8080/2017/08/24/spring-cloud-feign-hystrix-8/"/>
-    <id>http://www.pathto.top:8080/2017/08/24/spring-cloud-feign-hystrix-8/</id>
+    <link href="http://dennis.pathto.top/2017/08/24/spring-cloud-feign-hystrix-8/"/>
+    <id>http://dennis.pathto.top/2017/08/24/spring-cloud-feign-hystrix-8/</id>
     <published>2017-08-24T13:13:24.000Z</published>
     <updated>2017-08-24T13:24:51.829Z</updated>
     
@@ -5827,23 +6471,23 @@ public User[] listFallBack(){
     
     </summary>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/categories/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/categories/spring-cloud/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/tags/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/tags/spring-cloud/"/>
     
   </entry>
   
   <entry>
     <title>7.spring-cloud-ribbon和feign返回集合类型</title>
-    <link href="http://www.pathto.top:8080/2017/08/24/spring-cloud-ribbon-feign-collection-7/"/>
-    <id>http://www.pathto.top:8080/2017/08/24/spring-cloud-ribbon-feign-collection-7/</id>
+    <link href="http://dennis.pathto.top/2017/08/24/spring-cloud-ribbon-feign-collection-7/"/>
+    <id>http://dennis.pathto.top/2017/08/24/spring-cloud-ribbon-feign-collection-7/</id>
     <published>2017-08-24T13:13:21.000Z</published>
     <updated>2017-08-24T13:24:51.829Z</updated>
     
@@ -5927,23 +6571,23 @@ public class UserController {
     
     </summary>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/categories/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/categories/spring-cloud/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/tags/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/tags/spring-cloud/"/>
     
   </entry>
   
   <entry>
     <title>6.spring-cloud-feign入门</title>
-    <link href="http://www.pathto.top:8080/2017/08/24/spring-cloud-feign-6/"/>
-    <id>http://www.pathto.top:8080/2017/08/24/spring-cloud-feign-6/</id>
+    <link href="http://dennis.pathto.top/2017/08/24/spring-cloud-feign-6/"/>
+    <id>http://dennis.pathto.top/2017/08/24/spring-cloud-feign-6/</id>
     <published>2017-08-24T13:13:18.000Z</published>
     <updated>2017-08-24T13:24:51.829Z</updated>
     
@@ -6081,23 +6725,23 @@ feign.hystrix.enabled: false ## 索性禁用feign的hystrix支持
     
     </summary>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/categories/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/categories/spring-cloud/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/tags/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/tags/spring-cloud/"/>
     
   </entry>
   
   <entry>
     <title>5.spring-cloud-Ribbon-直接调用微服务</title>
-    <link href="http://www.pathto.top:8080/2017/08/24/spring-cloud-direct-invoke-micro-service-5/"/>
-    <id>http://www.pathto.top:8080/2017/08/24/spring-cloud-direct-invoke-micro-service-5/</id>
+    <link href="http://dennis.pathto.top/2017/08/24/spring-cloud-direct-invoke-micro-service-5/"/>
+    <id>http://dennis.pathto.top/2017/08/24/spring-cloud-direct-invoke-micro-service-5/</id>
     <published>2017-08-24T13:13:15.000Z</published>
     <updated>2017-08-24T13:24:51.813Z</updated>
     
@@ -6122,23 +6766,23 @@ spring-cloud-provider-test-direct:
     
     </summary>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/categories/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/categories/spring-cloud/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/tags/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/tags/spring-cloud/"/>
     
   </entry>
   
   <entry>
     <title>4.spring-cloud-Ribbon其他负载均衡算法</title>
-    <link href="http://www.pathto.top:8080/2017/08/24/spring-cloud-other-load-balance-4/"/>
-    <id>http://www.pathto.top:8080/2017/08/24/spring-cloud-other-load-balance-4/</id>
+    <link href="http://dennis.pathto.top/2017/08/24/spring-cloud-other-load-balance-4/"/>
+    <id>http://dennis.pathto.top/2017/08/24/spring-cloud-other-load-balance-4/</id>
     <published>2017-08-24T13:13:12.000Z</published>
     <updated>2017-08-24T13:24:51.813Z</updated>
     
@@ -6294,23 +6938,23 @@ public class UserController {
     
     </summary>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/categories/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/categories/spring-cloud/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/tags/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/tags/spring-cloud/"/>
     
   </entry>
   
   <entry>
     <title>3.spring-cloud-Ribbon负载均衡和故障转移</title>
-    <link href="http://www.pathto.top:8080/2017/08/24/spring-cloud-ribbon-load-balance-failover3/"/>
-    <id>http://www.pathto.top:8080/2017/08/24/spring-cloud-ribbon-load-balance-failover3/</id>
+    <link href="http://dennis.pathto.top/2017/08/24/spring-cloud-ribbon-load-balance-failover3/"/>
+    <id>http://dennis.pathto.top/2017/08/24/spring-cloud-ribbon-load-balance-failover3/</id>
     <published>2017-08-24T13:13:10.000Z</published>
     <updated>2017-08-24T14:06:34.590Z</updated>
     
@@ -6687,23 +7331,23 @@ public class User {
     
     </summary>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/categories/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/categories/spring-cloud/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/tags/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/tags/spring-cloud/"/>
     
   </entry>
   
   <entry>
     <title>2.spring-cloud-eureka客户端的使用</title>
-    <link href="http://www.pathto.top:8080/2017/08/24/spring-cloud-eureka-client-2/"/>
-    <id>http://www.pathto.top:8080/2017/08/24/spring-cloud-eureka-client-2/</id>
+    <link href="http://dennis.pathto.top/2017/08/24/spring-cloud-eureka-client-2/"/>
+    <id>http://dennis.pathto.top/2017/08/24/spring-cloud-eureka-client-2/</id>
     <published>2017-08-24T13:13:07.000Z</published>
     <updated>2017-08-24T13:24:51.813Z</updated>
     
@@ -6871,23 +7515,23 @@ public class MicroServiceInfoController {
     
     </summary>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/categories/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/categories/spring-cloud/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/tags/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/tags/spring-cloud/"/>
     
   </entry>
   
   <entry>
     <title>1.spring-cloud-Eureka</title>
-    <link href="http://www.pathto.top:8080/2017/08/24/spring-cloude-ureka-1/"/>
-    <id>http://www.pathto.top:8080/2017/08/24/spring-cloude-ureka-1/</id>
+    <link href="http://dennis.pathto.top/2017/08/24/spring-cloude-ureka-1/"/>
+    <id>http://dennis.pathto.top/2017/08/24/spring-cloude-ureka-1/</id>
     <published>2017-08-24T13:13:04.000Z</published>
     <updated>2017-08-24T13:24:51.813Z</updated>
     
@@ -7009,23 +7653,23 @@ org.springframework.cloud.netflix.eureka.server.EurekaServerConfigBean
     
     </summary>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/categories/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/categories/spring-cloud/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
-      <category term="spring-cloud" scheme="http://www.pathto.top:8080/tags/spring-cloud/"/>
+      <category term="spring-cloud" scheme="http://dennis.pathto.top/tags/spring-cloud/"/>
     
   </entry>
   
   <entry>
     <title>2.nginx-根据查询参数实现后端流量分发</title>
-    <link href="http://www.pathto.top:8080/2017/08/17/nginx-Traffic-distribution-2/"/>
-    <id>http://www.pathto.top:8080/2017/08/17/nginx-Traffic-distribution-2/</id>
+    <link href="http://dennis.pathto.top/2017/08/17/nginx-Traffic-distribution-2/"/>
+    <id>http://dennis.pathto.top/2017/08/17/nginx-Traffic-distribution-2/</id>
     <published>2017-08-17T12:36:55.000Z</published>
     <updated>2017-08-17T12:48:05.208Z</updated>
     
@@ -7082,19 +7726,19 @@ httpc:close()
     
     </summary>
     
-      <category term="nginx" scheme="http://www.pathto.top:8080/categories/nginx/"/>
+      <category term="nginx" scheme="http://dennis.pathto.top/categories/nginx/"/>
     
     
-      <category term="nginx" scheme="http://www.pathto.top:8080/tags/nginx/"/>
+      <category term="nginx" scheme="http://dennis.pathto.top/tags/nginx/"/>
     
-      <category term="openrestry" scheme="http://www.pathto.top:8080/tags/openrestry/"/>
+      <category term="openrestry" scheme="http://dennis.pathto.top/tags/openrestry/"/>
     
   </entry>
   
   <entry>
     <title>1.安装nginx+openrestry</title>
-    <link href="http://www.pathto.top:8080/2017/08/17/nginx-openrestry-install-1/"/>
-    <id>http://www.pathto.top:8080/2017/08/17/nginx-openrestry-install-1/</id>
+    <link href="http://dennis.pathto.top/2017/08/17/nginx-openrestry-install-1/"/>
+    <id>http://dennis.pathto.top/2017/08/17/nginx-openrestry-install-1/</id>
     <published>2017-08-17T12:35:45.000Z</published>
     <updated>2017-08-17T12:38:11.886Z</updated>
     
@@ -7199,19 +7843,19 @@ ngx.say(&quot;hello,lua project&quot;)
     
     </summary>
     
-      <category term="nginx" scheme="http://www.pathto.top:8080/categories/nginx/"/>
+      <category term="nginx" scheme="http://dennis.pathto.top/categories/nginx/"/>
     
     
-      <category term="nginx" scheme="http://www.pathto.top:8080/tags/nginx/"/>
+      <category term="nginx" scheme="http://dennis.pathto.top/tags/nginx/"/>
     
-      <category term="openrestry" scheme="http://www.pathto.top:8080/tags/openrestry/"/>
+      <category term="openrestry" scheme="http://dennis.pathto.top/tags/openrestry/"/>
     
   </entry>
   
   <entry>
     <title>这样的公司绝对不能去面试</title>
-    <link href="http://www.pathto.top:8080/2017/08/16/interview-garbage-company/"/>
-    <id>http://www.pathto.top:8080/2017/08/16/interview-garbage-company/</id>
+    <link href="http://dennis.pathto.top/2017/08/16/interview-garbage-company/"/>
+    <id>http://dennis.pathto.top/2017/08/16/interview-garbage-company/</id>
     <published>2017-08-15T23:57:22.000Z</published>
     <updated>2017-08-17T12:48:20.836Z</updated>
     
@@ -7241,19 +7885,19 @@ ngx.say(&quot;hello,lua project&quot;)
     
     </summary>
     
-      <category term="interview" scheme="http://www.pathto.top:8080/categories/interview/"/>
+      <category term="interview" scheme="http://dennis.pathto.top/categories/interview/"/>
     
     
-      <category term="interview" scheme="http://www.pathto.top:8080/tags/interview/"/>
+      <category term="interview" scheme="http://dennis.pathto.top/tags/interview/"/>
     
-      <category term="work" scheme="http://www.pathto.top:8080/tags/work/"/>
+      <category term="work" scheme="http://dennis.pathto.top/tags/work/"/>
     
   </entry>
   
   <entry>
     <title>9.spring-boot-跨域服务开发</title>
-    <link href="http://www.pathto.top:8080/2017/08/15/spring-boot-cors-9/"/>
-    <id>http://www.pathto.top:8080/2017/08/15/spring-boot-cors-9/</id>
+    <link href="http://dennis.pathto.top/2017/08/15/spring-boot-cors-9/"/>
+    <id>http://dennis.pathto.top/2017/08/15/spring-boot-cors-9/</id>
     <published>2017-08-15T15:16:22.000Z</published>
     <updated>2017-08-15T15:33:37.448Z</updated>
     
@@ -7348,21 +7992,21 @@ public class CorsController2 {
     
     </summary>
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/categories/spring-boot/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/categories/spring-boot/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
   </entry>
   
   <entry>
     <title>8.spring-boot-文件上传</title>
-    <link href="http://www.pathto.top:8080/2017/08/15/spring-boot-file-pload-8/"/>
-    <id>http://www.pathto.top:8080/2017/08/15/spring-boot-file-pload-8/</id>
+    <link href="http://dennis.pathto.top/2017/08/15/spring-boot-file-pload-8/"/>
+    <id>http://dennis.pathto.top/2017/08/15/spring-boot-file-pload-8/</id>
     <published>2017-08-15T15:16:17.000Z</published>
     <updated>2017-08-15T15:44:15.430Z</updated>
     
@@ -7440,21 +8084,21 @@ public class FileUploadController {
     
     </summary>
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/categories/spring-boot/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/categories/spring-boot/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
   </entry>
   
   <entry>
     <title>7.spring-boot-底层常用的过滤器监听器servlet开发</title>
-    <link href="http://www.pathto.top:8080/2017/08/15/spring-boot-servlet-filter-listener-7/"/>
-    <id>http://www.pathto.top:8080/2017/08/15/spring-boot-servlet-filter-listener-7/</id>
+    <link href="http://dennis.pathto.top/2017/08/15/spring-boot-servlet-filter-listener-7/"/>
+    <id>http://dennis.pathto.top/2017/08/15/spring-boot-servlet-filter-listener-7/</id>
     <published>2017-08-15T15:16:11.000Z</published>
     <updated>2017-08-15T15:33:37.426Z</updated>
     
@@ -7718,21 +8362,21 @@ public class MyFilter3 implements Filter {
     
     </summary>
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/categories/spring-boot/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/categories/spring-boot/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
   </entry>
   
   <entry>
     <title>6.spring-boot-错误页面开发</title>
-    <link href="http://www.pathto.top:8080/2017/08/15/spring-boot-error-page-6/"/>
-    <id>http://www.pathto.top:8080/2017/08/15/spring-boot-error-page-6/</id>
+    <link href="http://dennis.pathto.top/2017/08/15/spring-boot-error-page-6/"/>
+    <id>http://dennis.pathto.top/2017/08/15/spring-boot-error-page-6/</id>
     <published>2017-08-15T15:16:06.000Z</published>
     <updated>2017-08-15T15:48:25.974Z</updated>
     
@@ -7798,21 +8442,21 @@ public class TestExceptionPageController {
     
     </summary>
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/categories/spring-boot/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/categories/spring-boot/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
   </entry>
   
   <entry>
     <title>5.spring-boot和thymeleaf集成</title>
-    <link href="http://www.pathto.top:8080/2017/08/15/spring-boot-thymeleaf-5/"/>
-    <id>http://www.pathto.top:8080/2017/08/15/spring-boot-thymeleaf-5/</id>
+    <link href="http://dennis.pathto.top/2017/08/15/spring-boot-thymeleaf-5/"/>
+    <id>http://dennis.pathto.top/2017/08/15/spring-boot-thymeleaf-5/</id>
     <published>2017-08-15T15:16:00.000Z</published>
     <updated>2017-08-15T15:24:26.560Z</updated>
     
@@ -7883,21 +8527,21 @@ public class UriController {
     
     </summary>
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/categories/spring-boot/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/categories/spring-boot/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
   </entry>
   
   <entry>
     <title>4.spring-boot多环境配置</title>
-    <link href="http://www.pathto.top:8080/2017/08/15/spring-boot-multi-env-4/"/>
-    <id>http://www.pathto.top:8080/2017/08/15/spring-boot-multi-env-4/</id>
+    <link href="http://dennis.pathto.top/2017/08/15/spring-boot-multi-env-4/"/>
+    <id>http://dennis.pathto.top/2017/08/15/spring-boot-multi-env-4/</id>
     <published>2017-08-15T15:15:54.000Z</published>
     <updated>2017-08-15T15:24:26.554Z</updated>
     
@@ -7978,21 +8622,21 @@ spring:
     
     </summary>
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/categories/spring-boot/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/categories/spring-boot/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
   </entry>
   
   <entry>
     <title>3.spring-boot+mybatis集成</title>
-    <link href="http://www.pathto.top:8080/2017/08/15/spring-boot-mybatis-3/"/>
-    <id>http://www.pathto.top:8080/2017/08/15/spring-boot-mybatis-3/</id>
+    <link href="http://dennis.pathto.top/2017/08/15/spring-boot-mybatis-3/"/>
+    <id>http://dennis.pathto.top/2017/08/15/spring-boot-mybatis-3/</id>
     <published>2017-08-15T15:15:48.000Z</published>
     <updated>2017-08-24T08:05:11.045Z</updated>
     
@@ -8182,21 +8826,21 @@ public class UriController {
     
     </summary>
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/categories/spring-boot/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/categories/spring-boot/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
   </entry>
   
   <entry>
     <title>2.spring-boot项目创建</title>
-    <link href="http://www.pathto.top:8080/2017/08/15/spring-boot-create-2/"/>
-    <id>http://www.pathto.top:8080/2017/08/15/spring-boot-create-2/</id>
+    <link href="http://dennis.pathto.top/2017/08/15/spring-boot-create-2/"/>
+    <id>http://dennis.pathto.top/2017/08/15/spring-boot-create-2/</id>
     <published>2017-08-15T15:15:42.000Z</published>
     <updated>2017-08-15T15:52:06.459Z</updated>
     
@@ -8240,21 +8884,21 @@ public class UriController {
     
     </summary>
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/categories/spring-boot/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/categories/spring-boot/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
   </entry>
   
   <entry>
     <title>1.Spring Tool Suite插件的安装</title>
-    <link href="http://www.pathto.top:8080/2017/08/15/spring-boot-plugin-1/"/>
-    <id>http://www.pathto.top:8080/2017/08/15/spring-boot-plugin-1/</id>
+    <link href="http://dennis.pathto.top/2017/08/15/spring-boot-plugin-1/"/>
+    <id>http://dennis.pathto.top/2017/08/15/spring-boot-plugin-1/</id>
     <published>2017-08-15T15:15:36.000Z</published>
     <updated>2017-08-15T15:24:26.529Z</updated>
     
@@ -8285,21 +8929,21 @@ public class UriController {
     
     </summary>
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/categories/spring-boot/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/categories/spring-boot/"/>
     
     
-      <category term="spring-boot" scheme="http://www.pathto.top:8080/tags/spring-boot/"/>
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
     
-      <category term="spring" scheme="http://www.pathto.top:8080/tags/spring/"/>
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
-      <category term="java" scheme="http://www.pathto.top:8080/tags/java/"/>
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
     
   </entry>
   
   <entry>
     <title>6.redis部署哨兵集群</title>
-    <link href="http://www.pathto.top:8080/2017/08/14/redis-6-sentinal-deploy/"/>
-    <id>http://www.pathto.top:8080/2017/08/14/redis-6-sentinal-deploy/</id>
+    <link href="http://dennis.pathto.top/2017/08/14/redis-6-sentinal-deploy/"/>
+    <id>http://dennis.pathto.top/2017/08/14/redis-6-sentinal-deploy/</id>
     <published>2017-08-13T16:14:24.000Z</published>
     <updated>2017-08-13T16:25:29.579Z</updated>
     
@@ -8390,17 +9034,17 @@ SENTINEL get-master-addr-by-name mymaster
     
     </summary>
     
-      <category term="redis" scheme="http://www.pathto.top:8080/categories/redis/"/>
+      <category term="redis" scheme="http://dennis.pathto.top/categories/redis/"/>
     
     
-      <category term="redis" scheme="http://www.pathto.top:8080/tags/redis/"/>
+      <category term="redis" scheme="http://dennis.pathto.top/tags/redis/"/>
     
   </entry>
   
   <entry>
     <title>4.redis哨兵核心原理</title>
-    <link href="http://www.pathto.top:8080/2017/08/13/redis-4-sentinal-core-theory/"/>
-    <id>http://www.pathto.top:8080/2017/08/13/redis-4-sentinal-core-theory/</id>
+    <link href="http://dennis.pathto.top/2017/08/13/redis-4-sentinal-core-theory/"/>
+    <id>http://dennis.pathto.top/2017/08/13/redis-4-sentinal-core-theory/</id>
     <published>2017-08-13T15:55:41.000Z</published>
     <updated>2017-08-13T16:22:49.111Z</updated>
     
@@ -8447,17 +9091,17 @@ SENTINEL get-master-addr-by-name mymaster
     
     </summary>
     
-      <category term="redis" scheme="http://www.pathto.top:8080/categories/redis/"/>
+      <category term="redis" scheme="http://dennis.pathto.top/categories/redis/"/>
     
     
-      <category term="redis" scheme="http://www.pathto.top:8080/tags/redis/"/>
+      <category term="redis" scheme="http://dennis.pathto.top/tags/redis/"/>
     
   </entry>
   
   <entry>
     <title>3.redis sentinal架构</title>
-    <link href="http://www.pathto.top:8080/2017/08/13/redis-3-sentinal-framewaork/"/>
-    <id>http://www.pathto.top:8080/2017/08/13/redis-3-sentinal-framewaork/</id>
+    <link href="http://dennis.pathto.top/2017/08/13/redis-3-sentinal-framewaork/"/>
+    <id>http://dennis.pathto.top/2017/08/13/redis-3-sentinal-framewaork/</id>
     <published>2017-08-13T15:54:35.000Z</published>
     <updated>2017-08-13T16:21:53.522Z</updated>
     
@@ -8528,17 +9172,17 @@ SENTINEL get-master-addr-by-name mymaster
     
     </summary>
     
-      <category term="redis" scheme="http://www.pathto.top:8080/categories/redis/"/>
+      <category term="redis" scheme="http://dennis.pathto.top/categories/redis/"/>
     
     
-      <category term="redis" scheme="http://www.pathto.top:8080/tags/redis/"/>
+      <category term="redis" scheme="http://dennis.pathto.top/tags/redis/"/>
     
   </entry>
   
   <entry>
     <title>2.redis高可用</title>
-    <link href="http://www.pathto.top:8080/2017/08/13/redis-2-high-availability/"/>
-    <id>http://www.pathto.top:8080/2017/08/13/redis-2-high-availability/</id>
+    <link href="http://dennis.pathto.top/2017/08/13/redis-2-high-availability/"/>
+    <id>http://dennis.pathto.top/2017/08/13/redis-2-high-availability/</id>
     <published>2017-08-13T15:54:05.000Z</published>
     <updated>2017-08-13T16:17:18.382Z</updated>
     
@@ -8556,17 +9200,17 @@ SENTINEL get-master-addr-by-name mymaster
     
     </summary>
     
-      <category term="redis" scheme="http://www.pathto.top:8080/categories/redis/"/>
+      <category term="redis" scheme="http://dennis.pathto.top/categories/redis/"/>
     
     
-      <category term="redis" scheme="http://www.pathto.top:8080/tags/redis/"/>
+      <category term="redis" scheme="http://dennis.pathto.top/tags/redis/"/>
     
   </entry>
   
   <entry>
     <title>1.redis读写分离搭建</title>
-    <link href="http://www.pathto.top:8080/2017/08/13/redis-1-rw-separation-installation/"/>
-    <id>http://www.pathto.top:8080/2017/08/13/redis-1-rw-separation-installation/</id>
+    <link href="http://dennis.pathto.top/2017/08/13/redis-1-rw-separation-installation/"/>
+    <id>http://dennis.pathto.top/2017/08/13/redis-1-rw-separation-installation/</id>
     <published>2017-08-13T15:52:56.000Z</published>
     <updated>2017-08-13T16:16:19.135Z</updated>
     
@@ -8619,17 +9263,17 @@ info replication
     
     </summary>
     
-      <category term="redis" scheme="http://www.pathto.top:8080/categories/redis/"/>
+      <category term="redis" scheme="http://dennis.pathto.top/categories/redis/"/>
     
     
-      <category term="redis" scheme="http://www.pathto.top:8080/tags/redis/"/>
+      <category term="redis" scheme="http://dennis.pathto.top/tags/redis/"/>
     
   </entry>
   
   <entry>
     <title>1.kubernetes安装</title>
-    <link href="http://www.pathto.top:8080/2017/08/11/kubernetes-installation/"/>
-    <id>http://www.pathto.top:8080/2017/08/11/kubernetes-installation/</id>
+    <link href="http://dennis.pathto.top/2017/08/11/kubernetes-installation/"/>
+    <id>http://dennis.pathto.top/2017/08/11/kubernetes-installation/</id>
     <published>2017-08-11T12:50:58.000Z</published>
     <updated>2017-08-11T14:50:10.926Z</updated>
     
@@ -8880,25 +9524,25 @@ kube-system   kubernetes-dashboard-latest-2587589530-czkq5   1/1       Running  
     
     </summary>
     
-      <category term="kubernetes" scheme="http://www.pathto.top:8080/categories/kubernetes/"/>
+      <category term="kubernetes" scheme="http://dennis.pathto.top/categories/kubernetes/"/>
     
     
-      <category term="docker" scheme="http://www.pathto.top:8080/tags/docker/"/>
+      <category term="docker" scheme="http://dennis.pathto.top/tags/docker/"/>
     
-      <category term="cloud" scheme="http://www.pathto.top:8080/tags/cloud/"/>
+      <category term="cloud" scheme="http://dennis.pathto.top/tags/cloud/"/>
     
-      <category term="kubernetes" scheme="http://www.pathto.top:8080/tags/kubernetes/"/>
+      <category term="kubernetes" scheme="http://dennis.pathto.top/tags/kubernetes/"/>
     
-      <category term="container" scheme="http://www.pathto.top:8080/tags/container/"/>
+      <category term="container" scheme="http://dennis.pathto.top/tags/container/"/>
     
-      <category term="virtualization" scheme="http://www.pathto.top:8080/tags/virtualization/"/>
+      <category term="virtualization" scheme="http://dennis.pathto.top/tags/virtualization/"/>
     
   </entry>
   
   <entry>
     <title>4.zookeeper-原理</title>
-    <link href="http://www.pathto.top:8080/2017/08/08/4-zookeeper-principle/"/>
-    <id>http://www.pathto.top:8080/2017/08/08/4-zookeeper-principle/</id>
+    <link href="http://dennis.pathto.top/2017/08/08/4-zookeeper-principle/"/>
+    <id>http://dennis.pathto.top/2017/08/08/4-zookeeper-principle/</id>
     <published>2017-08-08T15:38:48.000Z</published>
     <updated>2017-08-08T16:51:45.969Z</updated>
     
@@ -8929,19 +9573,19 @@ kube-system   kubernetes-dashboard-latest-2587589530-czkq5   1/1       Running  
     
     </summary>
     
-      <category term="zookeeper" scheme="http://www.pathto.top:8080/categories/zookeeper/"/>
+      <category term="zookeeper" scheme="http://dennis.pathto.top/categories/zookeeper/"/>
     
     
-      <category term="zookeeper" scheme="http://www.pathto.top:8080/tags/zookeeper/"/>
+      <category term="zookeeper" scheme="http://dennis.pathto.top/tags/zookeeper/"/>
     
-      <category term="distributed" scheme="http://www.pathto.top:8080/tags/distributed/"/>
+      <category term="distributed" scheme="http://dennis.pathto.top/tags/distributed/"/>
     
   </entry>
   
   <entry>
     <title>3.zookeeper-使用</title>
-    <link href="http://www.pathto.top:8080/2017/08/08/3-zookeeper-usage/"/>
-    <id>http://www.pathto.top:8080/2017/08/08/3-zookeeper-usage/</id>
+    <link href="http://dennis.pathto.top/2017/08/08/3-zookeeper-usage/"/>
+    <id>http://dennis.pathto.top/2017/08/08/3-zookeeper-usage/</id>
     <published>2017-08-08T15:38:13.000Z</published>
     <updated>2017-08-08T17:07:06.563Z</updated>
     
@@ -9381,19 +10025,19 @@ kube-system   kubernetes-dashboard-latest-2587589530-czkq5   1/1       Running  
     
     </summary>
     
-      <category term="zookeeper" scheme="http://www.pathto.top:8080/categories/zookeeper/"/>
+      <category term="zookeeper" scheme="http://dennis.pathto.top/categories/zookeeper/"/>
     
     
-      <category term="zookeeper" scheme="http://www.pathto.top:8080/tags/zookeeper/"/>
+      <category term="zookeeper" scheme="http://dennis.pathto.top/tags/zookeeper/"/>
     
-      <category term="distributed" scheme="http://www.pathto.top:8080/tags/distributed/"/>
+      <category term="distributed" scheme="http://dennis.pathto.top/tags/distributed/"/>
     
   </entry>
   
   <entry>
     <title>2.zookeeper-安装</title>
-    <link href="http://www.pathto.top:8080/2017/08/08/2-zookeeper-install/"/>
-    <id>http://www.pathto.top:8080/2017/08/08/2-zookeeper-install/</id>
+    <link href="http://dennis.pathto.top/2017/08/08/2-zookeeper-install/"/>
+    <id>http://dennis.pathto.top/2017/08/08/2-zookeeper-install/</id>
     <published>2017-08-08T15:37:54.000Z</published>
     <updated>2017-08-08T17:10:58.627Z</updated>
     
@@ -9446,19 +10090,19 @@ zkServer.sh status
     
     </summary>
     
-      <category term="zookeeper" scheme="http://www.pathto.top:8080/categories/zookeeper/"/>
+      <category term="zookeeper" scheme="http://dennis.pathto.top/categories/zookeeper/"/>
     
     
-      <category term="zookeeper" scheme="http://www.pathto.top:8080/tags/zookeeper/"/>
+      <category term="zookeeper" scheme="http://dennis.pathto.top/tags/zookeeper/"/>
     
-      <category term="distributed" scheme="http://www.pathto.top:8080/tags/distributed/"/>
+      <category term="distributed" scheme="http://dennis.pathto.top/tags/distributed/"/>
     
   </entry>
   
   <entry>
     <title>1.zookeeper-介绍</title>
-    <link href="http://www.pathto.top:8080/2017/08/08/1-zookeeper-introduce/"/>
-    <id>http://www.pathto.top:8080/2017/08/08/1-zookeeper-introduce/</id>
+    <link href="http://dennis.pathto.top/2017/08/08/1-zookeeper-introduce/"/>
+    <id>http://dennis.pathto.top/2017/08/08/1-zookeeper-introduce/</id>
     <published>2017-08-08T15:34:43.000Z</published>
     <updated>2017-08-08T16:27:21.604Z</updated>
     
@@ -9554,19 +10198,19 @@ zkServer.sh status
     
     </summary>
     
-      <category term="zookeeper" scheme="http://www.pathto.top:8080/categories/zookeeper/"/>
+      <category term="zookeeper" scheme="http://dennis.pathto.top/categories/zookeeper/"/>
     
     
-      <category term="zookeeper" scheme="http://www.pathto.top:8080/tags/zookeeper/"/>
+      <category term="zookeeper" scheme="http://dennis.pathto.top/tags/zookeeper/"/>
     
-      <category term="distributed" scheme="http://www.pathto.top:8080/tags/distributed/"/>
+      <category term="distributed" scheme="http://dennis.pathto.top/tags/distributed/"/>
     
   </entry>
   
   <entry>
     <title>Tiled Map Editor地图编辑器</title>
-    <link href="http://www.pathto.top:8080/2017/08/02/game-tiled-map/"/>
-    <id>http://www.pathto.top:8080/2017/08/02/game-tiled-map/</id>
+    <link href="http://dennis.pathto.top/2017/08/02/game-tiled-map/"/>
+    <id>http://dennis.pathto.top/2017/08/02/game-tiled-map/</id>
     <published>2017-08-02T12:43:15.000Z</published>
     <updated>2017-08-03T16:39:33.060Z</updated>
     
@@ -9620,21 +10264,21 @@ zkServer.sh status
     
     </summary>
     
-      <category term="Tiled Map Editor" scheme="http://www.pathto.top:8080/categories/Tiled-Map-Editor/"/>
+      <category term="Tiled Map Editor" scheme="http://dennis.pathto.top/categories/Tiled-Map-Editor/"/>
     
     
-      <category term="game" scheme="http://www.pathto.top:8080/tags/game/"/>
+      <category term="game" scheme="http://dennis.pathto.top/tags/game/"/>
     
-      <category term="map" scheme="http://www.pathto.top:8080/tags/map/"/>
+      <category term="map" scheme="http://dennis.pathto.top/tags/map/"/>
     
-      <category term="tools" scheme="http://www.pathto.top:8080/tags/tools/"/>
+      <category term="tools" scheme="http://dennis.pathto.top/tags/tools/"/>
     
   </entry>
   
   <entry>
     <title>4.elasticsearch-head插件安装</title>
-    <link href="http://www.pathto.top:8080/2017/07/30/elasticsearch-4-plugin/"/>
-    <id>http://www.pathto.top:8080/2017/07/30/elasticsearch-4-plugin/</id>
+    <link href="http://dennis.pathto.top/2017/07/30/elasticsearch-4-plugin/"/>
+    <id>http://dennis.pathto.top/2017/07/30/elasticsearch-4-plugin/</id>
     <published>2017-07-30T09:18:10.000Z</published>
     <updated>2017-09-24T11:09:21.800Z</updated>
     
@@ -9687,17 +10331,17 @@ http.cors.allow-origin: &quot;*&quot;
     
     </summary>
     
-      <category term="elasticsearch" scheme="http://www.pathto.top:8080/categories/elasticsearch/"/>
+      <category term="elasticsearch" scheme="http://dennis.pathto.top/categories/elasticsearch/"/>
     
     
-      <category term="elasticsearch" scheme="http://www.pathto.top:8080/tags/elasticsearch/"/>
+      <category term="elasticsearch" scheme="http://dennis.pathto.top/tags/elasticsearch/"/>
     
   </entry>
   
   <entry>
     <title>Web接口管理工具-RAP</title>
-    <link href="http://www.pathto.top:8080/2017/07/28/tools-rap-for-web-api-management/"/>
-    <id>http://www.pathto.top:8080/2017/07/28/tools-rap-for-web-api-management/</id>
+    <link href="http://dennis.pathto.top/2017/07/28/tools-rap-for-web-api-management/"/>
+    <id>http://dennis.pathto.top/2017/07/28/tools-rap-for-web-api-management/</id>
     <published>2017-07-28T15:59:58.000Z</published>
     <updated>2017-07-29T05:51:41.180Z</updated>
     
@@ -9772,17 +10416,17 @@ http.cors.allow-origin: &quot;*&quot;
     
     </summary>
     
-      <category term="tools" scheme="http://www.pathto.top:8080/categories/tools/"/>
+      <category term="tools" scheme="http://dennis.pathto.top/categories/tools/"/>
     
     
-      <category term="tools" scheme="http://www.pathto.top:8080/tags/tools/"/>
+      <category term="tools" scheme="http://dennis.pathto.top/tags/tools/"/>
     
   </entry>
   
   <entry>
     <title>jboss7解决url中文乱码遇到的坑</title>
-    <link href="http://www.pathto.top:8080/2017/07/28/jboss-url-encoding-wenti/"/>
-    <id>http://www.pathto.top:8080/2017/07/28/jboss-url-encoding-wenti/</id>
+    <link href="http://dennis.pathto.top/2017/07/28/jboss-url-encoding-wenti/"/>
+    <id>http://dennis.pathto.top/2017/07/28/jboss-url-encoding-wenti/</id>
     <published>2017-07-28T13:05:00.000Z</published>
     <updated>2017-07-28T13:17:29.800Z</updated>
     
@@ -9810,17 +10454,17 @@ http.cors.allow-origin: &quot;*&quot;
     
     </summary>
     
-      <category term="jboss" scheme="http://www.pathto.top:8080/categories/jboss/"/>
+      <category term="jboss" scheme="http://dennis.pathto.top/categories/jboss/"/>
     
     
-      <category term="jboss" scheme="http://www.pathto.top:8080/tags/jboss/"/>
+      <category term="jboss" scheme="http://dennis.pathto.top/tags/jboss/"/>
     
   </entry>
   
   <entry>
     <title>在centos6.5系统下安装nodejs+npm+grunt</title>
-    <link href="http://www.pathto.top:8080/2017/07/28/nodejs-npm-gunt-install/"/>
-    <id>http://www.pathto.top:8080/2017/07/28/nodejs-npm-gunt-install/</id>
+    <link href="http://dennis.pathto.top/2017/07/28/nodejs-npm-gunt-install/"/>
+    <id>http://dennis.pathto.top/2017/07/28/nodejs-npm-gunt-install/</id>
     <published>2017-07-28T12:49:01.000Z</published>
     <updated>2017-10-02T14:30:50.168Z</updated>
     
@@ -9843,17 +10487,17 @@ yum -y install nodejs
     
     </summary>
     
-      <category term="nodejs" scheme="http://www.pathto.top:8080/categories/nodejs/"/>
+      <category term="nodejs" scheme="http://dennis.pathto.top/categories/nodejs/"/>
     
     
-      <category term="nodejs" scheme="http://www.pathto.top:8080/tags/nodejs/"/>
+      <category term="nodejs" scheme="http://dennis.pathto.top/tags/nodejs/"/>
     
   </entry>
   
   <entry>
     <title>《深入理解mybatis原理》 MyBatis缓存机制的设计与实现</title>
-    <link href="http://www.pathto.top:8080/2017/07/28/mybatis-huancunshejiheshixian/"/>
-    <id>http://www.pathto.top:8080/2017/07/28/mybatis-huancunshejiheshixian/</id>
+    <link href="http://dennis.pathto.top/2017/07/28/mybatis-huancunshejiheshixian/"/>
+    <id>http://dennis.pathto.top/2017/07/28/mybatis-huancunshejiheshixian/</id>
     <published>2017-07-28T02:20:54.000Z</published>
     <updated>2017-07-28T02:27:26.545Z</updated>
     
@@ -9877,46 +10521,41 @@ yum -y install nodejs
     
     </summary>
     
-      <category term="mybatis" scheme="http://www.pathto.top:8080/categories/mybatis/"/>
+      <category term="mybatis" scheme="http://dennis.pathto.top/categories/mybatis/"/>
     
     
-      <category term="mybatis" scheme="http://www.pathto.top:8080/tags/mybatis/"/>
+      <category term="mybatis" scheme="http://dennis.pathto.top/tags/mybatis/"/>
     
   </entry>
   
   <entry>
     <title>关于</title>
-    <link href="http://www.pathto.top:8080/2017/07/27/custom/"/>
-    <id>http://www.pathto.top:8080/2017/07/27/custom/</id>
+    <link href="http://dennis.pathto.top/2017/07/27/custom/"/>
+    <id>http://dennis.pathto.top/2017/07/27/custom/</id>
     <published>2017-07-27T12:46:20.000Z</published>
-    <updated>2017-08-11T05:38:20.148Z</updated>
+    <updated>2017-11-16T14:21:05.255Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="个人简介"><a href="#个人简介" class="headerlink" title="个人简介"></a>个人简介</h1><p>我是一名90后IT男。在大学四年学的是软件工程专业，我从小就对计算机很感兴趣，不过小时候的想法很简单，想成为一名计算机黑客，入侵首富的银行账户，把他们的财富占为已有，然后我成为一名慈善家，帮助那些像我一样那么穷，吃辣条都吃不起的孩子。</p>
-<h1 id="本博客的目的"><a href="#本博客的目的" class="headerlink" title="本博客的目的"></a>本博客的目的</h1><p>希望通过我自己的博客,保存和纠正各种牛逼的来自网络的或者自己写的或者带又自己观点的文章，一方面供自己阅读，另一方面供各路读者各路大神”吐槽”。本博客所有的实践(非理论类)类文章都是经过自己一步一步操作过的，绝不会允许一篇有问题的文章在此误导自己和各路读者。</p>
-<h1 id="编程的理想"><a href="#编程的理想" class="headerlink" title="编程的理想"></a>编程的理想</h1><p>我是一个热爱技术的程序猿，一直觉得编程大牛才是世界上最叼的，好的程序员绝对是造福世界，改变世界。比尔盖茨用自己的window改变了整个世界，扎克伯格用facebook连接了全世界，等等。<br>我想用自己的代码改变世界，让来自全世界的人使用自己的软件，框架，哪怕是看了自己的文章，想想就觉得是一件兴奋的事情！</p>
-<h1 id="技术方向"><a href="#技术方向" class="headerlink" title="技术方向"></a>技术方向</h1><p>主修java，javascript,python<br>数据库方向，mysql，mongodb，hbase<br>缓存方面，redis，memcached<br>消息系统，netty，rabbitmq，kafka,activemq<br>服务器，nginx，tomcat，apache<br>开源框架, spring，spring boot,spring cloud,mybatis,hibernate,lucene,elasticsearch,ELK<br>大数据, hadoop,spark,storm,hive<br>云计算, openstack,openshift,docker,Kubernetes<br>喜欢研究架构，分布式技术，分布式事务，高并发高可用高性能负载均衡，大数据,虚拟化，云计算等技术</p>
-<h1 id="兴趣"><a href="#兴趣" class="headerlink" title="兴趣"></a>兴趣</h1><p>运动：篮球，乒乓球，羽毛球，游泳都喜欢，最爱的还是羽毛球<br>动漫：火影，海贼，秦时明月等等<br>旅行：人文，历史类偏爱<br>分享：喜欢把自己的经验分享给大家<br>读书：小说，历史，专业书籍，最喜欢现实主义小说，最喜欢悲剧</p>
-<h1 id="欢迎留言"><a href="#欢迎留言" class="headerlink" title="欢迎留言"></a>欢迎留言</h1><p>如果有什么建议和想法，都可以和我留言，可以在博客下面留言，也可以去我的微博留言，必有回应！</p>
-<h1 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h1><p>感谢indigo的设计者！如果有需要，我愿意把本博客的源代码和修改分享出去！</p>
+    <content type="html"><![CDATA[<h1 id="个人简介"><a href="#个人简介" class="headerlink" title="个人简介"></a>个人简介</h1><p>一个很牛逼的人</p>
 ]]></content>
     
     <summary type="html">
     
-      &lt;h1 id=&quot;个人简介&quot;&gt;&lt;a href=&quot;#个人简介&quot; class=&quot;headerlink&quot; title=&quot;个人简介&quot;&gt;&lt;/a&gt;个人简介&lt;/h1&gt;&lt;p&gt;我是一名90后IT男。在大学四年学的是软件工程专业，我从小就对计算机很感兴趣，不过小时候的想法很简单，想成为一名计算机黑客，
+      &lt;h1 id=&quot;个人简介&quot;&gt;&lt;a href=&quot;#个人简介&quot; class=&quot;headerlink&quot; title=&quot;个人简介&quot;&gt;&lt;/a&gt;个人简介&lt;/h1&gt;&lt;p&gt;一个很牛逼的人&lt;/p&gt;
+
     
     </summary>
     
-      <category term="aboutMe" scheme="http://www.pathto.top:8080/categories/aboutMe/"/>
+      <category term="aboutMe" scheme="http://dennis.pathto.top/categories/aboutMe/"/>
     
     
-      <category term="aboutMe" scheme="http://www.pathto.top:8080/tags/aboutMe/"/>
+      <category term="aboutMe" scheme="http://dennis.pathto.top/tags/aboutMe/"/>
     
   </entry>
   
   <entry>
     <title>git命令－切换分支</title>
-    <link href="http://www.pathto.top:8080/2017/07/27/git-mingling-quehuangfenzhi/"/>
-    <id>http://www.pathto.top:8080/2017/07/27/git-mingling-quehuangfenzhi/</id>
+    <link href="http://dennis.pathto.top/2017/07/27/git-mingling-quehuangfenzhi/"/>
+    <id>http://dennis.pathto.top/2017/07/27/git-mingling-quehuangfenzhi/</id>
     <published>2017-07-27T12:16:07.000Z</published>
     <updated>2017-07-30T08:17:28.904Z</updated>
     
@@ -9955,17 +10594,17 @@ Your branch is up-to-date with &apos;origin/master&apos;.
     
     </summary>
     
-      <category term="git" scheme="http://www.pathto.top:8080/categories/git/"/>
+      <category term="git" scheme="http://dennis.pathto.top/categories/git/"/>
     
     
-      <category term="git" scheme="http://www.pathto.top:8080/tags/git/"/>
+      <category term="git" scheme="http://dennis.pathto.top/tags/git/"/>
     
   </entry>
   
   <entry>
     <title>openstack之swift原理和架构</title>
-    <link href="http://www.pathto.top:8080/2017/07/27/openstack-swift-yuanlijiagou/"/>
-    <id>http://www.pathto.top:8080/2017/07/27/openstack-swift-yuanlijiagou/</id>
+    <link href="http://dennis.pathto.top/2017/07/27/openstack-swift-yuanlijiagou/"/>
+    <id>http://dennis.pathto.top/2017/07/27/openstack-swift-yuanlijiagou/</id>
     <published>2017-07-27T10:52:32.000Z</published>
     <updated>2017-07-27T16:47:25.615Z</updated>
     
@@ -10046,19 +10685,19 @@ backups
     
     </summary>
     
-      <category term="openstack" scheme="http://www.pathto.top:8080/categories/openstack/"/>
+      <category term="openstack" scheme="http://dennis.pathto.top/categories/openstack/"/>
     
     
-      <category term="openstack" scheme="http://www.pathto.top:8080/tags/openstack/"/>
+      <category term="openstack" scheme="http://dennis.pathto.top/tags/openstack/"/>
     
-      <category term="swift" scheme="http://www.pathto.top:8080/tags/swift/"/>
+      <category term="swift" scheme="http://dennis.pathto.top/tags/swift/"/>
     
   </entry>
   
   <entry>
     <title>openstack介绍</title>
-    <link href="http://www.pathto.top:8080/2017/07/27/openstackjieshao/"/>
-    <id>http://www.pathto.top:8080/2017/07/27/openstackjieshao/</id>
+    <link href="http://dennis.pathto.top/2017/07/27/openstackjieshao/"/>
+    <id>http://dennis.pathto.top/2017/07/27/openstackjieshao/</id>
     <published>2017-07-27T10:44:06.000Z</published>
     <updated>2017-07-27T16:46:58.523Z</updated>
     
@@ -10120,10 +10759,10 @@ backups
     
     </summary>
     
-      <category term="openstack" scheme="http://www.pathto.top:8080/categories/openstack/"/>
+      <category term="openstack" scheme="http://dennis.pathto.top/categories/openstack/"/>
     
     
-      <category term="openstack" scheme="http://www.pathto.top:8080/tags/openstack/"/>
+      <category term="openstack" scheme="http://dennis.pathto.top/tags/openstack/"/>
     
   </entry>
   

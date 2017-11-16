@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>15.spring-boot多数据源 | Dennis&#39;Blog | 我不用讨人喜欢，只做一个迷人的混蛋</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="java,spring,spring-boot">
+    <meta name="description" content="在实际开发中，我们一个项目可能会用到多个数据库，通常一个数据库对应一个数据源。 代码结构：                                                                                              image              简要原理： 1）DatabaseType列出所有的数据源的key—key 2）Dat">
+<meta name="keywords" content="java,spring,spring-boot">
+<meta property="og:type" content="article">
+<meta property="og:title" content="15.spring-boot多数据源">
+<meta property="og:url" content="http://dennis.pathto.top/2017/11/16/spring-boot-15-multi-source/index.html">
+<meta property="og:site_name" content="Dennis&#39;Blog">
+<meta property="og:description" content="在实际开发中，我们一个项目可能会用到多个数据库，通常一个数据库对应一个数据源。 代码结构：                                                                                              image              简要原理： 1）DatabaseType列出所有的数据源的key—key 2）Dat">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://images2015.cnblogs.com/blog/866881/201604/866881-20160420170534570-1081086745.png">
+<meta property="og:updated_time" content="2017-11-16T15:10:33.127Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="15.spring-boot多数据源">
+<meta name="twitter:description" content="在实际开发中，我们一个项目可能会用到多个数据库，通常一个数据库对应一个数据源。 代码结构：                                                                                              image              简要原理： 1）DatabaseType列出所有的数据源的key—key 2）Dat">
+<meta name="twitter:image" content="http://images2015.cnblogs.com/blog/866881/201604/866881-20160420170534570-1081086745.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/semantic.css" type="text/css" />
+<link rel="stylesheet" href="/css/zyComment.css" type="text/css" />
+<style type="text/css">
+	#cloud-tie-wrapper label {
+	    font-weight: bold;
+	}
+	#cloud-tie-wrapper a {
+		font-family: Microsoft YaHei;
+	}
+	#articleComment {
+		width: "60%";
+		/*height: 1500px;*/
+		overflow: auto;
+	}
+</style>
+
+    <script>window.lazyScripts=[]</script>
+
+
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/zyComment.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+$(function(){
+var post_toc_links = $(".post-toc-link");
+$.each( post_toc_links, function(index,post_toc_link){
+	post_toc_link = $(post_toc_link);
+	var post_toc_number = post_toc_link.find(".post-toc-number");
+	var post_toc_text = post_toc_link.find(".post-toc-text");
+	//console.log(post_toc_number.text()+" "+post_toc_text.text());
+	$(post_toc_link.attr("href")).text(post_toc_number.text()+" "+post_toc_text.text())
+});
+});
+
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+function jsonp(url){
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.insertBefore(script, head.firstChild);
+}
+function add_blog_callBackFun(rs){
+	$("#articleComment").zyComment("setCommentAfter",rs);
+}
+function get_list_blog_commonts_callBackFun(rs){
+	var agoComment = rs;
+	$("#articleComment").zyComment({
+		"width":"355",
+		"height":"33",
+		"agoComment":agoComment,
+		"callback":function(comment){
+			var selfID = comment.selfID;
+			if(typeof selfID == "undefined" ){
+				selfID = 0;
+			}
+			jsonp(host+"/add_blog_jsonp?"+"p_id="+encodeURIComponent("2017/11/16/spring-boot-15-multi-source/")+ "&username="+encodeURIComponent(comment.name)+"&content="+encodeURIComponent(comment.content)+"&email="+encodeURIComponent(comment.email)+"&c_id_replay="+selfID);
+
+		}
+	});
+}
+jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/11/16/spring-boot-15-multi-source/"));
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Dennis</h5>
+          <a href="mailto:dennis52o1314@163.com" title="dennis52o1314@163.com" class="mail">dennis52o1314@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/599166320" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/2166908462" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                其他
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">15.spring-boot多数据源</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">15.spring-boot多数据源</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-11-16T15:10:33.000Z" itemprop="datePublished" class="page-time">
+  2017-11-16
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-boot/">spring-boot</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+<article id="post-spring-boot-15-multi-source"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">15.spring-boot多数据源</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-11-16 23:10:33" datetime="2017-11-16T15:10:33.000Z"  itemprop="datePublished">2017-11-16</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-boot/">spring-boot</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>在实际开发中，我们一个项目可能会用到多个数据库，通常一个数据库对应一个数据源。</p>
+<p>代码结构：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://images2015.cnblogs.com/blog/866881/201604/866881-20160420170534570-1081086745.png" alt="image" title="">
+                </div>
+                <div class="image-caption">image</div>
+            </figure>
+<p>简要原理：</p>
+<p>1）DatabaseType列出所有的数据源的key—key</p>
+<p>2）DatabaseContextHolder是一个线程安全的DatabaseType容器，并提供了向其中设置和获取DatabaseType的方法</p>
+<p>3）DynamicDataSource继承AbstractRoutingDataSource并重写其中的方法determineCurrentLookupKey()，在该方法中使用DatabaseContextHolder获取当前线程的DatabaseType</p>
+<p>4）MyBatisConfig中生成2个数据源DataSource的bean—value</p>
+<p>5）MyBatisConfig中将1）和4）组成的key-value对写入到DynamicDataSource动态数据源的targetDataSources属性（当然，同时也会设置2个数据源其中的一个为DynamicDataSource的defaultTargetDataSource属性中）</p>
+<p>6）将DynamicDataSource作为primary数据源注入到SqlSessionFactory的dataSource属性中去，并且该dataSource作为transactionManager的入参来构造DataSourceTransactionManager</p>
+<p>7）使用的时候，在dao层或service层先使用DatabaseContextHolder设置将要使用的数据源key，然后再调用mapper层进行相应的操作，建议放在dao层去做（当然也可以使用spring aop+自定注解去做）</p>
+<p>注意：在mapper层进行操作的时候，会先调用determineCurrentLookupKey()方法获取一个数据源（获取数据源：先根据设置去targetDataSources中去找，若没有，则选择defaultTargetDataSource），之后在进行数据库操作。</p>
+<p>1、假设有两个数据库，配置如下</p>
+<p>application.properties</p>
+<pre><code>#the first datasource
+jdbc.driverClassName = com.mysql.jdbc.Driver
+jdbc.url = jdbc:mysql://xxx:3306/mytestdb?zeroDateTimeBehavior=convertToNull&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf-8
+jdbc.username = root
+jdbc.password = 123
+
+#the second datasource
+jdbc2.driverClassName = com.mysql.jdbc.Driver
+jdbc2.url = jdbc:mysql://xxx:3306/mytestdb2?zeroDateTimeBehavior=convertToNull&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf-8
+jdbc2.username = root
+jdbc2.password = 123
+</code></pre><p>说明：在之前的配置的基础上，只增加了上述的第二个数据源。</p>
+<p>2、DatabaseType</p>
+<pre><code>package com.xxx.firstboot.common.datasource;
+
+/**
+ * 列出所有的数据源key（常用数据库名称来命名）
+ * 注意：
+ * 1）这里数据源与数据库是一对一的
+ * 2）DatabaseType中的变量名称就是数据库的名称
+ */
+public enum DatabaseType {
+    mytestdb,mytestdb2
+}
+</code></pre><p>作用：列举数据源的key。</p>
+<p>3、DatabaseContextHolder</p>
+<pre><code>package com.xxx.firstboot.common.datasource;
+
+/**
+ * 作用：
+ * 1、保存一个线程安全的DatabaseType容器
+ */
+public class DatabaseContextHolder {
+    private static final ThreadLocal&lt;DatabaseType&gt; contextHolder = new ThreadLocal&lt;&gt;();
+
+    public static void setDatabaseType(DatabaseType type){
+        contextHolder.set(type);
+    }
+
+    public static DatabaseType getDatabaseType(){
+        return contextHolder.get();
+    }
+}
+</code></pre><p>作用：构建一个DatabaseType容器，并提供了向其中设置和获取DatabaseType的方法</p>
+<p>4、DynamicDataSource</p>
+<pre><code>package com.xxx.firstboot.common.datasource;
+
+import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
+
+/**
+ * 动态数据源（需要继承AbstractRoutingDataSource）
+ */
+public class DynamicDataSource extends AbstractRoutingDataSource {
+    protected Object determineCurrentLookupKey() {
+        return DatabaseContextHolder.getDatabaseType();
+    }
+}
+</code></pre><p>作用：使用DatabaseContextHolder获取当前线程的DatabaseType</p>
+<p>5、MyBatisConfig</p>
+<pre><code>package com.xxx.firstboot.common;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+
+import com.alibaba.druid.pool.DruidDataSourceFactory;
+import com.xxx.firstboot.common.datasource.DatabaseType;
+import com.xxx.firstboot.common.datasource.DynamicDataSource;
+
+/**
+ * springboot集成mybatis的基本入口 1）创建数据源(如果采用的是默认的tomcat-jdbc数据源，则不需要)
+ * 2）创建SqlSessionFactory 3）配置事务管理器，除非需要使用事务，否则不用配置
+ */
+@Configuration // 该注解类似于spring配置文件
+@MapperScan(basePackages = &quot;com.xxx.firstboot.mapper&quot;)
+public class MyBatisConfig {
+
+    @Autowired
+    private Environment env;
+
+    /**
+     * 创建数据源(数据源的名称：方法名可以取为XXXDataSource(),XXX为数据库名称,该名称也就是数据源的名称)
+     */
+    @Bean
+    public DataSource myTestDbDataSource() throws Exception {
+        Properties props = new Properties();
+        props.put(&quot;driverClassName&quot;, env.getProperty(&quot;jdbc.driverClassName&quot;));
+        props.put(&quot;url&quot;, env.getProperty(&quot;jdbc.url&quot;));
+        props.put(&quot;username&quot;, env.getProperty(&quot;jdbc.username&quot;));
+        props.put(&quot;password&quot;, env.getProperty(&quot;jdbc.password&quot;));
+        return DruidDataSourceFactory.createDataSource(props);
+    }
+
+    @Bean
+    public DataSource myTestDb2DataSource() throws Exception {
+        Properties props = new Properties();
+        props.put(&quot;driverClassName&quot;, env.getProperty(&quot;jdbc2.driverClassName&quot;));
+        props.put(&quot;url&quot;, env.getProperty(&quot;jdbc2.url&quot;));
+        props.put(&quot;username&quot;, env.getProperty(&quot;jdbc2.username&quot;));
+        props.put(&quot;password&quot;, env.getProperty(&quot;jdbc2.password&quot;));
+        return DruidDataSourceFactory.createDataSource(props);
+    }
+
+    /**
+     * @Primary 该注解表示在同一个接口有多个实现类可以注入的时候，默认选择哪一个，而不是让@autowire注解报错
+     * @Qualifier 根据名称进行注入，通常是在具有相同的多个类型的实例的一个注入（例如有多个DataSource类型的实例）
+     */
+    @Bean
+    @Primary
+    public DynamicDataSource dataSource(@Qualifier(&quot;myTestDbDataSource&quot;) DataSource myTestDbDataSource,
+            @Qualifier(&quot;myTestDb2DataSource&quot;) DataSource myTestDb2DataSource) {
+        Map&lt;Object, Object&gt; targetDataSources = new HashMap&lt;&gt;();
+        targetDataSources.put(DatabaseType.mytestdb, myTestDbDataSource);
+        targetDataSources.put(DatabaseType.mytestdb2, myTestDb2DataSource);
+
+        DynamicDataSource dataSource = new DynamicDataSource();
+        dataSource.setTargetDataSources(targetDataSources);// 该方法是AbstractRoutingDataSource的方法
+        dataSource.setDefaultTargetDataSource(myTestDbDataSource);// 默认的datasource设置为myTestDbDataSource
+
+        return dataSource;
+    }
+
+    /**
+     * 根据数据源创建SqlSessionFactory
+     */
+    @Bean
+    public SqlSessionFactory sqlSessionFactory(DynamicDataSource ds) throws Exception {
+        SqlSessionFactoryBean fb = new SqlSessionFactoryBean();
+        fb.setDataSource(ds);// 指定数据源(这个必须有，否则报错)
+        // 下边两句仅仅用于*.xml文件，如果整个持久层操作不需要使用到xml文件的话（只用注解就可以搞定），则不加
+        fb.setTypeAliasesPackage(env.getProperty(&quot;mybatis.typeAliasesPackage&quot;));// 指定基包
+        fb.setMapperLocations(
+                new PathMatchingResourcePatternResolver().getResources(env.getProperty(&quot;mybatis.mapperLocations&quot;)));//
+
+        return fb.getObject();
+    }
+
+    /**
+     * 配置事务管理器
+     */
+    @Bean
+    public DataSourceTransactionManager transactionManager(DynamicDataSource dataSource) throws Exception {
+        return new DataSourceTransactionManager(dataSource);
+    }
+
+}
+</code></pre><p>作用：</p>
+<p>通过读取application.properties文件生成两个数据源（myTestDbDataSource、myTestDb2DataSource）</p>
+<p>使用以上生成的两个数据源构造动态数据源dataSource</p>
+<p>@Primary：指定在同一个接口有多个实现类可以注入的时候，默认选择哪一个，而不是让@Autowire注解报错（一般用于多数据源的情况下）</p>
+<p>@Qualifier：指定名称的注入，当一个接口有多个实现类的时候使用（在本例中，有两个DataSource类型的实例，需要指定名称注入）</p>
+<p>@Bean：生成的bean实例的名称是方法名（例如上边的@Qualifier注解中使用的名称是前边两个数据源的方法名，而这两个数据源也是使用@Bean注解进行注入的）</p>
+<p>通过动态数据源构造SqlSessionFactory和事务管理器（如果不需要事务，后者可以去掉）</p>
+<p>6、使用</p>
+<p>ShopMapper:</p>
+<pre><code>package com.xxx.firstboot.mapper;
+
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
+import org.apache.ibatis.annotations.Select;
+
+import com.xxx.firstboot.domain.Shop;
+
+public interface ShopMapper {
+
+    @Select(&quot;SELECT * FROM t_shop WHERE id = #{id}&quot;)
+    @Results(value = { @Result(id = true, column = &quot;id&quot;, property = &quot;id&quot;),
+                       @Result(column = &quot;shop_name&quot;, property = &quot;shopName&quot;) })
+    public Shop getShop(@Param(&quot;id&quot;) int id);
+
+}
+</code></pre><p>ShopDao:</p>
+<pre><code>package com.xxx.firstboot.dao;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import com.xxx.firstboot.common.datasource.DatabaseContextHolder;
+import com.xxx.firstboot.common.datasource.DatabaseType;
+import com.xxx.firstboot.domain.Shop;
+import com.xxx.firstboot.mapper.ShopMapper;
+
+@Repository
+public class ShopDao {
+    @Autowired
+    private ShopMapper mapper;
+
+    /**
+     * 获取shop
+     */
+    public Shop getShop(int id) {
+        DatabaseContextHolder.setDatabaseType(DatabaseType.mytestdb2);
+        return mapper.getShop(id);
+    }
+}
+</code></pre><p>注意：首先设置了数据源的key，然后调用mapper（在mapper中会首先根据该key从动态数据源中查询出相应的数据源，之后取出连接进行数据库操作）</p>
+<p>ShopService:</p>
+<pre><code>package com.xxx.firstboot.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.xxx.firstboot.dao.ShopDao;
+import com.xxx.firstboot.domain.Shop;
+
+@Service
+public class ShopService {
+
+    @Autowired
+    private ShopDao dao;
+
+    public Shop getShop(int id) {
+        return dao.getShop(id);
+    }
+}
+</code></pre><p>ShopController:</p>
+<pre><code>package com.xxx.firstboot.web;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.xxx.firstboot.domain.Shop;
+import com.xxx.firstboot.service.ShopService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+@RestController
+@RequestMapping(&quot;/shop&quot;)
+@Api(&quot;shopController相关api&quot;)
+public class ShopController {
+
+    @Autowired
+    private ShopService service;
+
+    @ApiOperation(&quot;获取shop信息,测试多数据源&quot;)
+    @RequestMapping(value = &quot;/getShop&quot;, method = RequestMethod.GET)
+    public Shop getShop(@RequestParam(&quot;id&quot;) int id) {
+        return service.getShop(id);
+    }
+
+}
+</code></pre><p>补：其实DatabaseContextHolder和DynamicDataSource完全可以合为一个类</p>
+<p>遗留：在实际开发中，一个dao类只会用到一个数据源，如果dao类中的方法很多的话，每一个方法前边都要添加一个设置数据源的一句话，代码有些冗余，可以使用AOP切面。</p>
+<p>具体的实现方式见 第九章 springboot + mybatis + 多数据源 （AOP实现）</p>
+<p>很多朋友反映遇到数据源循环依赖的问题，可以试一下将MyBatisConfig中的相关代码换成这样试试</p>
+<pre><code>@Bean
+public SqlSessionFactory sqlSessionFactory(@Qualifier(&quot;myTestDbDataSource&quot;) DataSource myTestDbDataSource,
+                                           @Qualifier(&quot;myTestDb2DataSource&quot;) DataSource myTestDb2DataSource) throws Exception{
+    SqlSessionFactoryBean fb = new SqlSessionFactoryBean();
+    fb.setDataSource(this.dataSource(myTestDbDataSource, myTestDb2DataSource));
+    fb.setTypeAliasesPackage(env.getProperty(&quot;mybatis.typeAliasesPackage&quot;));
+    fb.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(env.getProperty(&quot;mybatis.mapperLocations&quot;)));
+    return fb.getObject();
+}
+</code></pre>
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-11-16T15:10:33.127Z" itemprop="dateUpdated">2017-11-16 23:10:33</time>
+</span><br>
+
+
+        
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2017/11/16/spring-boot-15-multi-source/" target="_blank" rel="external">http://dennis.pathto.top/2017/11/16/spring-boot-15-multi-source/</a>
+        
+    </div>
+    <footer>
+        <a href="http://dennis.pathto.top">
+            <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
+            Dennis
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/">spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-boot/">spring-boot</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/11/16/spring-boot-15-multi-source/&title=《15.spring-boot多数据源》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/11/16/spring-boot-15-multi-source/&title=《15.spring-boot多数据源》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/11/16/spring-boot-15-multi-source/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《15.spring-boot多数据源》 — Dennis'Blog&url=http://dennis.pathto.top/2017/11/16/spring-boot-15-multi-source/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/11/16/spring-boot-15-multi-source/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2017/11/16/ubuntu-0-port-forward/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Ubuntu 安装 端口转发工具rinetd</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/11/16/spring-boot-14-background-job/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">14.spring-boot后台运行进程</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper">
+     <div id="articleComment" style="padding-left:5%;padding-right:5%;" ></div>
+    <!--<iframe height="900px" id="page_content_iframe" frameborder="0" marginheight="0" onload="dyniframesize('page_content_iframe');" width="100%" scrolling="auto" src="https://dennis-dzqapp.rhcloud.com/list_blog_commonts?p_id=2017/11/16/spring-boot-15-multi-source/" style="display: block;"></iframe>-->
+    </div>
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" data-alipay="http://otwbalpjp.bkt.clouddn.com/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Dennis &copy; 2015 - 2017</span>
+            <span>
+                
+                Power by <a href="http://dennis.pathto.top/" target="_blank">dennis.pathto.top</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2017/11/16/spring-boot-15-multi-source/&title=《15.spring-boot多数据源》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2017/11/16/spring-boot-15-multi-source/&title=《15.spring-boot多数据源》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2017/11/16/spring-boot-15-multi-source/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《15.spring-boot多数据源》 — Dennis'Blog&url=http://dennis.pathto.top/2017/11/16/spring-boot-15-multi-source/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2017/11/16/spring-boot-15-multi-source/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACtUlEQVR42u3aQW4jMQwEQP//07vXBYJxuknJyQI1pyC2Z1QyINIkX6/4+vPl+vr//LPt9e99XjcuPDw8vPXSE8Z+iU/Lfdqy/Ol4eHh4n+E9PSa59WwLElgbJPDw8PB+Py85uNv35Gw8PDy8/4uXvLN9z2YNeHh4eJ/nzYoI+aLfh4r2s1dqLXh4eHhdHeDAAf3Jv6/09/Dw8PDWXfX3B25yxO9T583wAR4eHt4NXr6INmFNGmPvW1xRoSFZJx4eHt41Xl4maBe0KfLmowmPG4GHh4f3EV4yGjU7svMUua021HMHeHh4eGcy4eFY6ubxm/u3gQoPDw/vFK9t5+dhI7lDWyyum2F4eHh4R3nJ0Z8PYM0aWgk7CSFRfw8PDw9vzUtuejb5nrXB8me98iiEh4eHt+DNktc2eCSHeLvoohCMh4eHd5TXJq+z5lZdI4mHA765Px4eHt7HebNrU1Odre0xmOHh4eEd5SXF1ja9bkPLrP0WDRng4eHhXeB9pue+KVts1oOHh4d3g3e2hHq2wLEpRjym1Hh4eHhrXj662o6x5gvalB7yogYeHh7eWV5ekK1/9pcjqptnffON4eHh4R3izdpaeTrbYtqmGh4eHt7P8tpGV7sdyat1THv/MwAPDw/vAm/WmN8PEOTPTbapCCR4eHh4h3h5rXff0GoHC5IkfhgM8PDw8C7wZglx3XMbjSMUm4uHh4d3jdemznlKnZd0Nw22w8VcPDw8vIe13WuAzZLvthz8zRbj4eHhXeBtRqb2wwSbsNEGLTw8PLyzvFPBID/iZw2zWakXDw8P7x4v6RzNAsa+xLC68PDw8H4BLz/o8xLDrBkWfQ14eHh4v4yXk2ZbllcVoqErPDw8vKO8ffNpk2TnYaNufeHh4eFd4LW/6JNH5on1phB8alQLDw8PL+b9Bef32k+bpQ6VAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="/js/main.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '我消失了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '我回来了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

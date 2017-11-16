@@ -23,7 +23,7 @@
     <meta name="description" content="我不用讨人喜欢，只做一个迷人的混蛋">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Dennis&#39;Blog">
-<meta property="og:url" content="http://www.pathto.top:8080/page/4/index.html">
+<meta property="og:url" content="http://dennis.pathto.top/page/4/index.html">
 <meta property="og:site_name" content="Dennis&#39;Blog">
 <meta property="og:description" content="我不用讨人喜欢，只做一个迷人的混蛋">
 <meta property="og:locale" content="zh-CN">
@@ -70,7 +70,7 @@ $.each( post_toc_links, function(index,post_toc_link){
 });
 });
 
-var host = "http://www.pathto.top:8080";//document.location.protocol+"//"+window.location.host;
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
 function jsonp(url){
 	var script = document.createElement("script");
 	script.type = "text/javascript";
@@ -224,6 +224,336 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("page/4/index.html
 <div class="container body-wrap">
 
     <ul class="post-list">
+    
+        <li class="post-list-item fade">
+            <article id="post-elasticsearch-10-match-bool"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-09-10 21:25:29" datetime="2017-09-10T13:25:29.000Z"  itemprop="datePublished">2017-09-10</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/elasticsearch/">elasticsearch</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/09/10/elasticsearch-10-match-bool/">10.elasticsearch中的match查询和bool查询的关系，提升查询子句</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        match和bool查询等价的例子现在，你也许意识到了使用了match查询的多词查询只是简单地将生成的term查询包含在了一个bool查询中。通过默认的or操作符，每个term查询都以一个语句被添加，所以至少一个should语句需要被匹配。以下两个查询是等价的：
+{
+&quot;match&quot;: { &quot;title&quot;: &quot;brown fox&quot;}
+...
+    
+
+        <a href="/2017/09/10/elasticsearch-10-match-bool/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elk/">elk</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-elasticsearch-8-several-query"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-09-09 21:25:29" datetime="2017-09-09T13:25:29.000Z"  itemprop="datePublished">2017-09-09</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/elasticsearch/">elasticsearch</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/09/09/elasticsearch-8-several-query/">8.elasticsearch几种查询</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        数据准备
+                
+                    
+                    
+                
+                image
+            
+query string search搜索全部商品GET /company/emp/_search
+
+
+
+序号
+属性
+描述
+
+
+
+
+1
+took
+耗费了几毫秒
+
+...
+    
+
+        <a href="/2017/09/09/elasticsearch-8-several-query/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elk/">elk</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-elasticsearch-7-cluster-management"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-09-08 21:25:29" datetime="2017-09-08T13:25:29.000Z"  itemprop="datePublished">2017-09-08</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/elasticsearch/">elasticsearch</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/09/08/elasticsearch-7-cluster-management/">7.elasticsearch-简单集群管理</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        简单的集群管理快速检查集群的健康状况GET /_cat/health?v
+
+
+{
+  &quot;cluster_name&quot;: &quot;es-log&quot;,
+  &quot;status&quot;: &quot;green&quot;,
+  &quot;timed_out&quot;: false,
+  &quot;number_of_nodes&quot;: 2,
+ ...
+    
+
+        <a href="/2017/09/08/elasticsearch-7-cluster-management/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-elasticsearch-6-xpack-kibana"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-09-07 21:25:29" datetime="2017-09-07T13:25:29.000Z"  itemprop="datePublished">2017-09-07</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/elasticsearch/">elasticsearch</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/09/07/elasticsearch-6-xpack-kibana/">6.elasticsearch-x-pack和klibana安装</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        安装x-pack:在线安装方法bin/elasticsearch-plugin install x-pack
+但是上面的安装方法可能网络的原因，会很卡，可以直接下载，上传zip包。
+直接用下载包安装bin/kibana-plugin install file:///usr/local/es/x-pack-5.2.0.zip 
+修改es配置文件添加：xpack.security.enabled...
+    
+
+        <a href="/2017/09/07/elasticsearch-6-xpack-kibana/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-elasticsearch-5-ik"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-09-05 21:25:29" datetime="2017-09-05T13:25:29.000Z"  itemprop="datePublished">2017-09-05</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/elasticsearch/">elasticsearch</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/09/05/elasticsearch-5-ik/">5.elasticsearch-IK分词器安装</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        安装ik分词插件git clone https://github.com/medcl/elasticsearch-analysis-ik
+git checkout tags/v5.2.0 #切换到对应的版本
+mvn package
+建立相应的ik分词插件目录mkdir /usr/local/es/elasticsearch-5.2.0/plugins/ik
+复制压缩包到目录下cp targe...
+    
+
+        <a href="/2017/09/05/elasticsearch-5-ik/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-elasticsearch-3-installation-problem"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-09-03 21:25:29" datetime="2017-09-03T13:25:29.000Z"  itemprop="datePublished">2017-09-03</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/elasticsearch/">elasticsearch</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/09/03/elasticsearch-3-installation-problem/">3.elasticsearch运行系统参数优化</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        在centos6.5系统中，不能直接运行elasticsearch,必须对系统参数进行优化如果没有优化，会出现如下面的问题
+                
+                    
+                    
+                
+                
+            
+下面我们来进行系统优化吧~~
+启动 elasticsear...
+    
+
+        <a href="/2017/09/03/elasticsearch-3-installation-problem/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
     
         <li class="post-list-item fade">
             <article id="post-elasticsearch-2-installation"
@@ -461,318 +791,12 @@ API网关具有有点，也具有缺点
 
         </li>
     
-        <li class="post-list-item fade">
-            <article id="post-spring-cloud-hystrix-turbine-monitor-12"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2017-08-24 21:13:35" datetime="2017-08-24T13:13:35.000Z"  itemprop="datePublished">2017-08-24</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-cloud/">spring-cloud</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2017/08/24/spring-cloud-hystrix-turbine-monitor-12/">12.spring-cloud-turbine监控微服务</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        turbine是聚合服务器发送事件流数据的一个工具，hystrix的监控中，只能监控单个节点，实际生产中都为集群，因此可以通过turbine来监控集群下hystrix的metrics情况，通过eureka来发现hystrix服务。
-下面把turbine整合到spring-cloud项目中
-pom.xml
-&lt;dependency&gt;
-    &lt;groupId&gt;org.sp...
-    
-
-        <a href="/2017/08/24/spring-cloud-hystrix-turbine-monitor-12/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/">spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-boot/">spring-boot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-cloud/">spring-cloud</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-spring-cloud-hystrix-monitor-11"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2017-08-24 21:13:32" datetime="2017-08-24T13:13:32.000Z"  itemprop="datePublished">2017-08-24</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-cloud/">spring-cloud</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2017/08/24/spring-cloud-hystrix-monitor-11/">11.spring-cloud-hystrix监控微服务</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        hystrix监控功能
-1.添加maven依赖
-&lt;dependency&gt;
-    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt;
-&lt;/dependency&gt;
-&lt;...
-    
-
-        <a href="/2017/08/24/spring-cloud-hystrix-monitor-11/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/">spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-boot/">spring-boot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-cloud/">spring-cloud</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-spring-cloud-feign-without-hystrix-10"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2017-08-24 21:13:29" datetime="2017-08-24T13:13:29.000Z"  itemprop="datePublished">2017-08-24</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-cloud/">spring-cloud</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2017/08/24/spring-cloud-feign-without-hystrix-10/">10.spring-cloud-指定某些feignClient无需Hystrix的支持</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        定义一个不需要Hystrix支持的FeignClient
-UserFeignClientWithoutHystrix.java
-package com.example.demo.feign;
-@FeignClient(name=&quot;spring-cloud-provider&quot;,fallback=UserFeignClientFallback.class,configurat...
-    
-
-        <a href="/2017/08/24/spring-cloud-feign-without-hystrix-10/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/">spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-boot/">spring-boot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-cloud/">spring-cloud</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-spring-cloud-feign-hystrix-feign-9"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2017-08-24 21:13:27" datetime="2017-08-24T13:13:27.000Z"  itemprop="datePublished">2017-08-24</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-cloud/">spring-cloud</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2017/08/24/spring-cloud-feign-hystrix-feign-9/">9.spring-cloud-hystrix和feign整合</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        上一章中完成了Ribbon和hytrix的整合，本章整合Hystrix和Feign
-要实现Hystrix和Feign的整合，需要在消费端完成以下几个步骤:
-1.添加Hystrix和Feign的maven依赖
-&lt;dependency&gt;
-    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-    &lt;artif...
-    
-
-        <a href="/2017/08/24/spring-cloud-feign-hystrix-feign-9/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/">spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-boot/">spring-boot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-cloud/">spring-cloud</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-spring-cloud-feign-hystrix-8"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2017-08-24 21:13:24" datetime="2017-08-24T13:13:24.000Z"  itemprop="datePublished">2017-08-24</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-cloud/">spring-cloud</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2017/08/24/spring-cloud-feign-hystrix-8/">8.spring-cloud-hystrix入门</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        介绍使用微服务架构实现大型项目的过程中，经常会对一个大而全的系统拆分成多个较小的服务单元，各个服务单元之间通过注册和订阅的方式，了解对方的状态，相互依赖。每一个服务单元运行在一个单独的进程中。各个服务单元在相互调用的过程中，会出现各种各样的不可用情况，如网络不可用，服务单元的进程挂掉了，服务单元内部的实现性能有问题等等。如果高并发高并发的情况下，挂起的服务单元一直占用系统资源不及时释放，就会...
-    
-
-        <a href="/2017/08/24/spring-cloud-feign-hystrix-8/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/">spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-boot/">spring-boot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-cloud/">spring-cloud</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-spring-cloud-ribbon-feign-collection-7"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2017-08-24 21:13:21" datetime="2017-08-24T13:13:21.000Z"  itemprop="datePublished">2017-08-24</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-cloud/">spring-cloud</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2017/08/24/spring-cloud-ribbon-feign-collection-7/">7.spring-cloud-ribbon和feign返回集合类型</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        ribbon中如果要调用服务端的接口，需要使用到restTemplate，使用restTemplate提供的api返回多个元素是一个数组了下的。
-feign中提供的接口如果要返回集合类型的数据，数据类型和服务端的返回的数据类型一致即可
-消费端
-UserConstroller.java
-Ribbon调用微服务的方法
-@ResponseBody
-@GetMapping(&quot;/list&q...
-    
-
-        <a href="/2017/08/24/spring-cloud-ribbon-feign-collection-7/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/">spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-boot/">spring-boot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-cloud/">spring-cloud</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
     </ul>
 
     
 <nav id="page-nav">
     <div class="inner">
-    <a class="extend prev" rel="prev" href="/page/3/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/5/">下一页</a>
+    <a class="extend prev" rel="prev" href="/page/3/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/5/">下一页</a>
     </div>
 </nav>
 
@@ -803,7 +827,7 @@ Ribbon调用微服务的方法
         <p><span>Dennis &copy; 2015 - 2017</span>
             <span>
                 
-                Power by <a href="http://116.196.88.117/" target="_blank">pathto.top</a>
+                Power by <a href="http://dennis.pathto.top/" target="_blank">dennis.pathto.top</a>
             </span>
         </p>
     </div>
@@ -818,7 +842,7 @@ Ribbon调用微服务的方法
 <div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.pathto.top:8080/page/4/&title=Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/page/4/&title=Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -828,22 +852,22 @@ Ribbon调用微服务的方法
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.pathto.top:8080/page/4/&title=Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/page/4/&title=Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.pathto.top:8080/page/4/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/page/4/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=Dennis'Blog&url=http://www.pathto.top:8080/page/4/&via=http://www.pathto.top:8080" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=Dennis'Blog&url=http://dennis.pathto.top/page/4/&via=http://dennis.pathto.top" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.pathto.top:8080/page/4/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/page/4/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -854,7 +878,7 @@ Ribbon调用微服务的方法
 <div class="page-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK4AAACuCAAAAACKZ2kyAAABvklEQVR42u3aQYrDMAwF0N7/0pltocT9smw3DM+rENr4JQshyXq94nW9rfc7n9ef/7q7vvvXgoWLi9vmXsM13iDZ+O454/u3T8bFxT3IzcNQEqSqL5kYcHFxn89NHl0NcLi4uP+D2wlbuLi4z+cmxU/y+7yI2l6r4eLiNrh5l3Lf9Zb+Li4u7hR3VTDKD1quxsLFxT3DrbY85lKffqsFFxf3V9zFzYtGQlOu1XBxcZdyqw2IVeMXeTv1S0aGi4t7hJsErzGxGv4KARQXF/cId+1oRXLgmpdSC2o1XFzcRdxq46PaBl1QMuHi4m7mzh2f9JOVyX1xcXGPc/Pkpj/WmYTRL7UaLi7uNu44SK0teKqjGNEhKy4u7mbuXOIyftXqwWp0HxcX9wHc/EC0NQPS7+/i4uJu4O4+ZO1/FFxc3PPcapHTGqGYSndwcXHPcK/iqiYxecsjehlcXNwj3HwlCdDiqZCp9gouLu4qbh50qonRXHrUSnRwcXGXcnePTXRSmXJ/FxcX96fcMa6avkRtFFxc3Edyq23QwmjFjkCGi4vb4JZHJ9tFzmQoxMXFPcKthpJxulPdPvkEuLi4B7l/ghgLCbugKqwAAAAASUVORK5CYII=" alt="微信分享二维码">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK4AAACuCAAAAACKZ2kyAAAB0ElEQVR42u3aQW7DMAwEwPz/0ynQU4HWzpK0maAYnYymkcY5LCRSj0c8nt/j5/Pvcf6t6qejgYuLO+Y+T0d16vPvnj9HPwQuLu4iNw+vPOCq80dhh4uL+2HcfBuUvDAuLu7/4B4tWd0S9cIOFxd3n5scfiZxloTaxWc1XFzcAbdXML32+fb6Li4u7kVdiV6Zo7dhilbHxcVd4SbljPMkqUZevoU6jDlcXNybuZMrFMnhZBJ5hxGGi4u7wu21PXJKb3Pzx2vj4uKucJM4y/+eHJYm8+Pi4r6Xmx+Hqtcv8vbtIRoXF3eRO292zq9fRCvi4uLezM1jq/qfveNQocmKi4t7GzcviMybKNWAO/wWLi7uIrc6aX74qTZTcXFx38tNChnVmOsVPqKNFC4u7gp3ct2qF3z5Cxfqu7i4uJdyk/LoBFotzr5YERcXd5Gbt0h7xY5qs/ZFkOHi4q5w81Ftyk4ORVE9FRcX9wbufGtS3b7k1zUmGylcXNw5txdASVulF2SF61m4uLg3cydF0jy2kgSNWim4uLgfw51sTaIGalJGwcXF/WBuskyyfSmvgouLu8hNJko+rb5euWiCi4u7wp00R/NrVfkM80seuLi4A+4XGBUGHPLAZT8AAAAASUVORK5CYII=" alt="微信分享二维码">
 </div>
 
 

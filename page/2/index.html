@@ -23,7 +23,7 @@
     <meta name="description" content="我不用讨人喜欢，只做一个迷人的混蛋">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Dennis&#39;Blog">
-<meta property="og:url" content="http://www.pathto.top:8080/page/2/index.html">
+<meta property="og:url" content="http://dennis.pathto.top/page/2/index.html">
 <meta property="og:site_name" content="Dennis&#39;Blog">
 <meta property="og:description" content="我不用讨人喜欢，只做一个迷人的混蛋">
 <meta property="og:locale" content="zh-CN">
@@ -70,7 +70,7 @@ $.each( post_toc_links, function(index,post_toc_link){
 });
 });
 
-var host = "http://www.pathto.top:8080";//document.location.protocol+"//"+window.location.host;
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
 function jsonp(url){
 	var script = document.createElement("script");
 	script.type = "text/javascript";
@@ -224,6 +224,318 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("page/2/index.html
 <div class="container body-wrap">
 
     <ul class="post-list">
+    
+        <li class="post-list-item fade">
+            <article id="post-docker-ip-forward-14"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-10-03 22:57:45" datetime="2017-10-03T14:57:45.000Z"  itemprop="datePublished">2017-10-03</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/docker/">docker</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/10/03/docker-ip-forward-14/">14.ip转发的方式实现机器的容器互联互通</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        ip转发的方式实现机器的容器互联互通 
+网络架构
+
+                
+                    
+                    
+                
+                image
+            
+容器的网段默认主机分配的都是172.17.0.1/16网段的IP地址，可以修改/usr/lib/systemd/syst...
+    
+
+        <a href="/2017/10/03/docker-ip-forward-14/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cloud/">cloud</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-docker-network-model-13"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-10-03 22:57:09" datetime="2017-10-03T14:57:09.000Z"  itemprop="datePublished">2017-10-03</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/docker/">docker</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/10/03/docker-network-model-13/">13.几种网络互联的方式</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        查看默认的几种网络驱动[root@docker01 ~]# docker network ls
+NETWORK ID          NAME                               DRIVER              SCOPE
+755f59e30dcd        bridge                             bridge       ...
+    
+
+        <a href="/2017/10/03/docker-network-model-13/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cloud/">cloud</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-docker-compose-workpress-11"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-10-02 23:07:01" datetime="2017-10-02T15:07:01.000Z"  itemprop="datePublished">2017-10-02</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/docker/">docker</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/10/02/docker-compose-workpress-11/">11.docker_compose构建workpress</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        Docker compose容器编排入门安装curl -L https://get.daocloud.io/docker/compose/releases/download/1.11.2/docker-compose-`uname -s`-`uname -m` &gt; /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-...
+    
+
+        <a href="/2017/10/02/docker-compose-workpress-11/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cloud/">cloud</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-docker-push-error-10"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-10-02 23:06:56" datetime="2017-10-02T15:06:56.000Z"  itemprop="datePublished">2017-10-02</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/docker/">docker</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/10/02/docker-push-error-10/">10.docker push问题</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        docker registry push错误“server gave HTTP response to HTTPS client”
+系统环境：centos7
+docker版本： 1.12.3（注意版本，可能存在不同版本设置不同的情况）
+docker registry版本：2.4.1
+问题：
+成功安装docker registry，在浏览器中输入http://192.168.159.159:5...
+    
+
+        <a href="/2017/10/02/docker-push-error-10/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cloud/">cloud</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-docker-local-dockerhub-9"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-10-02 23:06:51" datetime="2017-10-02T15:06:51.000Z"  itemprop="datePublished">2017-10-02</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/docker/">docker</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/10/02/docker-local-dockerhub-9/">9.docker本地仓库</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        下载镜像仓库[root@docker01 mysql]# docker pull registry
+Using default tag: latest
+latest: Pulling from library/registry
+90f4dba627d6: Pull complete 
+Digest: sha256:0f8fe61fa337b8ef02217702ba979b47a7d6871...
+    
+
+        <a href="/2017/10/02/docker-local-dockerhub-9/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cloud/">cloud</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-docker-dockerfile-workpress-8"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-10-02 23:06:46" datetime="2017-10-02T15:06:46.000Z"  itemprop="datePublished">2017-10-02</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/docker/">docker</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/10/02/docker-dockerfile-workpress-8/">8.使用Dockerfile搭建自己的博客</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        Dockerfile 目录结构[root@docker01 file]# tree -L 2 --charset ASCII
+.
+|-- mysql
+|   |-- Dockerfile
+|   |-- epel-6.repo
+|   |-- my.cnf
+|   `-- startup.sh
+|-- nginx
+|   |-- Dockerfile
+|   |-- nginx-1.11.1...
+    
+
+        <a href="/2017/10/02/docker-dockerfile-workpress-8/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cloud/">cloud</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
     
         <li class="post-list-item fade">
             <article id="post-docker-dockerfile-7"
@@ -437,319 +749,12 @@ docker...
 
         </li>
     
-        <li class="post-list-item fade">
-            <article id="post-docker-management-cmd-3"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2017-10-02 23:06:21" datetime="2017-10-02T15:06:21.000Z"  itemprop="datePublished">2017-10-02</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/docker/">docker</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2017/10/02/docker-management-cmd-3/">3.docker常用的简单管理命令</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        查看本地docker镜像docker images
-在docker容器中执行linux命令#如果本地没有想过镜像，会自动下载
-[root@bogon ~]# docker run centos:centos6 uname -a
-Unable to find image &apos;centos:centos6&apos; locally
-centos6: Pulling from libra...
-    
-
-        <a href="/2017/10/02/docker-management-cmd-3/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cloud/">cloud</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-docker-installation-2"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2017-10-02 23:06:16" datetime="2017-10-02T15:06:16.000Z"  itemprop="datePublished">2017-10-02</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/docker/">docker</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2017/10/02/docker-installation-2/">2.安装docker</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        选择操作系统版本[root@localhost ~]# cat /etc/redhat-release 
-CentOS Linux release 7.3.1611 (Core) 
-配置网卡固定ip地址，开机激活忘啦,并且能够联网
-TYPE=Ethernet
-BOOTPROTO=static
-DEFROUTE=yes
-PEERDNS=yes
-PEERROUTES=yes
-IPV4_FAILU...
-    
-
-        <a href="/2017/10/02/docker-installation-2/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cloud/">cloud</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-spring-boot-hot-deploy-13"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2017-09-24 19:05:12" datetime="2017-09-24T11:05:12.000Z"  itemprop="datePublished">2017-09-24</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-boot/">spring-boot</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2017/09/24/spring-boot-hot-deploy-13/">13.Spring Boot 热部署</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        Spring Boot 热部署实际开发中，修改某个页面数据或逻辑功能都需要重启应用。这无形中降低了开发效率，所以使用热部署是十分必要的。
-什么是热部署？应用启动后会把编译好的Class文件加载的虚拟机中，正常情况下在项目修改了源文件是需要全部重新编译并重新加载（需要重启应用）。而热部署就是监听Class文件的变动，只把发生修改的Class重新加载，而不需要重启应用，使得开发变得简便。
-Spr...
-    
-
-        <a href="/2017/09/24/spring-boot-hot-deploy-13/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/">spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-boot/">spring-boot</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-spring-boot-properties-problem-12"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2017-09-24 19:05:08" datetime="2017-09-24T11:05:08.000Z"  itemprop="datePublished">2017-09-24</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-boot/">spring-boot</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2017/09/24/spring-boot-properties-problem-12/">12.spring-boot-properties问题</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        application.properties配置文件问题
-application.properties配置文件名称的第一个字母不能为大写，可能在开发环境中没有问题，但是打包运行的时候会出现问题
-uri配置问题属性文件配置了context-path,访问的时候,要在端口后面添加consumer,http://localhost:9000/consumer/user/list
-server:
- ...
-    
-
-        <a href="/2017/09/24/spring-boot-properties-problem-12/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/">spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-boot/">spring-boot</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-spring-boot-Thymeleaf-context-path-11"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2017-09-24 19:03:30" datetime="2017-09-24T11:03:30.000Z"  itemprop="datePublished">2017-09-24</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-boot/">spring-boot</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2017/09/24/spring-boot-Thymeleaf-context-path-11/">11.spring-boot-Thymeleaf和context path</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        Thymeleaf 输出context path在页面中&lt;th:action=&quot;@{/edit.html}&quot; /&gt;
-&lt;a th:href=&quot;@{edit.html}&quot;   /&gt;
-在javascript中&lt;script th:inline=&quot;javascript&quot;&gt;  
-    function e...
-    
-
-        <a href="/2017/09/24/spring-boot-Thymeleaf-context-path-11/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/">spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-boot/">spring-boot</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-spring-boot-new-feature-consumer-product-10"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2017-09-24 19:03:25" datetime="2017-09-24T11:03:25.000Z"  itemprop="datePublished">2017-09-24</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-boot/">spring-boot</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2017/09/24/spring-boot-new-feature-consumer-product-10/">10.spring-boot使用新特性开发生产者和消费者程序</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        在spring-boot中，引入非常多的新特性，简化了spring中繁琐，臃肿的开发方式
-组合注解使用组合注解，通过其名称，就可以非常容易知道其意义，提高代码的可读性
-@RestController=@Controller+@ResponseBody
-@GetMapping=@RequestMapping(method = RequestMethod.GET)
-http客户端spring-b...
-    
-
-        <a href="/2017/09/24/spring-boot-new-feature-consumer-product-10/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/">spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-boot/">spring-boot</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
     </ul>
 
     
 <nav id="page-nav">
     <div class="inner">
-    <a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/3/">下一页</a>
+    <a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/3/">下一页</a>
     </div>
 </nav>
 
@@ -780,7 +785,7 @@ http客户端spring-b...
         <p><span>Dennis &copy; 2015 - 2017</span>
             <span>
                 
-                Power by <a href="http://116.196.88.117/" target="_blank">pathto.top</a>
+                Power by <a href="http://dennis.pathto.top/" target="_blank">dennis.pathto.top</a>
             </span>
         </p>
     </div>
@@ -795,7 +800,7 @@ http客户端spring-b...
 <div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://www.pathto.top:8080/page/2/&title=Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/page/2/&title=Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -805,22 +810,22 @@ http客户端spring-b...
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.pathto.top:8080/page/2/&title=Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/page/2/&title=Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://www.pathto.top:8080/page/2/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/page/2/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=Dennis'Blog&url=http://www.pathto.top:8080/page/2/&via=http://www.pathto.top:8080" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=Dennis'Blog&url=http://dennis.pathto.top/page/2/&via=http://dennis.pathto.top" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://www.pathto.top:8080/page/2/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/page/2/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -831,7 +836,7 @@ http客户端spring-b...
 <div class="page-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK4AAACuCAAAAACKZ2kyAAABwklEQVR42u3aQW7DMAwEwPz/0+4DUidLUlINdHQKgtge50BQXL1e8bre1vv3d1fdfb67asHCxcUdc6+PK//N5/vnr/3l/ri4uAe5eRnq4e7+oNyAi4v7ZG5SmJKXxMXF/T/cvGzh4uI+n5tsfvItTb7J2bhXw8XFXTnHeE2KWu/zlvkuLi5ui3sVV69lqZa826fj4uIe4eYFpdeaJI1R/lxcXNwncKuUtWFMM2TFxcUdc6vhR8KqovPiiIuLe4bbu6AXnPTapl/ugIuLe4T7+RBVsiFJvsmhkQoXF3cbdxKITqLW3rEPXFzcM9y8NZkfqqhGKeW6i4uLu4hbDTyqMUnexERX4eLiHuEWos1JVhPjqpsoXFzc3dy8YPXGpr0w5svmBxcXdxs3/2mzLhb/gtHBLFxc3G3c6iZkHqsUYlpcXNyD3HxgsewIReuYFy4u7m7uVVy9AUc1gCl0Sbi4uBu4+cqHIGuPWTRfBhcXd8zNi04veplHtoXqi4uLu5Q7f0x+tKvXseDi4j6fm4848/YlKp24uLiP5+ZD1fIcd0chw8XFLXInJz3z5qbaEuHi4v4Vt1pK8ghkThnNd3FxcTvcH4OgcbCxrJFUAAAAAElFTkSuQmCC" alt="微信分享二维码">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK4AAACuCAAAAACKZ2kyAAAByElEQVR42u3ay4rDMAwF0P7/T2dgVgND0ivJcVo4XoWWxsddCOvxesXr+F1/n/+v619Vvx0tXFzcMfe4XGfcsy17v00MuLi4+7l58Eo2uD5ScuzTz3FxcT+Mm4S/6oFxcXG/nVvFJfkLLi7uJ3OTa8o1sZoO3Z6r4eLiDri9guna59vru7i4uIu6EsmFptdWOVoLFxd3Dze/ppxtUw15+RXqNMzh4uJu5FbTm2ZR4zKViv4UXFzcLdw8FcmHM3pjFvlfhouLex83D0Z5A7XaTE2Sq/K8Bi4u7iLu5NXVt10f9XRHXFzcjdw5sVDUKDZZy1MbuLi4Y251+1WXmGSwo9l2xcXFXcStliqSC0pv5CIKi7i4uDdzq23OXvIz3wUXF/cpbjKsORnlrBZe37RScHFxb+P2Atb8SM2CKS4u7hbuUVzVZCanR0UTXFzcjdzeQNWcW62O4uLi7uT2AlnebuklRaMmCi4u7oA7uZpU6fk75xcpXFzcObcagKonXnxUXFzcjdxqCaPXgu01b97Ud3FxcR/lJttHpc9WGwYXF/eTuZORi17RBBcX9ylutUg6H7dqhlFcXNwt3FWljaRVU23n4OLibuf+AM1SJQtO0V2yAAAAAElFTkSuQmCC" alt="微信分享二维码">
 </div>
 
 
