@@ -13,25 +13,25 @@
     
     
     
-    <title>20.SpringBoot初始教程之Redis集中式Session管理 | Dennis&#39;Blog | 我不用讨人喜欢，只做一个迷人的混蛋</title>
+    <title>20.SpringBoot初始教程之Redis集中式Session管理 | Dennis&#39;Blog | 本博客内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、大数据，云计算，运维开发、系统监控等相关的研究与知识分享。</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
     <meta name="theme-color" content="#3F51B5">
     
     
     <meta name="keywords" content="java,spring,spring-boot">
-    <meta name="description" content="SpringBoot初始教程之Redis集中式Session管理 1.介绍有关Session的管理方式这里就不再进行讨论，目前无非就是三种单机Session(基于单机内存，无法部署多台机器)、基于Cookie(安全性差)、基于全局的统一Session管理(redis、mysql)等多种方式针对于像淘宝这种超大型网站来说Session如何管理的就无从得知了、但是可以通过yy的方式想象一下，这种大型架">
+    <meta name="description" content="SpringBoot初始教程之Redis集中式Session管理 介绍有关Session的管理方式这里就不再进行讨论，目前无非就是三种单机Session(基于单机内存，无法部署多台机器)、基于Cookie(安全性差)、基于全局的统一Session管理(redis、mysql)等多种方式针对于像淘宝这种超大型网站来说Session如何管理的就无从得知了、但是可以通过yy的方式想象一下，这种大型架构都">
 <meta name="keywords" content="java,spring,spring-boot">
 <meta property="og:type" content="article">
 <meta property="og:title" content="20.SpringBoot初始教程之Redis集中式Session管理">
 <meta property="og:url" content="http://dennis.pathto.top/2018/04/25/spring-boot-20-Redis-session/index.html">
 <meta property="og:site_name" content="Dennis&#39;Blog">
-<meta property="og:description" content="SpringBoot初始教程之Redis集中式Session管理 1.介绍有关Session的管理方式这里就不再进行讨论，目前无非就是三种单机Session(基于单机内存，无法部署多台机器)、基于Cookie(安全性差)、基于全局的统一Session管理(redis、mysql)等多种方式针对于像淘宝这种超大型网站来说Session如何管理的就无从得知了、但是可以通过yy的方式想象一下，这种大型架">
+<meta property="og:description" content="SpringBoot初始教程之Redis集中式Session管理 介绍有关Session的管理方式这里就不再进行讨论，目前无非就是三种单机Session(基于单机内存，无法部署多台机器)、基于Cookie(安全性差)、基于全局的统一Session管理(redis、mysql)等多种方式针对于像淘宝这种超大型网站来说Session如何管理的就无从得知了、但是可以通过yy的方式想象一下，这种大型架构都">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-04-24T16:08:24.253Z">
+<meta property="og:updated_time" content="2018-04-24T16:33:08.046Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="20.SpringBoot初始教程之Redis集中式Session管理">
-<meta name="twitter:description" content="SpringBoot初始教程之Redis集中式Session管理 1.介绍有关Session的管理方式这里就不再进行讨论，目前无非就是三种单机Session(基于单机内存，无法部署多台机器)、基于Cookie(安全性差)、基于全局的统一Session管理(redis、mysql)等多种方式针对于像淘宝这种超大型网站来说Session如何管理的就无从得知了、但是可以通过yy的方式想象一下，这种大型架">
+<meta name="twitter:description" content="SpringBoot初始教程之Redis集中式Session管理 介绍有关Session的管理方式这里就不再进行讨论，目前无非就是三种单机Session(基于单机内存，无法部署多台机器)、基于Cookie(安全性差)、基于全局的统一Session管理(redis、mysql)等多种方式针对于像淘宝这种超大型网站来说Session如何管理的就无从得知了、但是可以通过yy的方式想象一下，这种大型架构都">
     
         <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
     
@@ -213,7 +213,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2018/04/25/spring
         <h1 class="title">20.SpringBoot初始教程之Redis集中式Session管理</h1>
         <h5 class="subtitle">
             
-                <time datetime="2018-04-24T16:08:24.000Z" itemprop="datePublished" class="page-time">
+                <time datetime="2018-04-24T16:33:08.000Z" itemprop="datePublished" class="page-time">
   2018-04-25
 </time>
 
@@ -235,7 +235,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2018/04/25/spring
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#1-介绍"><span class="post-toc-number">1.</span> <span class="post-toc-text">1.介绍</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#2-快速开始"><span class="post-toc-number">2.</span> <span class="post-toc-text">2.快速开始</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#application-yaml配置"><span class="post-toc-number">3.</span> <span class="post-toc-text">application.yaml配置</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#3-其他扩展"><span class="post-toc-number">4.</span> <span class="post-toc-text">3. 其他扩展</span></a></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#介绍"><span class="post-toc-number">1.</span> <span class="post-toc-text">介绍</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#快速开始"><span class="post-toc-number">2.</span> <span class="post-toc-text">快速开始</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#application-yaml配置"><span class="post-toc-number">3.</span> <span class="post-toc-text">application.yaml配置</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#其他扩展"><span class="post-toc-number">4.</span> <span class="post-toc-text">其他扩展</span></a></li></ol>
         </nav>
     </aside>
     
@@ -245,7 +245,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2018/04/25/spring
     <div class="post-card">
         <h1 class="post-card-title">20.SpringBoot初始教程之Redis集中式Session管理</h1>
         <div class="post-meta">
-            <time class="post-time" title="2018-04-25 00:08:24" datetime="2018-04-24T16:08:24.000Z"  itemprop="datePublished">2018-04-25</time>
+            <time class="post-time" title="2018-04-25 00:33:08" datetime="2018-04-24T16:33:08.000Z"  itemprop="datePublished">2018-04-25</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-boot/">spring-boot</a></li></ul>
@@ -261,8 +261,8 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2018/04/25/spring
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
             <p>SpringBoot初始教程之Redis集中式Session管理</p>
-<h1 id="1-介绍"><a href="#1-介绍" class="headerlink" title="1.介绍"></a>1.介绍</h1><p>有关Session的管理方式这里就不再进行讨论，目前无非就是三种单机Session(基于单机内存，无法部署多台机器)、基于Cookie(安全性差)、基于全局的统一Session管理(redis、mysql)等多种方式<br>针对于像淘宝这种超大型网站来说Session如何管理的就无从得知了、但是可以通过yy的方式想象一下，这种大型架构都需要部署多台认证Server，但是一般来说集中式Session无法存储那么多的Session<br>那么就可以通过UID分片的形式来存储，不同UID分布在不同的Server上认证即可(纯属猜测丷)</p>
-<h1 id="2-快速开始"><a href="#2-快速开始" class="headerlink" title="2.快速开始"></a>2.快速开始</h1><p>这里采用的是redis进行集中式Session管理,核心如下依赖</p>
+<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>有关Session的管理方式这里就不再进行讨论，目前无非就是三种单机Session(基于单机内存，无法部署多台机器)、基于Cookie(安全性差)、基于全局的统一Session管理(redis、mysql)等多种方式<br>针对于像淘宝这种超大型网站来说Session如何管理的就无从得知了、但是可以通过yy的方式想象一下，这种大型架构都需要部署多台认证Server，但是一般来说集中式Session无法存储那么多的Session<br>那么就可以通过UID分片的形式来存储，不同UID分布在不同的Server上认证即可(纯属猜测丷)</p>
+<h1 id="快速开始"><a href="#快速开始" class="headerlink" title="快速开始"></a>快速开始</h1><p>这里采用的是redis进行集中式Session管理,核心如下依赖</p>
 <pre><code>&lt;dependency&gt;
     &lt;groupId&gt;org.springframework.session&lt;/groupId&gt;
     &lt;artifactId&gt;spring-session&lt;/artifactId&gt;
@@ -369,7 +369,7 @@ public class IndexController {
         return ResponseEntity.ok(httpSession.getAttribute(&quot;user&quot;));
     }
 }
-</code></pre><h1 id="3-其他扩展"><a href="#3-其他扩展" class="headerlink" title="3. 其他扩展"></a>3. 其他扩展</h1><p>SpringBoot Session集中式管理不仅仅限于redis这种方式，目前内部支持HttpSession with Pivotal GemFire、HttpSession with JDBC、HttpSession with Mongo<br>等多种方式具体可以参考<a href="http://docs.spring.io/spring-session/docs/1.2.2.RELEASE/reference/html5/#httpsession-jdbc" target="_blank" rel="external">http://docs.spring.io/spring-session/docs/1.2.2.RELEASE/reference/html5/#httpsession-jdbc</a> </p>
+</code></pre><h1 id="其他扩展"><a href="#其他扩展" class="headerlink" title="其他扩展"></a>其他扩展</h1><p>SpringBoot Session集中式管理不仅仅限于redis这种方式，目前内部支持HttpSession with Pivotal GemFire、HttpSession with JDBC、HttpSession with Mongo<br>等多种方式具体可以参考<a href="http://docs.spring.io/spring-session/docs/1.2.2.RELEASE/reference/html5/#httpsession-jdbc" target="_blank" rel="external">http://docs.spring.io/spring-session/docs/1.2.2.RELEASE/reference/html5/#httpsession-jdbc</a> </p>
 
         </div>
 
@@ -377,7 +377,7 @@ public class IndexController {
     <div class="content">
         
 <span class="post-time">
-    最后更新时间：<time datetime="2018-04-24T16:08:24.253Z" itemprop="dateUpdated">2018-04-25 00:08:24</time>
+    最后更新时间：<time datetime="2018-04-24T16:33:08.046Z" itemprop="dateUpdated">2018-04-25 00:33:08</time>
 </span><br>
 
 
@@ -422,7 +422,7 @@ public class IndexController {
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2018/04/25/spring-boot-20-Redis-session/&title=《20.SpringBoot初始教程之Redis集中式Session管理》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2018/04/25/spring-boot-20-Redis-session/&title=《20.SpringBoot初始教程之Redis集中式Session管理》 — Dennis'Blog&source=本博客内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、大数据，云计算，运维开发、系统监控等相关的研究与知识分享。" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
@@ -460,9 +460,9 @@ public class IndexController {
 <nav class="post-nav flex-row flex-justify-between">
   
     <div class="waves-block waves-effect prev">
-      <a href="/2018/04/25/spring-boot-21-start-stop-daemon/" id="post-prev" class="post-nav-link">
+      <a href="/2018/04/25/hbase-2-common/" id="post-prev" class="post-nav-link">
         <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
-        <h4 class="title">21.start-stop-daemon问题</h4>
+        <h4 class="title">2.hbase命令</h4>
       </a>
     </div>
   
@@ -579,7 +579,7 @@ public class IndexController {
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2018/04/25/spring-boot-20-Redis-session/&title=《20.SpringBoot初始教程之Redis集中式Session管理》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2018/04/25/spring-boot-20-Redis-session/&title=《20.SpringBoot初始教程之Redis集中式Session管理》 — Dennis'Blog&source=本博客内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、大数据，云计算，运维开发、系统监控等相关的研究与知识分享。" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>

@@ -13,23 +13,23 @@
     
     
     
-    <title>Dennis&#39;Blog | 我不用讨人喜欢，只做一个迷人的混蛋</title>
+    <title>Dennis&#39;Blog | 本博客内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、大数据，云计算，运维开发、系统监控等相关的研究与知识分享。</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
     <meta name="theme-color" content="#3F51B5">
     
     
     <meta name="keywords" content="undefined">
-    <meta name="description" content="我不用讨人喜欢，只做一个迷人的混蛋">
+    <meta name="description" content="本博客内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、大数据，云计算，运维开发、系统监控等相关的研究与知识分享。">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Dennis&#39;Blog">
 <meta property="og:url" content="http://dennis.pathto.top/page/6/index.html">
 <meta property="og:site_name" content="Dennis&#39;Blog">
-<meta property="og:description" content="我不用讨人喜欢，只做一个迷人的混蛋">
+<meta property="og:description" content="本博客内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、大数据，云计算，运维开发、系统监控等相关的研究与知识分享。">
 <meta property="og:locale" content="zh-CN">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Dennis&#39;Blog">
-<meta name="twitter:description" content="我不用讨人喜欢，只做一个迷人的混蛋">
+<meta name="twitter:description" content="本博客内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、大数据，云计算，运维开发、系统监控等相关的研究与知识分享。">
     
         <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
     
@@ -211,7 +211,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("page/6/index.html
         <h1 class="title">Dennis&#39;Blog</h1>
         <h5 class="subtitle">
             
-                我不用讨人喜欢，只做一个迷人的混蛋
+                本博客内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、大数据，云计算，运维开发、系统监控等相关的研究与知识分享。
             
         </h5>
     </div>
@@ -226,11 +226,300 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("page/6/index.html
     <ul class="post-list">
     
         <li class="post-list-item fade">
-            <article id="post-spring-cloud-ribbon-feign-collection-7"
+            <article id="post-elasticsearch-6-xpack-kibana"
   class="article-card article-type-post" itemprop="blogPost">
 
     <div class="post-meta">
-        <time class="post-time" title="2017-08-24 21:13:21" datetime="2017-08-24T13:13:21.000Z"  itemprop="datePublished">2017-08-24</time>
+        <time class="post-time" title="2017-09-07 21:25:29" datetime="2017-09-07T13:25:29.000Z"  itemprop="datePublished">2017-09-07</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/elasticsearch/">elasticsearch</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/09/07/elasticsearch-6-xpack-kibana/">6.elasticsearch-x-pack和klibana安装</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        安装x-pack:在线安装方法bin/elasticsearch-plugin install x-pack
+但是上面的安装方法可能网络的原因，会很卡，可以直接下载，上传zip包。
+直接用下载包安装bin/kibana-plugin install file:///usr/local/es/x-pack-5.2.0.zip 
+修改es配置文件添加：xpack.security.enabled...
+    
+
+        <a href="/2017/09/07/elasticsearch-6-xpack-kibana/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-elasticsearch-5-ik"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-09-05 21:25:29" datetime="2017-09-05T13:25:29.000Z"  itemprop="datePublished">2017-09-05</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/elasticsearch/">elasticsearch</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/09/05/elasticsearch-5-ik/">5.elasticsearch-IK分词器安装</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        安装ik分词插件git clone https://github.com/medcl/elasticsearch-analysis-ik
+git checkout tags/v5.2.0 #切换到对应的版本
+mvn package
+建立相应的ik分词插件目录mkdir /usr/local/es/elasticsearch-5.2.0/plugins/ik
+复制压缩包到目录下cp targe...
+    
+
+        <a href="/2017/09/05/elasticsearch-5-ik/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-elasticsearch-3-installation-problem"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-09-03 21:25:29" datetime="2017-09-03T13:25:29.000Z"  itemprop="datePublished">2017-09-03</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/elasticsearch/">elasticsearch</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/09/03/elasticsearch-3-installation-problem/">3.elasticsearch运行系统参数优化</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        在centos6.5系统中，不能直接运行elasticsearch,必须对系统参数进行优化如果没有优化，会出现如下面的问题
+                
+                    
+                    
+                
+                
+            
+下面我们来进行系统优化吧~~
+启动 elasticsear...
+    
+
+        <a href="/2017/09/03/elasticsearch-3-installation-problem/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-elasticsearch-2-installation"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-09-02 21:25:29" datetime="2017-09-02T13:25:29.000Z"  itemprop="datePublished">2017-09-02</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/elasticsearch/">elasticsearch</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/09/02/elasticsearch-2-installation/">2.elasticsearch安装</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        软件版本
+
+
+名称
+版本
+
+
+
+
+os
+CentOS release 6.5 (Final)
+
+
+ES
+elasticsearch-5.2.0
+
+
+
+集群节点
+
+
+主机
+ip
+
+
+
+
+study0
+192.168.137.150
+
+
+study1
+192.168.137.151
+
+
+
+部署elasticsearch集群：安装jdk[root@study0 elasticsearch-5.2....
+    
+
+        <a href="/2017/09/02/elasticsearch-2-installation/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-elasticsearch-1-instroduce"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-09-01 21:25:29" datetime="2017-09-01T13:25:29.000Z"  itemprop="datePublished">2017-09-01</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/elasticsearch/">elasticsearch</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/09/01/elasticsearch-1-instroduce/">1.elasticsearch介绍</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        lucene全文检索与数据库查询的区别性能上数据库:比如我要查找某个商品，根据商品名，比如:
+select * from product where doctname like %keywords%
+这样查询的话对于数据量少是可以的，可是一旦你的数据量巨大几万几十万的时候，你的性能将会极大的减弱。
+lucene(全文检索):建立一个索引库，一次建立多次使用。在索引库里面会把所有的商品名根据分...
+    
+
+        <a href="/2017/09/01/elasticsearch-1-instroduce/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-spring-cloud-zuul-configuration-14"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-08-24 21:13:40" datetime="2017-08-24T13:13:40.000Z"  itemprop="datePublished">2017-08-24</time>
 
         
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-cloud/">spring-cloud</a></li></ul>
@@ -244,7 +533,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("page/6/index.html
 
   
     <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2017/08/24/spring-cloud-ribbon-feign-collection-7/">7.spring-cloud-ribbon和feign返回集合类型</a>
+      <a class="post-title-link" href="/2017/08/24/spring-cloud-zuul-configuration-14/">14.spring-cloud-zuul配置</a>
     </h3>
   
 
@@ -254,16 +543,16 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("page/6/index.html
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        ribbon中如果要调用服务端的接口，需要使用到restTemplate，使用restTemplate提供的api返回多个元素是一个数组了下的。
-feign中提供的接口如果要返回集合类型的数据，数据类型和服务端的返回的数据类型一致即可
-消费端
-UserConstroller.java
-Ribbon调用微服务的方法
-@ResponseBody
-@GetMapping(&quot;/list&q...
+        微服务重命名zuul可以给微服务重命名,重命名非常简单，只需要在application配置文件中添加下面配置项即可
+zuul:
+  ignored-services: &apos;*&apos;
+  routes:
+    spring-cloud-provider: /provider/**
+这个配置把spring-cloud-provider的一组微服务名称命名为provider了
+浏览...
     
 
-        <a href="/2017/08/24/spring-cloud-ribbon-feign-collection-7/" class="post-more waves-effect waves-button">
+        <a href="/2017/08/24/spring-cloud-zuul-configuration-14/" class="post-more waves-effect waves-button">
             阅读全文…
         </a>
     </div>
@@ -279,11 +568,11 @@ Ribbon调用微服务的方法
         </li>
     
         <li class="post-list-item fade">
-            <article id="post-spring-cloud-feign-6"
+            <article id="post-spring-cloud-zuul-13"
   class="article-card article-type-post" itemprop="blogPost">
 
     <div class="post-meta">
-        <time class="post-time" title="2017-08-24 21:13:18" datetime="2017-08-24T13:13:18.000Z"  itemprop="datePublished">2017-08-24</time>
+        <time class="post-time" title="2017-08-24 21:13:37" datetime="2017-08-24T13:13:37.000Z"  itemprop="datePublished">2017-08-24</time>
 
         
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-cloud/">spring-cloud</a></li></ul>
@@ -297,7 +586,7 @@ Ribbon调用微服务的方法
 
   
     <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2017/08/24/spring-cloud-feign-6/">6.spring-cloud-feign入门</a>
+      <a class="post-title-link" href="/2017/08/24/spring-cloud-zuul-13/">13.spring-cloud-zuul入门</a>
     </h3>
   
 
@@ -307,15 +596,13 @@ Ribbon调用微服务的方法
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        feign介绍feign整合了ribbon和hystrix。除了整合两者的强大功能外，还提供了一种声明式的web服务客户端定义方式。feign简化了ribbon中template的开发，提供更高层次的接口.feign自身也提供了一下可插拔的组件，如编码器和解码器。等等
-快速入门spring-cloud-consumer-01步骤:
-
-添加feign的依赖
-
-在pom.xml中添加下面的mav...
+        zuul介绍Zuul是Netflix的基于JVM的路由器和服务器端负载均衡器,提供了API网关的功能。
+API网关是一个服务器，也可以是进入系统的唯一节点。这与面向对象设计的门面模式很像。API网关封装内部系统的架构。并且提供API给各个客户端，它还可能具备授权，监控，负载均衡，缓存，请求分片，管理，静态响应处理等功能。
+API网关具有有点，也具有缺点
+优点API网关的最大有点就是分装了应用...
     
 
-        <a href="/2017/08/24/spring-cloud-feign-6/" class="post-more waves-effect waves-button">
+        <a href="/2017/08/24/spring-cloud-zuul-13/" class="post-more waves-effect waves-button">
             阅读全文…
         </a>
     </div>
@@ -331,11 +618,11 @@ Ribbon调用微服务的方法
         </li>
     
         <li class="post-list-item fade">
-            <article id="post-spring-cloud-direct-invoke-micro-service-5"
+            <article id="post-spring-cloud-hystrix-turbine-monitor-12"
   class="article-card article-type-post" itemprop="blogPost">
 
     <div class="post-meta">
-        <time class="post-time" title="2017-08-24 21:13:15" datetime="2017-08-24T13:13:15.000Z"  itemprop="datePublished">2017-08-24</time>
+        <time class="post-time" title="2017-08-24 21:13:35" datetime="2017-08-24T13:13:35.000Z"  itemprop="datePublished">2017-08-24</time>
 
         
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-cloud/">spring-cloud</a></li></ul>
@@ -349,7 +636,7 @@ Ribbon调用微服务的方法
 
   
     <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2017/08/24/spring-cloud-direct-invoke-micro-service-5/">5.spring-cloud-Ribbon-直接调用微服务</a>
+      <a class="post-title-link" href="/2017/08/24/spring-cloud-hystrix-turbine-monitor-12/">12.spring-cloud-turbine监控微服务</a>
     </h3>
   
 
@@ -359,17 +646,14 @@ Ribbon调用微服务的方法
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-         禁止使用eureka来发现微服务，直接调用微服务  
-ribbon:
-  eureka:
-   enabled: false
-spring-cloud-provider-test-direct: 
-  ribbon: 
-    listOfServers: localhost:8085,localhost:8086
-
+        turbine是聚合服务器发送事件流数据的一个工具，hystrix的监控中，只能监控单个节点，实际生产中都为集群，因此可以通过turbine来监控集群下hystrix的metrics情况，通过eureka来发现hystrix服务。
+下面把turbine整合到spring-cloud项目中
+pom.xml
+&lt;dependency&gt;
+    &lt;groupId&gt;org.sp...
     
 
-        <a href="/2017/08/24/spring-cloud-direct-invoke-micro-service-5/" class="post-more waves-effect waves-button">
+        <a href="/2017/08/24/spring-cloud-hystrix-turbine-monitor-12/" class="post-more waves-effect waves-button">
             阅读全文…
         </a>
     </div>
@@ -385,11 +669,11 @@ spring-cloud-provider-test-direct:
         </li>
     
         <li class="post-list-item fade">
-            <article id="post-spring-cloud-other-load-balance-4"
+            <article id="post-spring-cloud-hystrix-monitor-11"
   class="article-card article-type-post" itemprop="blogPost">
 
     <div class="post-meta">
-        <time class="post-time" title="2017-08-24 21:13:12" datetime="2017-08-24T13:13:12.000Z"  itemprop="datePublished">2017-08-24</time>
+        <time class="post-time" title="2017-08-24 21:13:32" datetime="2017-08-24T13:13:32.000Z"  itemprop="datePublished">2017-08-24</time>
 
         
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-cloud/">spring-cloud</a></li></ul>
@@ -403,7 +687,7 @@ spring-cloud-provider-test-direct:
 
   
     <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2017/08/24/spring-cloud-other-load-balance-4/">4.spring-cloud-Ribbon其他负载均衡算法</a>
+      <a class="post-title-link" href="/2017/08/24/spring-cloud-hystrix-monitor-11/">11.spring-cloud-hystrix监控微服务</a>
     </h3>
   
 
@@ -413,14 +697,16 @@ spring-cloud-provider-test-direct:
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        Ribbon支持多种客户端负载均衡算法，如轮询，最小响应时间，随机等等.
-这里简单使用一下随机的Ribbon客户端负载均衡算法
-使用上一章的项目，在spring-cloud-consumer-01项目中添加一个配置类，在里面构建一个随机负载均衡的bean
-配置类的方式配置父子均衡算法spring-cloud-consumer-01消费端添加了对随机负载均衡的支持
-LoadBarentConf...
+        hystrix监控功能
+1.添加maven依赖
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;...
     
 
-        <a href="/2017/08/24/spring-cloud-other-load-balance-4/" class="post-more waves-effect waves-button">
+        <a href="/2017/08/24/spring-cloud-hystrix-monitor-11/" class="post-more waves-effect waves-button">
             阅读全文…
         </a>
     </div>
@@ -436,11 +722,11 @@ LoadBarentConf...
         </li>
     
         <li class="post-list-item fade">
-            <article id="post-spring-cloud-ribbon-load-balance-failover3"
+            <article id="post-spring-cloud-feign-without-hystrix-10"
   class="article-card article-type-post" itemprop="blogPost">
 
     <div class="post-meta">
-        <time class="post-time" title="2017-08-24 21:13:10" datetime="2017-08-24T13:13:10.000Z"  itemprop="datePublished">2017-08-24</time>
+        <time class="post-time" title="2017-08-24 21:13:29" datetime="2017-08-24T13:13:29.000Z"  itemprop="datePublished">2017-08-24</time>
 
         
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-cloud/">spring-cloud</a></li></ul>
@@ -454,7 +740,7 @@ LoadBarentConf...
 
   
     <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2017/08/24/spring-cloud-ribbon-load-balance-failover3/">3.spring-cloud-Ribbon负载均衡和故障转移</a>
+      <a class="post-title-link" href="/2017/08/24/spring-cloud-feign-without-hystrix-10/">10.spring-cloud-指定某些feignClient无需Hystrix的支持</a>
     </h3>
   
 
@@ -464,13 +750,13 @@ LoadBarentConf...
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        Ribbon可以实现客户端的负载均衡和故障转移，默认情况下，Ribbon使用到的负载均衡算法是轮询算法
-下面是Ribbon实现客户端负载均衡的列子
-使用到的项目有spring-cloud-eureka,spring-cloud-provider-01,spring-cloud-provider-02,spring-cloud-consumer-01
-服务提供端spring-cloud-pro...
+        定义一个不需要Hystrix支持的FeignClient
+UserFeignClientWithoutHystrix.java
+package com.example.demo.feign;
+@FeignClient(name=&quot;spring-cloud-provider&quot;,fallback=UserFeignClientFallback.class,configurat...
     
 
-        <a href="/2017/08/24/spring-cloud-ribbon-load-balance-failover3/" class="post-more waves-effect waves-button">
+        <a href="/2017/08/24/spring-cloud-feign-without-hystrix-10/" class="post-more waves-effect waves-button">
             阅读全文…
         </a>
     </div>
@@ -478,261 +764,6 @@ LoadBarentConf...
     <div class="post-footer">
         
 	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/">spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-boot/">spring-boot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-cloud/">spring-cloud</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-spring-cloud-eureka-client-2"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2017-08-24 21:13:07" datetime="2017-08-24T13:13:07.000Z"  itemprop="datePublished">2017-08-24</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-cloud/">spring-cloud</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2017/08/24/spring-cloud-eureka-client-2/">2.spring-cloud-eureka客户端的使用</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        本章主要试验:eureka客户端注册 ，监控,eureka客户端信息
-spring-cloud-provider-01pom.xml&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xm...
-    
-
-        <a href="/2017/08/24/spring-cloud-eureka-client-2/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/">spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-boot/">spring-boot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-cloud/">spring-cloud</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-spring-cloude-ureka-1"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2017-08-24 21:13:04" datetime="2017-08-24T13:13:04.000Z"  itemprop="datePublished">2017-08-24</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-cloud/">spring-cloud</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2017/08/24/spring-cloude-ureka-1/">1.spring-cloud-Eureka</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        在Spring Cloud实现一个Eureka Server是一件非常简单的事情。下面我们来写一个Eureka Server DEMO。
-(1) 首先创建一个Maven工程，添加内容如下：
-&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;project xmlns=&quot;http://maven....
-    
-
-        <a href="/2017/08/24/spring-cloude-ureka-1/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/">spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-boot/">spring-boot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-cloud/">spring-cloud</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-nginx-Traffic-distribution-2"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2017-08-17 20:36:55" datetime="2017-08-17T12:36:55.000Z"  itemprop="datePublished">2017-08-17</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/nginx/">nginx</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2017/08/17/nginx-Traffic-distribution-2/">2.nginx-根据查询参数实现后端流量分发</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        nginx应用层安装按照《1.安装nginx+openrestry》在study1和study2节点上安装nginx
-配置study1和study2的lua页面http://study1/lua
-1.study1
-[root@study1 hello]# cat lua/hello.lua 
-ngx.say(&quot;hello,study1&quot;)
-2.study2
-[root@s...
-    
-
-        <a href="/2017/08/17/nginx-Traffic-distribution-2/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/openrestry/">openrestry</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-nginx-openrestry-install-1"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2017-08-17 20:35:45" datetime="2017-08-17T12:35:45.000Z"  itemprop="datePublished">2017-08-17</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/nginx/">nginx</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2017/08/17/nginx-openrestry-install-1/">1.安装nginx+openrestry</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        部署nginx+openresty+lua，作为应用层nginx
-安装nginx+openresty创建安装目录mkdir -p /usr/servers  
-cd /usr/servers/
-安装依赖yum install -y readline-devel pcre-devel openssl-devel gcc
-wget http://openresty.org/download/op...
-    
-
-        <a href="/2017/08/17/nginx-openrestry-install-1/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/openrestry/">openrestry</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-interview-garbage-company"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2017-08-16 07:57:22" datetime="2017-08-15T23:57:22.000Z"  itemprop="datePublished">2017-08-16</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/interview/">interview</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2017/08/16/interview-garbage-company/">这样的公司绝对不能去面试</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        
-首先，真正的高级人才是不用找工作的，因为只有被工作找的份。 
-
-当你开始厌倦了旧的工作环境，或者遇到天花板，没有了发展空间，或者遇到新老板上任后排除异己来提拔自己的亲信等等……这些都会促使你动跳槽的念头。如果你真打算自己去找工作，那么至少需注意以下几点： 
-有些公司常年在招聘同一个职位。网上求职尤其需注意那些一天到晚在网上打招聘广告的公司。这类公司通常分成两类： 
-一类是垃圾公司，如一些别...
-    
-
-        <a href="/2017/08/16/interview-garbage-company/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/interview/">interview</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/work/">work</a></li></ul>
 
     </div>
     
@@ -745,7 +776,7 @@ wget http://openresty.org/download/op...
     
 <nav id="page-nav">
     <div class="inner">
-    <a class="extend prev" rel="prev" href="/page/5/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/7/">下一页</a>
+    <a class="extend prev" rel="prev" href="/page/5/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/7/">下一页</a>
     </div>
 </nav>
 
@@ -801,7 +832,7 @@ wget http://openresty.org/download/op...
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/page/6/&title=Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/page/6/&title=Dennis'Blog&source=本博客内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、大数据，云计算，运维开发、系统监控等相关的研究与知识分享。" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>

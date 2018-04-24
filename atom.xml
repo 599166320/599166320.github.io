@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Dennis&#39;Blog</title>
-  <subtitle>我不用讨人喜欢，只做一个迷人的混蛋</subtitle>
+  <subtitle>本博客内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、大数据，云计算，运维开发、系统监控等相关的研究与知识分享。</subtitle>
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://dennis.pathto.top/"/>
-  <updated>2018-04-24T16:08:29.020Z</updated>
+  <updated>2018-04-24T16:33:41.288Z</updated>
   <id>http://dennis.pathto.top/</id>
   
   <author>
@@ -16,11 +16,650 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>9.phoenix建表</title>
+    <link href="http://dennis.pathto.top/2018/04/25/hbase-9-phoenix-ale/"/>
+    <id>http://dennis.pathto.top/2018/04/25/hbase-9-phoenix-ale/</id>
+    <published>2018-04-24T16:33:41.000Z</published>
+    <updated>2018-04-24T16:33:41.288Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="建表"><a href="#建表" class="headerlink" title="建表"></a>建表</h1><h2 id="hbase建表"><a href="#hbase建表" class="headerlink" title="hbase建表"></a>hbase建表</h2><pre><code>put &apos;t1&apos;,&apos;key001&apos;,&apos;f1:col1&apos;,&apos;hello&apos;
+put &apos;t1&apos;,&apos;key001&apos;,&apos;f1:age&apos;,20
+put &apos;t1&apos;,&apos;key002&apos;,&apos;f1:col1&apos;,&apos;hello1&apos;
+put &apos;t1&apos;,&apos;key002&apos;,&apos;f1:age&apos;,21
+</code></pre><h2 id="建立phonex视图"><a href="#建立phonex视图" class="headerlink" title="建立phonex视图"></a>建立phonex视图</h2><pre><code>0: jdbc:phoenix:localhost&gt; CREATE VIEW &quot;t1&quot; (&quot;tid&quot; VARCHAR PRIMARY KEY,&quot;f1&quot;.&quot;age&quot; VARCHAR,&quot;f1&quot;.&quot;col1&quot; VARCHAR);
+No rows affected (0.087 seconds)
+0: jdbc:phoenix:localhost&gt; select * from &quot;t1&quot;;
++---------+------+---------+
+|   tid   | age  |  col1   |
++---------+------+---------+
+| key001  | 20   | hello   |
+| key002  | 21   | hello1  |
++---------+------+---------+
+2 rows selected (0.065 seconds)
+</code></pre><h1 id="复合主键"><a href="#复合主键" class="headerlink" title="复合主键"></a>复合主键</h1><h2 id="创建hbase表"><a href="#创建hbase表" class="headerlink" title="创建hbase表"></a>创建hbase表</h2><pre><code>put &apos;t2&apos;,&quot;k009\09&quot;,&apos;f1:col1&apos;,&apos;kkkkkkkkkkkkkkkkkkkkkkkk&apos;
+put &apos;t2&apos;,&quot;k009\09&quot;,&apos;f1:age&apos;,21
+</code></pre><blockquote>
+<p>rowkey需要使用双引号限定</p>
+</blockquote>
+<h2 id="创建phoenix表"><a href="#创建phoenix表" class="headerlink" title="创建phoenix表"></a>创建phoenix表</h2><pre><code>CREATE VIEW &quot;t2&quot; (&quot;k1&quot; VARCHAR,&quot;k2&quot;  VARCHAR,&quot;f1&quot;.&quot;age&quot; VARCHAR,&quot;f1&quot;.&quot;col1&quot; VARCHAR CONSTRAINT PK PRIMARY KEY (&quot;k1&quot;, &quot;k2&quot;));
+
+
+0: jdbc:phoenix:localhost&gt; select * from &quot;t2&quot;;
++--------------+-----+------+---------------------------+
+|      k1      | k2  | age  |           col1            |
++--------------+-----+------+---------------------------+
+| k009         | 9   | 21   | kkkkkkkkkkkkkkkkkkkkkkkk  |
+</code></pre><h1 id="使用phoenix插入数据"><a href="#使用phoenix插入数据" class="headerlink" title="使用phoenix插入数据"></a>使用phoenix插入数据</h1><h2 id="建表-1"><a href="#建表-1" class="headerlink" title="建表"></a>建表</h2><pre><code>0: jdbc:phoenix:localhost&gt; CREATE table &quot;t3&quot; (&quot;k1&quot; VARCHAR,&quot;k2&quot;  VARCHAR,&quot;f1&quot;.&quot;age&quot; VARCHAR,&quot;f1&quot;.&quot;col1&quot; VARCHAR CONSTRAINT PK PRIMARY KEY (&quot;k1&quot;, &quot;k2&quot;));
+No rows affected (0.651 seconds)
+</code></pre><h2 id="插入数据"><a href="#插入数据" class="headerlink" title="插入数据"></a>插入数据</h2><pre><code>0: jdbc:phoenix:localhost&gt; upsert into &quot;t3&quot; values(&apos;k009&apos;,&apos;9&apos;,&apos;29&apos;,&apos;9&apos;);
+1 row affected (0.008 seconds)
+</code></pre><h2 id="查询数据"><a href="#查询数据" class="headerlink" title="查询数据"></a>查询数据</h2><pre><code>0: jdbc:phoenix:localhost&gt; select * from &quot;t3&quot;;
++-------+-----+------+-------+
+|  k1   | k2  | age  | col1  |
++-------+-----+------+-------+
+| k001  | 1   | 20   | 9     |
++-------+-----+------+-------+
+</code></pre>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;建表&quot;&gt;&lt;a href=&quot;#建表&quot; class=&quot;headerlink&quot; title=&quot;建表&quot;&gt;&lt;/a&gt;建表&lt;/h1&gt;&lt;h2 id=&quot;hbase建表&quot;&gt;&lt;a href=&quot;#hbase建表&quot; class=&quot;headerlink&quot; title=&quot;hbase建表&quot;&gt;&lt;/
+    
+    </summary>
+    
+      <category term="hbase" scheme="http://dennis.pathto.top/categories/hbase/"/>
+    
+    
+      <category term="bigdata" scheme="http://dennis.pathto.top/tags/bigdata/"/>
+    
+      <category term="hbase" scheme="http://dennis.pathto.top/tags/hbase/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>8.opentsdb安装</title>
+    <link href="http://dennis.pathto.top/2018/04/25/hbase-8-opentsdb-install/"/>
+    <id>http://dennis.pathto.top/2018/04/25/hbase-8-opentsdb-install/</id>
+    <published>2018-04-24T16:33:37.000Z</published>
+    <updated>2018-04-24T16:33:37.192Z</updated>
+    
+    <content type="html"><![CDATA[<p>Opentsdb安装</p>
+<p>安装环境</p>
+<p>操作系统：CentOS Linux release 7.2.1511 (Core)</p>
+<p>OpenTSDB版本：2.3.0</p>
+<p>JDK版本：1.8.1_101</p>
+<p>Apache HBase版本：1.2.2</p>
+<p>1.从Releases · OpenTSDB/opentsdb · GitHub上选择下载相应的版本，也可以去官网下载都可以，解压Opentsdb安装文件，并且解压文件：</p>
+<pre><code>tar -xvf opentsdb.tar.gz
+cd  opentsdb
+./build.sh 
+</code></pre><p>2.执行完以上命令后，将会在build文件夹下生成一个tsdb.jar,接下来安装</p>
+<pre><code>cd build
+make install
+</code></pre><p>3.操作Opentsdb以及数据存入到Hbase中：</p>
+<p>（1）第一次启动OpenTSDB需要HBase的支持，所以首先需要创建必要的HBase表格，命令如下：</p>
+<pre><code>env COMPRESSION=NONE HBASE_HOME=/usr/local/hbase ./src/create_table.sh 
+</code></pre><p><code>HBASE_HOME</code>必须是你本地安装的HBase的目录，因为<code>OpenTSDB</code>是基于<code>HBase</code>实现的，所以这里要指明HBase的安装路径。这样就会创建出四个表格，分别是<code>tsdb</code>、<code>tsdb-uid</code>、<code>tsdb-tree</code>和<code>tsdb-meta</code>。为了防止<code>opentsdb</code>产生大量的日志，可以在<code>/src/logback.xml</code>中设置一个日志级别。</p>
+<p>（2）启动Opentsdb</p>
+<pre><code>./build/tsdb tsd 执行如下命令启动TSD
+tsdtmp=${TMPDIR-&apos;/tmp&apos;}/tsd 创建临时目录
+mkdir -p &quot;$tsdtmp&quot;
+./build/tsdb tsd --port=4242 --staticroot=build/staticroot --cachedir=&quot;$tsdtmp&quot;
+</code></pre>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Opentsdb安装&lt;/p&gt;
+&lt;p&gt;安装环境&lt;/p&gt;
+&lt;p&gt;操作系统：CentOS Linux release 7.2.1511 (Core)&lt;/p&gt;
+&lt;p&gt;OpenTSDB版本：2.3.0&lt;/p&gt;
+&lt;p&gt;JDK版本：1.8.1_101&lt;/p&gt;
+&lt;p&gt;Apache HBas
+    
+    </summary>
+    
+      <category term="hbase" scheme="http://dennis.pathto.top/categories/hbase/"/>
+    
+    
+      <category term="bigdata" scheme="http://dennis.pathto.top/tags/bigdata/"/>
+    
+      <category term="hbase" scheme="http://dennis.pathto.top/tags/hbase/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>7.hbase运维</title>
+    <link href="http://dennis.pathto.top/2018/04/25/hbase-7-operation/"/>
+    <id>http://dennis.pathto.top/2018/04/25/hbase-7-operation/</id>
+    <published>2018-04-24T16:33:33.000Z</published>
+    <updated>2018-04-24T16:33:33.102Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="文件查看工具hfile"><a href="#文件查看工具hfile" class="headerlink" title="文件查看工具hfile"></a>文件查看工具hfile</h1><p> 查看文本格式Hfile内容</p>
+<pre><code>[root@bigdata01 hbase-0.98.24-hadoop2]# hbase hfile -v -p -f /data/hbase/hbase/data/default/t1/b14eac8d0ab2fed2b3731c41b5e6a70c/f1/6c98c440b02a445f97d3e98edf7e44a9
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [jar:file:/usr/local/src/hbase-0.98.24-hadoop2/lib/slf4j-log4j12-1.6.4.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/usr/local/src/hadoop-2.2.0/share/hadoop/common/lib/slf4j-log4j12-1.7.5.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+2018-04-25 04:56:53,788 INFO  [main] Configuration.deprecation: fs.default.name is deprecated. Instead, use fs.defaultFS
+Scanning -&gt; /data/hbase/hbase/data/default/t1/b14eac8d0ab2fed2b3731c41b5e6a70c/f1/6c98c440b02a445f97d3e98edf7e44a9
+2018-04-25 04:56:53,862 INFO  [main] hfile.CacheConfig: Created cacheConfig: CacheConfig:disabled
+2018-04-25 04:56:53,920 INFO  [main] Configuration.deprecation: hadoop.native.lib is deprecated. Instead, use io.native.lib.available
+2018-04-25 04:56:54,078 INFO  [main] util.ChecksumType: Checksum using org.apache.hadoop.util.PureJavaCrc32
+2018-04-25 04:56:54,079 INFO  [main] util.ChecksumType: Checksum can use org.apache.hadoop.util.PureJavaCrc32C
+K: key002/f1:age/1524237570428/Put/vlen=2/mvcc=0 V: 21
+K: key002/f1:col1/1524237562131/Put/vlen=6/mvcc=0 V: hello1
+Scanned kv count -&gt; 2
+#没有输入-v，只能查看到hfile的汇总信息，-p,表示输出keyvalue的信息
+</code></pre><p>下线节点</p>
+<blockquote>
+<p>关闭负载均衡 balance_switch false<br>graceful_stop.sh HOSTNAME  逐渐减少需要下线节点的负载</p>
+</blockquote>
+<p>滚动重启</p>
+<pre><code>1)运行hbck 确保一致性
+
+hbase hbck
+
+2)重启Master
+hbase-daemon.sh stop master; hbase-daemon.sh start master
+
+3)关闭负载均衡
+
+echo &quot;balance_switch false&quot;|hbase shell
+
+4)每个regionserver 运行 graceful_stop.sh
+
+for i in &apos;cat conf/regionserver|sort&apos;;do graceful_stop.sh --resatrt --reload --debug $i done &amp;&gt;/tmp/log.txt &amp;
+
+5)重启master
+
+6)重启负载均衡
+
+7)运行hbck保证一致性
+</code></pre>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;文件查看工具hfile&quot;&gt;&lt;a href=&quot;#文件查看工具hfile&quot; class=&quot;headerlink&quot; title=&quot;文件查看工具hfile&quot;&gt;&lt;/a&gt;文件查看工具hfile&lt;/h1&gt;&lt;p&gt; 查看文本格式Hfile内容&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[roo
+    
+    </summary>
+    
+      <category term="hbase" scheme="http://dennis.pathto.top/categories/hbase/"/>
+    
+    
+      <category term="bigdata" scheme="http://dennis.pathto.top/tags/bigdata/"/>
+    
+      <category term="hbase" scheme="http://dennis.pathto.top/tags/hbase/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>6.hbase0.98命令</title>
+    <link href="http://dennis.pathto.top/2018/04/25/hbase-6-0.98-commod/"/>
+    <id>http://dennis.pathto.top/2018/04/25/hbase-6-0.98-commod/</id>
+    <published>2018-04-24T16:33:29.000Z</published>
+    <updated>2018-04-24T16:33:29.026Z</updated>
+    
+    <content type="html"><![CDATA[<p>hbase0.98版本和habse1.x版本是不一样的，在hbase0.98版本中，如果表还没有见</p>
+<pre><code>ERROR: Failed 1 action: user: 1 time, servers with issues: null location, 
+
+Here is some help for this command:
+Put a cell &apos;value&apos; at specified table/row/column and optionally
+timestamp coordinates.  To put a cell value into table &apos;ns1:t1&apos; or &apos;t1&apos;
+at row &apos;r1&apos; under column &apos;c1&apos; marked with the time &apos;ts1&apos;, do:
+
+  hbase&gt; put &apos;ns1:t1&apos;, &apos;r1&apos;, &apos;c1&apos;, &apos;value&apos;
+  hbase&gt; put &apos;t1&apos;, &apos;r1&apos;, &apos;c1&apos;, &apos;value&apos;
+  hbase&gt; put &apos;t1&apos;, &apos;r1&apos;, &apos;c1&apos;, &apos;value&apos;, ts1
+  hbase&gt; put &apos;t1&apos;, &apos;r1&apos;, &apos;c1&apos;, &apos;value&apos;, {ATTRIBUTES=&gt;{&apos;mykey&apos;=&gt;&apos;myvalue&apos;}}
+  hbase&gt; put &apos;t1&apos;, &apos;r1&apos;, &apos;c1&apos;, &apos;value&apos;, ts1, {ATTRIBUTES=&gt;{&apos;mykey&apos;=&gt;&apos;myvalue&apos;}}
+  hbase&gt; put &apos;t1&apos;, &apos;r1&apos;, &apos;c1&apos;, &apos;value&apos;, ts1, {VISIBILITY=&gt;&apos;PRIVATE|SECRET&apos;}
+
+The same commands also can be run on a table reference. Suppose you had a reference
+t to table &apos;t1&apos;, the corresponding command would be:
+
+  hbase&gt; t.put &apos;r1&apos;, &apos;c1&apos;, &apos;value&apos;, ts1, {ATTRIBUTES=&gt;{&apos;mykey&apos;=&gt;&apos;myvalue&apos;}}
+</code></pre><p>进入hbase shell console<br>$HBASE_HOME/bin/hbase shell<br>如果有kerberos认证，需要事先使用相应的keytab进行一下认证（使用kinit命令），认证成功之后再使用hbase shell进入可以使用whoami命令可查看当前用户<br>hbase(main)&gt; whoami<br>表的管理<br>1）查看有哪些表<br>hbase(main)&gt; list<br>2）创建表</p>
+<h1 id="语法：create-NAME-gt-VERSIONS-gt"><a href="#语法：create-NAME-gt-VERSIONS-gt" class="headerlink" title="语法：create , {NAME =&gt; , VERSIONS =&gt; }"></a>语法：create <table>, {NAME =&gt; <family>, VERSIONS =&gt; <versions>}</versions></family></table></h1><h1 id="例如：创建表t1，有两个family-name：f1，f2，且版本数均为2"><a href="#例如：创建表t1，有两个family-name：f1，f2，且版本数均为2" class="headerlink" title="例如：创建表t1，有两个family name：f1，f2，且版本数均为2"></a>例如：创建表t1，有两个family name：f1，f2，且版本数均为2</h1><p>hbase(main)&gt; create ‘t1’,{NAME =&gt; ‘f1’, VERSIONS =&gt; 2},{NAME =&gt; ‘f2’, VERSIONS =&gt; 2}<br>3）删除表<br>分两步：首先disable，然后drop<br>例如：删除表t1</p>
+<p>hbase(main)&gt; disable ‘t1’<br>hbase(main)&gt; drop ‘t1’<br>4）查看表的结构</p>
+<h1 id="语法：describe"><a href="#语法：describe" class="headerlink" title="语法：describe "></a>语法：describe <table></table></h1><h1 id="例如：查看表t1的结构"><a href="#例如：查看表t1的结构" class="headerlink" title="例如：查看表t1的结构"></a>例如：查看表t1的结构</h1><p>hbase(main)&gt; describe ‘t1’<br>5）修改表结构<br>修改表结构必须先disable</p>
+<h1 id="语法：alter-‘t1’-NAME-gt-‘f1’-NAME-gt-‘f2’-METHOD-gt-‘delete’"><a href="#语法：alter-‘t1’-NAME-gt-‘f1’-NAME-gt-‘f2’-METHOD-gt-‘delete’" class="headerlink" title="语法：alter ‘t1’, {NAME =&gt; ‘f1’}, {NAME =&gt; ‘f2’, METHOD =&gt; ‘delete’}"></a>语法：alter ‘t1’, {NAME =&gt; ‘f1’}, {NAME =&gt; ‘f2’, METHOD =&gt; ‘delete’}</h1><h1 id="例如：修改表test1的cf的TTL为180天"><a href="#例如：修改表test1的cf的TTL为180天" class="headerlink" title="例如：修改表test1的cf的TTL为180天"></a>例如：修改表test1的cf的TTL为180天</h1><p>hbase(main)&gt; disable ‘test1’<br>hbase(main)&gt; alter ‘test1’,{NAME=&gt;’body’,TTL=&gt;’15552000’},{NAME=&gt;’meta’, TTL=&gt;’15552000’}<br>hbase(main)&gt; enable ‘test1’<br>权限管理<br>1）分配权限</p>
+<h1 id="语法-grant-参数后面用逗号分隔"><a href="#语法-grant-参数后面用逗号分隔" class="headerlink" title="语法 : grant      参数后面用逗号分隔"></a>语法 : grant <user> <permissions> <table> <column family=""> <column qualifier=""> 参数后面用逗号分隔</column></column></table></permissions></user></h1><h1 id="权限用五个字母表示：-“RWXCA”"><a href="#权限用五个字母表示：-“RWXCA”" class="headerlink" title="权限用五个字母表示： “RWXCA”."></a>权限用五个字母表示： “RWXCA”.</h1><h1 id="READ-‘R’-WRITE-‘W’-EXEC-‘X’-CREATE-‘C’-ADMIN-‘A’"><a href="#READ-‘R’-WRITE-‘W’-EXEC-‘X’-CREATE-‘C’-ADMIN-‘A’" class="headerlink" title="READ(‘R’), WRITE(‘W’), EXEC(‘X’), CREATE(‘C’), ADMIN(‘A’)"></a>READ(‘R’), WRITE(‘W’), EXEC(‘X’), CREATE(‘C’), ADMIN(‘A’)</h1><h1 id="例如，给用户‘test’分配对表t1有读写的权限，"><a href="#例如，给用户‘test’分配对表t1有读写的权限，" class="headerlink" title="例如，给用户‘test’分配对表t1有读写的权限，"></a>例如，给用户‘test’分配对表t1有读写的权限，</h1><p>hbase(main)&gt; grant ‘test’,’RW’,’t1’<br>2）查看权限</p>
+<h1 id="语法：user-permission"><a href="#语法：user-permission" class="headerlink" title="语法：user_permission "></a>语法：user_permission <table></table></h1><h1 id="例如，查看表t1的权限列表"><a href="#例如，查看表t1的权限列表" class="headerlink" title="例如，查看表t1的权限列表"></a>例如，查看表t1的权限列表</h1><p>hbase(main)&gt; user_permission ‘t1’<br>3）收回权限</p>
+<h1 id="与分配权限类似，语法：revoke"><a href="#与分配权限类似，语法：revoke" class="headerlink" title="与分配权限类似，语法：revoke    "></a>与分配权限类似，语法：revoke <user> <table> <column family=""> <column qualifier=""></column></column></table></user></h1><h1 id="例如，收回test用户在表t1上的权限"><a href="#例如，收回test用户在表t1上的权限" class="headerlink" title="例如，收回test用户在表t1上的权限"></a>例如，收回test用户在表t1上的权限</h1><p>hbase(main)&gt; revoke ‘test’,’t1’<br>表数据的增删改查<br>1）添加数据</p>
+<h1 id="语法：put"><a href="#语法：put" class="headerlink" title="语法：put ,,,,"></a>语法：put <table>,<rowkey>,<family:column>,<value>,<timestamp></timestamp></value></family:column></rowkey></table></h1><h1 id="例如：给表t1的添加一行记录：rowkey是rowkey001，family-name：f1，column-name：col1，value：value01，timestamp：系统默认"><a href="#例如：给表t1的添加一行记录：rowkey是rowkey001，family-name：f1，column-name：col1，value：value01，timestamp：系统默认" class="headerlink" title="例如：给表t1的添加一行记录：rowkey是rowkey001，family name：f1，column name：col1，value：value01，timestamp：系统默认"></a>例如：给表t1的添加一行记录：rowkey是rowkey001，family name：f1，column name：col1，value：value01，timestamp：系统默认</h1><p>hbase(main)&gt; put ‘t1’,’rowkey001’,’f1:col1’,’value01’<br>用法比较单一。<br>2）查询数据<br>a）查询某行记录</p>
+<h1 id="语法：get-…"><a href="#语法：get-…" class="headerlink" title="语法：get ,,[,….]"></a>语法：get <table>,<rowkey>,[<family:column>,….]</family:column></rowkey></table></h1><h1 id="例如：查询表t1，rowkey001中的f1下的col1的值"><a href="#例如：查询表t1，rowkey001中的f1下的col1的值" class="headerlink" title="例如：查询表t1，rowkey001中的f1下的col1的值"></a>例如：查询表t1，rowkey001中的f1下的col1的值</h1><p>hbase(main)&gt; get ‘t1’,’rowkey001’, ‘f1:col1’</p>
+<h1 id="或者："><a href="#或者：" class="headerlink" title="或者："></a>或者：</h1><p>hbase(main)&gt; get ‘t1’,’rowkey001’, {COLUMN=&gt;’f1:col1’}</p>
+<h1 id="查询表t1，rowke002中的f1下的所有列值"><a href="#查询表t1，rowke002中的f1下的所有列值" class="headerlink" title="查询表t1，rowke002中的f1下的所有列值"></a>查询表t1，rowke002中的f1下的所有列值</h1><p>hbase(main)&gt; get ‘t1’,’rowkey001’<br>b）扫描表</p>
+<h1 id="语法：scan-COLUMNS-gt-…-LIMIT-gt-num"><a href="#语法：scan-COLUMNS-gt-…-LIMIT-gt-num" class="headerlink" title="语法：scan , {COLUMNS =&gt; [ ,…. ], LIMIT =&gt; num}"></a>语法：scan <table>, {COLUMNS =&gt; [ <family:column>,…. ], LIMIT =&gt; num}</family:column></table></h1><h1 id="另外，还可以添加STARTROW、TIMERANGE和FITLER等高级功能"><a href="#另外，还可以添加STARTROW、TIMERANGE和FITLER等高级功能" class="headerlink" title="另外，还可以添加STARTROW、TIMERANGE和FITLER等高级功能"></a>另外，还可以添加STARTROW、TIMERANGE和FITLER等高级功能</h1><h1 id="例如：扫描表t1的前5条数据"><a href="#例如：扫描表t1的前5条数据" class="headerlink" title="例如：扫描表t1的前5条数据"></a>例如：扫描表t1的前5条数据</h1><p>hbase(main)&gt; scan ‘t1’,{LIMIT=&gt;5}<br>c）查询表中的数据行数</p>
+<h1 id="语法：count-INTERVAL-gt-intervalNum-CACHE-gt-cacheNum"><a href="#语法：count-INTERVAL-gt-intervalNum-CACHE-gt-cacheNum" class="headerlink" title="语法：count , {INTERVAL =&gt; intervalNum, CACHE =&gt; cacheNum}"></a>语法：count <table>, {INTERVAL =&gt; intervalNum, CACHE =&gt; cacheNum}</table></h1><h1 id="INTERVAL设置多少行显示一次及对应的rowkey，默认1000；CACHE每次去取的缓存区大小，默认是10，调整该参数可提高查询速度"><a href="#INTERVAL设置多少行显示一次及对应的rowkey，默认1000；CACHE每次去取的缓存区大小，默认是10，调整该参数可提高查询速度" class="headerlink" title="INTERVAL设置多少行显示一次及对应的rowkey，默认1000；CACHE每次去取的缓存区大小，默认是10，调整该参数可提高查询速度"></a>INTERVAL设置多少行显示一次及对应的rowkey，默认1000；CACHE每次去取的缓存区大小，默认是10，调整该参数可提高查询速度</h1><h1 id="例如，查询表t1中的行数，每100条显示一次，缓存区为500"><a href="#例如，查询表t1中的行数，每100条显示一次，缓存区为500" class="headerlink" title="例如，查询表t1中的行数，每100条显示一次，缓存区为500"></a>例如，查询表t1中的行数，每100条显示一次，缓存区为500</h1><p>hbase(main)&gt; count ‘t1’, {INTERVAL =&gt; 100, CACHE =&gt; 500}<br>3）删除数据<br>a )删除行中的某个列值</p>
+<h1 id="语法：delete-必须指定列名"><a href="#语法：delete-必须指定列名" class="headerlink" title="语法：delete , ,   , ,必须指定列名"></a>语法：delete <table>, <rowkey>,  <family:column> , <timestamp>,必须指定列名</timestamp></family:column></rowkey></table></h1><h1 id="例如：删除表t1，rowkey001中的f1-col1的数据"><a href="#例如：删除表t1，rowkey001中的f1-col1的数据" class="headerlink" title="例如：删除表t1，rowkey001中的f1:col1的数据"></a>例如：删除表t1，rowkey001中的f1:col1的数据</h1><p>hbase(main)&gt; delete ‘t1’,’rowkey001’,’f1:col1’<br>注：将删除改行f1:col1列所有版本的数据<br>b )删除行</p>
+<h1 id="语法：deleteall-，可以不指定列名，删除整行数据"><a href="#语法：deleteall-，可以不指定列名，删除整行数据" class="headerlink" title="语法：deleteall , ,   , ，可以不指定列名，删除整行数据"></a>语法：deleteall <table>, <rowkey>,  <family:column> , <timestamp>，可以不指定列名，删除整行数据</timestamp></family:column></rowkey></table></h1><h1 id="例如：删除表t1，rowk001的数据"><a href="#例如：删除表t1，rowk001的数据" class="headerlink" title="例如：删除表t1，rowk001的数据"></a>例如：删除表t1，rowk001的数据</h1><p>hbase(main)&gt; deleteall ‘t1’,’rowkey001’<br>c）删除表中的所有数据</p>
+<h1 id="语法：-truncate"><a href="#语法：-truncate" class="headerlink" title="语法： truncate "></a>语法： truncate <table></table></h1><h1 id="其具体过程是：disable-table-gt-drop-table-gt-create-table"><a href="#其具体过程是：disable-table-gt-drop-table-gt-create-table" class="headerlink" title="其具体过程是：disable table -&gt; drop table -&gt; create table"></a>其具体过程是：disable table -&gt; drop table -&gt; create table</h1><h1 id="例如：删除表t1的所有数据"><a href="#例如：删除表t1的所有数据" class="headerlink" title="例如：删除表t1的所有数据"></a>例如：删除表t1的所有数据</h1><p>hbase(main)&gt; truncate ‘t1’<br>Region管理<br>1）移动region</p>
+<h1 id="语法：move-‘encodeRegionName’-‘ServerName’"><a href="#语法：move-‘encodeRegionName’-‘ServerName’" class="headerlink" title="语法：move ‘encodeRegionName’, ‘ServerName’"></a>语法：move ‘encodeRegionName’, ‘ServerName’</h1><h1 id="encodeRegionName指的regioName后面的编码，ServerName指的是master-status的Region-Servers列表"><a href="#encodeRegionName指的regioName后面的编码，ServerName指的是master-status的Region-Servers列表" class="headerlink" title="encodeRegionName指的regioName后面的编码，ServerName指的是master-status的Region Servers列表"></a>encodeRegionName指的regioName后面的编码，ServerName指的是master-status的Region Servers列表</h1><h1 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h1><p>hbase(main)&gt;move ‘4343995a58be8e5bbc739af1e91cd72d’, ‘db-41.xxx.xxx.org,60020,1390274516739’<br>2）开启/关闭region</p>
+<h1 id="语法：balance-switch-true-false"><a href="#语法：balance-switch-true-false" class="headerlink" title="语法：balance_switch true|false"></a>语法：balance_switch true|false</h1><p>hbase(main)&gt; balance_switch<br>3）手动split</p>
+<h1 id="语法：split-‘regionName’-‘splitKey’"><a href="#语法：split-‘regionName’-‘splitKey’" class="headerlink" title="语法：split ‘regionName’, ‘splitKey’"></a>语法：split ‘regionName’, ‘splitKey’</h1><p>4）手动触发major compaction</p>
+<p>#语法：</p>
+<p>#Compact all regions in a table:</p>
+<p>#hbase&gt; major_compact ‘t1’</p>
+<p>#Compact an entire region:</p>
+<p>#hbase&gt; major_compact ‘r1’</p>
+<p>#Compact a single column family within a region:</p>
+<p>#hbase&gt; major_compact ‘r1’, ‘c1’</p>
+<p>#Compact a single column family within a table:</p>
+<p>#hbase&gt; major_compact ‘t1’, ‘c1’<br>配置管理及节点重启<br>1）修改hdfs配置<br>hdfs配置位置：/etc/hadoop/conf</p>
+<h1 id="同步hdfs配置"><a href="#同步hdfs配置" class="headerlink" title="同步hdfs配置"></a>同步hdfs配置</h1><p>cat /home/hadoop/slaves|xargs -i -t scp /etc/hadoop/conf/hdfs-site.xml hadoop@{}:/etc/hadoop/conf/hdfs-site.xml</p>
+<p>#关闭：<br>cat /home/hadoop/slaves|xargs -i -t ssh hadoop@{} “sudo /home/hadoop/cdh4/hadoop-2.0.0-cdh4.2.1/sbin/hadoop-daemon.sh –config /etc/hadoop/conf stop datanode”</p>
+<p>#启动：<br>cat /home/hadoop/slaves|xargs -i -t ssh hadoop@{} “sudo /home/hadoop/cdh4/hadoop-2.0.0-cdh4.2.1/sbin/hadoop-daemon.sh –config /etc/hadoop/conf start datanode”<br>2）修改hbase配置<br>hbase配置位置：</p>
+<h1 id="同步hbase配置"><a href="#同步hbase配置" class="headerlink" title="同步hbase配置"></a>同步hbase配置</h1><p>cat /home/hadoop/hbase/conf/regionservers|xargs -i -t scp /home/hadoop/hbase/conf/hbase-site.xml hadoop@{}:/home/hadoop/hbase/conf/hbase-site.xml</p>
+<h1 id="graceful重启"><a href="#graceful重启" class="headerlink" title="graceful重启"></a>graceful重启</h1><p>cd ~/hbase<br>bin/graceful_stop.sh –restart –reload –debug inspurXXX.xxx.xxx.org</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;hbase0.98版本和habse1.x版本是不一样的，在hbase0.98版本中，如果表还没有见&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ERROR: Failed 1 action: user: 1 time, servers with issues: null location
+    
+    </summary>
+    
+      <category term="hbase" scheme="http://dennis.pathto.top/categories/hbase/"/>
+    
+    
+      <category term="bigdata" scheme="http://dennis.pathto.top/tags/bigdata/"/>
+    
+      <category term="hbase" scheme="http://dennis.pathto.top/tags/hbase/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>hbase-6-0.98-commod</title>
+    <link href="http://dennis.pathto.top/2018/04/25/hbase-6-0-98-commod/"/>
+    <id>http://dennis.pathto.top/2018/04/25/hbase-6-0-98-commod/</id>
+    <published>2018-04-24T16:33:26.000Z</published>
+    <updated>2018-04-24T16:33:26.967Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>5.Hbase Region的拆分和合并</title>
+    <link href="http://dennis.pathto.top/2018/04/25/hbase-5-split-compact/"/>
+    <id>http://dennis.pathto.top/2018/04/25/hbase-5-split-compact/</id>
+    <published>2018-04-24T16:33:24.000Z</published>
+    <updated>2018-04-24T16:33:24.933Z</updated>
+    
+    <content type="html"><![CDATA[<p>Split拆分</p>
+<pre><code>说明：
+Split entire table or pass a region to split individual region.  With the 
+second parameter, you can specify an explicit split key for the region.  
+Examples:
+split &apos;tableName&apos;
+split &apos;namespace:tableName&apos;
+split &apos;regionName&apos; # format: &apos;tableName,startKey,id&apos;
+split &apos;tableName&apos;, &apos;splitKey&apos;
+split &apos;regionName&apos;, &apos;splitKey&apos;
+</code></pre><p>首先执行scan ‘hbase:meta’查看元数据，共有三条记录</p>
+<pre><code>hbase(main):001:0&gt; scan &apos;hbase:meta&apos;
+ROW  COLUMN+CELL 
+ hbase:namespace,,15 column=info:regioninfo, timestamp=1500279250104, value={
+ 00279203600.844a078 ENCODED =&gt; 844a078aa357b6e4bf848b42ce46a713, NAME =&gt; &apos;hb
+ aa357b6e4bf848b42ce ase:namespace,,1500279203600.844a078aa357b6e4bf848b42ce4
+ 46a713. 6a713.&apos;, STARTKEY =&gt; &apos;&apos;, ENDKEY =&gt; &apos;&apos;}  
+ hbase:namespace,,15 column=info:seqnumDuringOpen, timestamp=1500279210909, v
+ 00279203600.844a078 alue=\x00\x00\x00\x00\x00\x00\x00\x02   
+ aa357b6e4bf848b42ce 
+ 46a713. 
+ hbase:namespace,,15 column=info:server, timestamp=1500279210909, value=maste
+ 00279203600.844a078 r:16020 
+ aa357b6e4bf848b42ce 
+ 46a713. 
+ hbase:namespace,,15 column=info:serverstartcode, timestamp=1500279210909, va
+ 00279203600.844a078 lue=1500279162649   
+ aa357b6e4bf848b42ce 
+ 46a713. 
+ test,,1500293557739 column=info:regioninfo, timestamp=1500293644890, value={
+ .e686fd30012f1c4cb6 ENCODED =&gt; e686fd30012f1c4cb6d78a241d911202, NAME =&gt; &apos;te
+ d78a241d911202. st,,1500293557739.e686fd30012f1c4cb6d78a241d911202.&apos;, ST
+ ARTKEY =&gt; &apos;&apos;, ENDKEY =&gt; &apos;&apos;} 
+ test,,1500293557739 column=info:seqnumDuringOpen, timestamp=1500293644890, v
+ .e686fd30012f1c4cb6 alue=\x00\x00\x00\x00\x00\x00\x00\x02   
+ d78a241d911202. 
+ test,,1500293557739 column=info:server, timestamp=1500293644890, value=slave
+ .e686fd30012f1c4cb6 1:16020 
+ d78a241d911202. 
+ test,,1500293557739 column=info:serverstartcode, timestamp=1500293644890, va
+ .e686fd30012f1c4cb6 lue=1500279205588   
+ d78a241d911202. 
+ test1,,150028521182 column=info:regioninfo, timestamp=1500288301234, value={
+ 0.ee4ccd1877cf2d579 ENCODED =&gt; ee4ccd1877cf2d5793b41f62a1552257, NAME =&gt; &apos;te
+ 3b41f62a1552257.st1,,1500285211820.ee4ccd1877cf2d5793b41f62a1552257.&apos;, S
+ TARTKEY =&gt; &apos;&apos;, ENDKEY =&gt; &apos;&apos;}
+ test1,,150028521182 column=info:seqnumDuringOpen, timestamp=1500288301234, v
+ 0.ee4ccd1877cf2d579 alue=\x00\x00\x00\x00\x00\x00\x00\x03   
+ 3b41f62a1552257.
+ test1,,150028521182 column=info:server, timestamp=1500288301234, value=maste
+ 0.ee4ccd1877cf2d579 r:16020 
+ 3b41f62a1552257.
+ test1,,150028521182 column=info:serverstartcode, timestamp=1500288301234, va
+ 0.ee4ccd1877cf2d579 lue=1500279162649   
+ 3b41f62a1552257.
+3 row(s) in 2.0130 seconds
+</code></pre><p>然后执行 split ‘test’</p>
+<pre><code>hbase(main):003:0&gt; split &apos;test&apos;
+0 row(s) in 1.4880 seconds
+</code></pre><p>执行scan ‘hbase:meta’查看元数据，结果为5条记录证明正在拆分</p>
+<p>再次执行scan ‘hbase:meta’查看元数据，共有四条记录，证明拆分完成</p>
+<p>merge_region合并</p>
+<p>说明：</p>
+<pre><code>hbase(main):001:0&gt; help &apos;merge_region&apos;
+Merge two regions. Passing &apos;true&apos; as the optional third parameter will force
+a merge (&apos;force&apos; merges regardless else merge will fail unless passed
+adjacent regions. &apos;force&apos; is for expert use only).
+
+NOTE: You must pass the encoded region name, not the full region name so
+this command is a little different from other region operations.  The encoded
+region name is the hash suffix on region names: e.g. if the region name were
+TestTable,0094429456,1289497600452.527db22f95c8a9e0116f0cc13c680396. then
+the encoded region name portion is 527db22f95c8a9e0116f0cc13c680396
+
+Examples:
+
+  hbase&gt; merge_region &apos;ENCODED_REGIONNAME&apos;, &apos;ENCODED_REGIONNAME&apos;
+  hbase&gt; merge_region &apos;ENCODED_REGIONNAME&apos;, &apos;ENCODED_REGIONNAME&apos;, true
+</code></pre><p>合并示例</p>
+<pre><code>hbase(main):002:0&gt; merge_region &apos;85ccd1a431c1f9c2736beeb544466616&apos;,&apos;234da87a49b63975c21b5b5f9c076b10&apos;,true
+0 row(s) in 2.1020 seconds
+</code></pre><p>再次执行scan ‘hbase:meta’查看元数据，共有三条记录，证明合并完成</p>
+<p>Region拆分策略<br>Region 概念<br>Region是表获取和分布的基本元素，由每个列族的一个Store组成。对象层级图如下：</p>
+<pre><code>Table       (HBase table)
+
+  Region       (Regions for the table)
+       Store          (Store per ColumnFamily for each Region for the table)
+
+           MemStore        (MemStore for each Store for each Region for the table)
+
+             StoreFile       (StoreFiles for each Store for each Region for the table)
+
+                 Block     (Blocks within a StoreFile within a Store for each Region for the table)
+</code></pre><ul>
+<li>Region 大小</li>
+</ul>
+<p>Region的大小是一个棘手的问题，需要考量如下几个因素。</p>
+<p>Region是HBase中分布式存储和负载均衡的最小单元。不同Region分布到不同RegionServer上，但并不是存储的最小单元。</p>
+<p>Region由一个或者多个Store组成，每个store保存一个columns family，每个Strore又由一个memStore和0至多个StoreFile 组成。memStore存储在内存中， StoreFile存储在HDFS上。<br>HBase通过将region切分在许多机器上实现分布式。也就是说，你如果有16GB的数据，只分了2个region， 你却有20台机器，有18台就浪费了。<br>region数目太多就会造成性能下降，现在比以前好多了。但是对于同样大小的数据，700个region比3000个要好。</p>
+<p>region数目太少就会妨碍可扩展性，降低并行能力。有的时候导致压力不够分散。这就是为什么，你向一个10节点的HBase集群导入200MB的数据，大部分的节点是idle的。</p>
+<p>RegionServer中1个region和10个region索引需要的内存量没有太多的差别。</p>
+<p>最好是使用默认的配置，可以把热的表配小一点(或者受到split热点的region把压力分散到集群中)。如果你的cell的大小比较大(100KB或更大)，就可以把region的大小调到1GB。region的最大大小在hbase配置文件中定义：</p>
+<pre><code>&lt;property&gt;
+   &lt;name&gt;hbase.hregion.max.filesize&lt;/name&gt;
+   &lt;value&gt;10 * 1024 * 1024 * 1024&lt;/value&gt;
+ &lt;/property&gt;
+</code></pre><p>说明：</p>
+<p>当region中的StoreFile大小超过了上面配置的值的时候，该region就会被拆分，具体的拆分策略见下文。</p>
+<p>上面的值也可以针对每个表单独设置，例如在hbase shell中设置：</p>
+<pre><code>create &apos;t&apos;,&apos;f&apos;
+disable &apos;t&apos;
+alter &apos;t&apos;, METHOD =&gt; &apos;table_att&apos;, MAX_FILESIZE =&gt; &apos;134217728&apos;
+enable &apos;t&apos;
+</code></pre><p>Region 拆分策略<br>Region的分割操作是不可见的，因为Master不会参与其中。RegionServer拆分region的步骤是，先将该region下线，然后拆分，将其子region加入到META元信息中，再将他们加入到原本的RegionServer中，最后汇报Master。</p>
+<p>执行split的线程是CompactSplitThread。</p>
+<p>自定义拆分策略<br>可以通过设置RegionSplitPolicy的实现类来指定拆分策略，RegionSplitPolicy类的实现类有：</p>
+<pre><code>ConstantSizeRegionSplitPolicy
+    IncreasingToUpperBoundRegionSplitPolicy
+        DelimitedKeyPrefixRegionSplitPolicy
+        KeyPrefixRegionSplitPolicy
+</code></pre><p>对于split，并不是设置了hbase.hregion.max.filesize（默认10G）为很大就保证不split了，需要有以下的算法：</p>
+<p>IncreasingToUpperBoundRegionSplitPolicy，0.94.0默认region split策略。根据公式min(r^2*flushSize，maxFileSize)确定split的maxFileSize，其中r为在线region个数，maxFileSize由hbase.hregion.max.filesize指定。</p>
+<p>ConstantSizeRegionSplitPolicy，仅仅当region大小超过常量值（hbase.hregion.max.filesize大小）时，才进行拆分。</p>
+<p>DelimitedKeyPrefixRegionSplitPolicy，保证以分隔符前面的前缀为splitPoint，保证相同RowKey前缀的数据在一个Region中</p>
+<p>KeyPrefixRegionSplitPolicy，保证具有相同前缀的row在一个region中（要求设计中前缀具有同样长度）。指定rowkey前缀位数划分region，通过读取table的prefix_split_key_policy.prefix_length属性，该属性为数字类型，表示前缀长度，在进行split时，按此长度对splitPoint进行截取。此种策略比较适合固定前缀的rowkey。当table中没有设置该属性，或其属性不为Integer类型时，指定此策略效果等同与使用IncreasingToUpperBoundRegionSplitPolicy。</p>
+<p>IncreasingToUpperBoundRegionSplitPolicy</p>
+<p>这是0.94.0默认region split策略。根据根据公式min(r^2*flushSize，maxFileSize)确定split的maxFileSize，这里假设flushSize为128M：</p>
+<pre><code>第一次拆分大小为：min(10G，1*1*128M)=128M 
+第二次拆分大小为：min(10G，3*3*128M)=1152M 
+第三次拆分大小为：min(10G，5*5*128M)=3200M 
+第四次拆分大小为：min(10G，7*7*128M)=6272M 
+第五次拆分大小为：min(10G，9*9*128M)=10G 
+第五次拆分大小为：min(10G，11*11*128M)=10G 
+可以看到，只有在第四次之后的拆分大小才为10G
+</code></pre><p>配置拆分策略<br>你可以在hbase配置文件中定义全局的拆分策略，设置hbase.regionserver.region.split.policy的值即可，也可以在创建和修改表时候指定：</p>
+<p>// 更新现有表的split策略</p>
+<pre><code>HBaseAdmin admin = new HBaseAdmin( conf);
+HTable hTable = new HTable( conf, &quot;test&quot; );
+HTableDescriptor htd = hTable.getTableDescriptor();
+HTableDescriptor newHtd = new HTableDescriptor(htd);
+newHtd.setValue(HTableDescriptor. SPLIT_POLICY, KeyPrefixRegionSplitPolicy.class .getName());// 指定策略
+newHtd.setValue(&quot;prefix_split_key_policy.prefix_length&quot;, &quot;2&quot;);
+newHtd.setValue(&quot;MEMSTORE_FLUSHSIZE&quot;, &quot;5242880&quot;); // 5M
+admin.disableTable( &quot;test&quot;);
+admin.modifyTable(Bytes. toBytes(&quot;test&quot;), newHtd);
+admin.enableTable( &quot;test&quot;);
+</code></pre><p>说明：</p>
+<p>上面的不同策略可以在不同的业务场景下使用，特别是第三种和第四种一般关注和使用的比较少。<br>如果想关闭自动拆分改为手动拆分，建议同时修改hbase.hregion.max.filesize和hbase.regionserver.region.split.policy值。</p>
+<p>编程实现table和Region的拆分合并<br>1、拆分</p>
+<pre><code>public static Configuration conf = null;
+public static Connection conn = null;
+
+/**
+ * 运行时创建静态程序块
+ */
+static {
+    try {
+        // 新型API创建连接
+        conf = HBaseConfiguration.create();
+        conn = ConnectionFactory.createConnection(conf);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+
+}
+
+public static void main(String[] args) throws Exception {
+    findRegions();
+    splitTable();
+}
+
+/**
+ * 查询区域
+ * @throws IOException
+ */
+public static void findRegions() throws IOException{
+    Admin admin = conn.getAdmin();
+    List&lt;HRegionInfo&gt; list = admin.getTableRegions(TableName.valueOf(&quot;test&quot;));
+    System.out.println(list.size());
+}
+
+/**
+ * 拆分表
+ * @throws IOException
+ */
+public static void splitTable() throws IOException{
+    Admin admin = conn.getAdmin();
+    admin.split(TableName.valueOf(&quot;test&quot;));
+    System.out.println(&quot;拆分表成功&quot;);
+}
+</code></pre><p>2、部分结果</p>
+<pre><code>2017-07-17 23:04:58,623 INFO  [main-SendThread(slave2:2181)] zookeeper.ClientCnxn: Session establishment complete on server slave2/192.168.1.153:2181, sessionid = 0x15d502879ab0004, negotiated timeout = 90000
+2017-07-17 23:04:59,790 INFO  [main-EventThread] zookeeper.ClientCnxn: EventThread shut down
+2017-07-17 23:04:59,792 INFO  [main] zookeeper.ZooKeeper: Session: 0x15d502879ab0004 closed
+1
+2017-07-17 23:04:59,817 INFO  [main] zookeeper.RecoverableZooKeeper: Process identifier=hbase-admin-on-hconnection-0x397fbdb connecting to ZooKeeper ensemble=slave1:2181,slave2:2181
+2017-07-17 23:04:59,818 INFO  [main] zookeeper.ZooKeeper: Initiating client connection, connectString=slave1:2181,slave2:2181 sessionTimeout=90000 watcher=hbase-admin-on-hconnection-0x397fbdb0x0, quorum=slave1:2181,slave2:2181, baseZNode=/hbase
+2017-07-17 23:04:59,824 INFO  [main-SendThread(slave2:2181)] zookeeper.ClientCnxn: Opening socket connection to server slave2/192.168.1.153:2181. Will not attempt to authenticate using SASL (unknown error)
+2017-07-17 23:04:59,827 INFO  [main-SendThread(slave2:2181)] zookeeper.ClientCnxn: Socket connection established to slave2/192.168.1.153:2181, initiating session
+2017-07-17 23:04:59,871 INFO  [main-SendThread(slave2:2181)] zookeeper.ClientCnxn: Session establishment complete on server slave2/192.168.1.153:2181, sessionid = 0x15d502879ab0005, negotiated timeout = 90000
+2017-07-17 23:05:00,008 INFO  [main] zookeeper.ZooKeeper: Session: 0x15d502879ab0005 closed
+</code></pre><p>拆分成功<br>2017-07-17 23:05:00,009 INFO  [main-EventThread] zookeeper.ClientCnxn: EventThread shut down<br>3、执行echo “scan ‘hbase:meta’” | hbase shell查看元数据，共有四条记录，证明拆分完成</p>
+<p>4、拆分区域添加如下代码</p>
+<pre><code>/**
+ * 拆分区域
+ * @throws IOException
+ */
+public static void splitRegion() throws IOException{
+    Admin admin = conn.getAdmin();
+    admin.splitRegion(converBytes(&quot;855cd5b9660a1dd68757ef8344902ab2&quot;));
+    System.out.println(&quot;拆分区域成功&quot;);
+}
+</code></pre><p>5、合并区域添加如下代码</p>
+<pre><code>/**
+ * 合并区域
+ * @throws IOException
+ */
+public static void splitMerge_region() throws IOException{
+    Admin admin = conn.getAdmin();
+    admin.mergeRegions(converBytes(&quot;855cd5b9660a1dd68757ef8344902ab2&quot;), converBytes(&quot;ed234e41da5b3ea3fdffec840e8eb29c&quot;), true);
+    System.out.println(&quot;合并区域成功&quot;);
+}
+</code></pre>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Split拆分&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;说明：
+Split entire table or pass a region to split individual region.  With the 
+second parameter, you can specify a
+    
+    </summary>
+    
+      <category term="hbase" scheme="http://dennis.pathto.top/categories/hbase/"/>
+    
+    
+      <category term="bigdata" scheme="http://dennis.pathto.top/tags/bigdata/"/>
+    
+      <category term="hbase" scheme="http://dennis.pathto.top/tags/hbase/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>4.HBase常用操作之namespace</title>
+    <link href="http://dennis.pathto.top/2018/04/25/hbase-4-namespace/"/>
+    <id>http://dennis.pathto.top/2018/04/25/hbase-4-namespace/</id>
+    <published>2018-04-24T16:33:20.000Z</published>
+    <updated>2018-04-24T16:33:20.854Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>在HBase中，namespace命名空间指对一组表的逻辑分组，类似RDBMS中的database，方便对表在业务上划分。Apache HBase从0.98.0,<br>0.95.2两个版本开始支持namespace级别的授权操作，HBase全局管理员可以创建、修改和回收namespace的授权。</p>
+<h1 id="namespace"><a href="#namespace" class="headerlink" title="namespace"></a>namespace</h1><p>HBase系统默认定义了两个缺省的namespace</p>
+<p>hbase：系统内建表，包括namespace和meta表</p>
+<p>default：用户建表时未指定namespace的表都创建在此</p>
+<p>创建namespace</p>
+<pre><code>hbase&gt;create_namespace &apos;ai_ns&apos;  
+</code></pre><p>删除namespace</p>
+<pre><code>hbase&gt;drop_namespace &apos;ai_ns&apos;  
+</code></pre><p>查看namespace</p>
+<pre><code>hbase&gt;describe_namespace &apos;ai_ns&apos;  
+</code></pre><p>列出所有namespace</p>
+<pre><code>hbase&gt;list_namespace  
+</code></pre><p>在namespace下创建表</p>
+<pre><code>hbase&gt;create &apos;ai_ns:testtable&apos;, &apos;fm1&apos; 
+</code></pre><p>查看namespace下的表</p>
+<pre><code>hbase&gt;list_namespace_tables &apos;ai_ns&apos;  
+</code></pre><h1 id="授权"><a href="#授权" class="headerlink" title="授权"></a>授权</h1><p>具备Create权限的namespace Admin可以对表创建和删除、生成和恢复快照</p>
+<p>具备Admin权限的namespace Admin可以对表splits或major compactions</p>
+<p>授权tenant-A用户对ai_ns下的写权限</p>
+<pre><code>hbase&gt;grant &apos;tenant-A&apos; &apos;W&apos; &apos;@ai_ns&apos;  
+</code></pre><p>回收tenant-A用户对ai_ns的所有权限</p>
+<pre><code>hbase&gt;revoke &apos;tenant-A&apos;&apos;@ai_ns&apos;  
+</code></pre><p>当前用户：hbase</p>
+<pre><code>hbase&gt;namespace_create &apos;hbase_perf&apos;  
+hbase&gt;grant &apos;mike&apos;, &apos;W&apos;, &apos;@hbase_perf&apos;  
+</code></pre><p>当前用户：mike</p>
+<pre><code>hbase&gt;create &apos;hbase_perf.table20&apos;, &apos;family1&apos;  
+hbase&gt;create &apos;hbase_perf.table50&apos;, &apos;family1&apos;  
+</code></pre><p>mike创建了两张表table20和table50，同时成为这两张表的owner，意味着有’RWXCA’权限<br>此时，mike团队的另一名成员alice也需要获得hbase_perf下的权限，hbase管理员操作如下<br>当前用户：hbase</p>
+<pre><code>hbase&gt;grant &apos;alice&apos;, &apos;W&apos;, &apos;@hbase_perf&apos;  
+</code></pre><p>此时alice可以在hbase_perf下创建表，但是无法读、写、修改和删除hbase_perf下已存在的表<br>当前用户：alice</p>
+<pre><code>hbase&gt;scan &apos;hbase_perf:table20&apos;  
+</code></pre><p>报错AccessDeniedException</p>
+<p>如果希望alice可以访问已经存在的表，则hbase管理员操作如下<br>当前用户：hbase</p>
+<pre><code>hbase&gt;grant &apos;alice&apos;, &apos;RW&apos;, &apos;hbase_perf.table20&apos;  
+hbase&gt;grant &apos;alice&apos;, &apos;RW&apos;, &apos;hbase_perf.table50&apos;  
+</code></pre><p>在HBase中启用授权机制</p>
+<p>hbase-site.xml</p>
+<pre><code>&lt;property&gt;  
+     &lt;name&gt;hbase.security.authorization&lt;/name&gt;  
+     &lt;value&gt;true&lt;/value&gt;  
+&lt;/property&gt;  
+&lt;property&gt;  
+     &lt;name&gt;hbase.coprocessor.master.classes&lt;/name&gt;  
+     &lt;value&gt;org.apache.hadoop.hbase.security.access.AccessController&lt;/value&gt;  
+&lt;/property&gt;  
+&lt;property&gt;  
+     &lt;name&gt;hbase.coprocessor.region.classes&lt;/name&gt;  
+     &lt;value&gt;org.apache.hadoop.hbase.security.token.TokenProvider,org.apache.hadoop.hbase.security.access.AccessController&lt;/value&gt;  
+&lt;/property&gt;  
+</code></pre><p>配置完成后需要重启HBase集群</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>HBase namespace特性是对表资源进行隔离的一种技术，隔离技术决定了HBase能否实现资源统一化管理的关键，提高了整体的安全性。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;介绍&quot;&gt;&lt;a href=&quot;#介绍&quot; class=&quot;headerlink&quot; title=&quot;介绍&quot;&gt;&lt;/a&gt;介绍&lt;/h1&gt;&lt;p&gt;在HBase中，namespace命名空间指对一组表的逻辑分组，类似RDBMS中的database，方便对表在业务上划分。Apache HB
+    
+    </summary>
+    
+      <category term="hbase" scheme="http://dennis.pathto.top/categories/hbase/"/>
+    
+    
+      <category term="bigdata" scheme="http://dennis.pathto.top/tags/bigdata/"/>
+    
+      <category term="hbase" scheme="http://dennis.pathto.top/tags/hbase/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>3.hbase问题</title>
+    <link href="http://dennis.pathto.top/2018/04/25/hbase-3-truoble/"/>
+    <id>http://dennis.pathto.top/2018/04/25/hbase-3-truoble/</id>
+    <published>2018-04-24T16:33:16.000Z</published>
+    <updated>2018-04-24T16:33:16.761Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="Waiting-for-region-servers-count-to-settle"><a href="#Waiting-for-region-servers-count-to-settle" class="headerlink" title="Waiting for region servers count to settle"></a>Waiting for region servers count to settle</h2><pre><code>2018-04-24 19:15:09,579 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 10730 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:11,096 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 12247 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:12,613 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 13763 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:14,130 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 15281 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:15,657 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 16808 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:17,183 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 18334 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:18,712 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 19863 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:20,241 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 21392 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:21,770 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 22920 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:23,298 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 24449 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:24,842 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 25993 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:26,375 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 27526 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:27,906 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 29057 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:29,433 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 30584 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:30,960 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 32111 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:32,488 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 33639 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:34,015 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 35166 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:35,545 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 36696 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:37,074 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 38225 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+</code></pre><p>出现上面的问题重启regionserver就可以解决了.</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;Waiting-for-region-servers-count-to-settle&quot;&gt;&lt;a href=&quot;#Waiting-for-region-servers-count-to-settle&quot; class=&quot;headerlink&quot; title=&quot;Waiting 
+    
+    </summary>
+    
+      <category term="hbase" scheme="http://dennis.pathto.top/categories/hbase/"/>
+    
+    
+      <category term="bigdata" scheme="http://dennis.pathto.top/tags/bigdata/"/>
+    
+      <category term="hbase" scheme="http://dennis.pathto.top/tags/hbase/"/>
+    
+  </entry>
+  
+  <entry>
     <title>21.start-stop-daemon问题</title>
     <link href="http://dennis.pathto.top/2018/04/25/spring-boot-21-start-stop-daemon/"/>
     <id>http://dennis.pathto.top/2018/04/25/spring-boot-21-start-stop-daemon/</id>
-    <published>2018-04-24T16:08:29.000Z</published>
-    <updated>2018-04-24T16:08:29.020Z</updated>
+    <published>2018-04-24T16:33:08.000Z</published>
+    <updated>2018-04-24T16:33:08.047Z</updated>
     
     <content type="html"><![CDATA[<p>在ubuntu中没法启动spring boot</p>
 <pre><code>Try &apos;start-stop-daemon --help&apos; for more information.
@@ -60,15 +699,115 @@ start-stop-daemon: unrecognized opt
   </entry>
   
   <entry>
+    <title>2.hbase命令</title>
+    <link href="http://dennis.pathto.top/2018/04/25/hbase-2-common/"/>
+    <id>http://dennis.pathto.top/2018/04/25/hbase-2-common/</id>
+    <published>2018-04-24T16:33:08.000Z</published>
+    <updated>2018-04-24T16:33:08.046Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="进入hbase"><a href="#进入hbase" class="headerlink" title="进入hbase"></a>进入hbase</h1><pre><code>[root@bigdata01 conf]# hbase shell
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [jar:file:/usr/local/hbase/lib/slf4j-log4j12-1.7.5.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/usr/local/hadoop/share/hadoop/common/lib/slf4j-log4j12-1.7.10.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J: Actual binding is of type [org.slf4j.impl.Log4jLoggerFactory]
+HBase Shell; enter &apos;help&lt;RETURN&gt;&apos; for list of supported commands.
+Type &quot;exit&lt;RETURN&gt;&quot; to leave the HBase Shell
+Version 1.2.6, rUnknown, Mon May 29 02:25:32 CDT 2017
+</code></pre><h1 id="查看hbase集群状态"><a href="#查看hbase集群状态" class="headerlink" title="查看hbase集群状态"></a>查看hbase集群状态</h1><pre><code>hbase(main):001:0&gt; status
+1 active master, 0 backup masters, 3 servers, 0 dead, 1.0000 average load
+</code></pre><h1 id="put用法"><a href="#put用法" class="headerlink" title="put用法"></a>put用法</h1><pre><code>put &apos;表名&apos;,&apos;主键&apos;,&apos;列族:列名&apos;,&apos;值&apos;
+</code></pre><h1 id="create用法"><a href="#create用法" class="headerlink" title="create用法"></a>create用法</h1><pre><code>create &apos;表名&apos;,&apos;列族名&apos;
+</code></pre><h1 id="scan用法"><a href="#scan用法" class="headerlink" title="scan用法"></a>scan用法</h1><h3 id="查询表"><a href="#查询表" class="headerlink" title="查询表"></a>查询表</h3><pre><code>scan &apos;表名&apos;
+</code></pre><h1 id="get用法"><a href="#get用法" class="headerlink" title="get用法"></a>get用法</h1><h2 id="查询具体列族"><a href="#查询具体列族" class="headerlink" title="查询具体列族"></a>查询具体列族</h2><pre><code>get &apos;表名&apos;,&apos;主键&apos;,&apos;列族名:列&apos;
+</code></pre><h1 id="删除表步骤"><a href="#删除表步骤" class="headerlink" title="删除表步骤"></a>删除表步骤</h1><h2 id="禁用表"><a href="#禁用表" class="headerlink" title="禁用表"></a>禁用表</h2><pre><code>disable &apos;表名&apos;
+</code></pre><h2 id="删除表"><a href="#删除表" class="headerlink" title="删除表"></a>删除表</h2><pre><code>drop &apos;表名&apos;
+</code></pre><h1 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h1><pre><code>//插入数据
+hbase(main):002:0&gt; put &apos;user&apos; ,&apos;001&apos;,&apos;info:name&apos;,&apos;dengzhiqiang&apos;
+0 row(s) in 0.2630 seconds
+
+hbase(main):003:0&gt; put &apos;user&apos;,&apos;001&apos;,&apos;info:age&apos;,20
+0 row(s) in 0.0140 seconds
+
+
+//扫描数据
+hbase(main):005:0&gt; scan &apos;user&apos;
+ROW                         COLUMN+CELL                                                                   
+ 001                        column=info:age, timestamp=1516449657830, value=20                            
+ 001                        column=info:name, timestamp=1516449634823, value=dengzhiqiang                 
+1 row(s) in 0.0570 seconds
+//通过rowkey获取数据
+hbase(main):007:0&gt; get &apos;user&apos;,&apos;001&apos;
+COLUMN                      CELL                                                                          
+ info:age                   timestamp=1516449657830, value=20                                             
+ info:name                  timestamp=1516449634823, value=dengzhiqiang                                   
+2 row(s) in 0.0510 seconds
+//查看用户
+hbase(main):009:0&gt; whoami
+root (auth:SIMPLE)
+    groups: root
+//列出命名
+hbase(main):010:0&gt; list_namespace
+NAMESPACE                                                                                                 
+default                                                                                                   
+hbase                                                                                                     
+2 row(s) in 0.0440 seconds
+//创建命名空间
+hbase(main):012:0&gt; create_namespace &apos;ns21&apos;
+0 row(s) in 0.0440 seconds
+
+hbase(main):013:0&gt; list
+TABLE                                                                                                     
+user                                                                                                      
+1 row(s) in 0.0140 seconds
+
+=&gt; [&quot;user&quot;]
+hbase(main):014:0&gt; list_namespace
+NAMESPACE                                                                                                 
+default                                                                                                   
+hbase                                                                                                     
+ns21                                                                                                      
+3 row(s) in 0.0130 seconds
+
+//删除命名空间
+hbase(main):015:0&gt; drop_namespace &apos;ns21&apos;
+0 row(s) in 0.0370 seconds
+
+hbase(main):016:0&gt; list_namespace
+NAMESPACE                                                                                                 
+default                                                                                                   
+hbase                                                                                                     
+2 row(s) in 0.0150 seconds
+
+hbase(main):017:0&gt; 
+</code></pre>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;进入hbase&quot;&gt;&lt;a href=&quot;#进入hbase&quot; class=&quot;headerlink&quot; title=&quot;进入hbase&quot;&gt;&lt;/a&gt;进入hbase&lt;/h1&gt;&lt;pre&gt;&lt;code&gt;[root@bigdata01 conf]# hbase shell
+SLF4J: 
+    
+    </summary>
+    
+      <category term="hbase" scheme="http://dennis.pathto.top/categories/hbase/"/>
+    
+    
+      <category term="bigdata" scheme="http://dennis.pathto.top/tags/bigdata/"/>
+    
+      <category term="hbase" scheme="http://dennis.pathto.top/tags/hbase/"/>
+    
+  </entry>
+  
+  <entry>
     <title>20.SpringBoot初始教程之Redis集中式Session管理</title>
     <link href="http://dennis.pathto.top/2018/04/25/spring-boot-20-Redis-session/"/>
     <id>http://dennis.pathto.top/2018/04/25/spring-boot-20-Redis-session/</id>
-    <published>2018-04-24T16:08:24.000Z</published>
-    <updated>2018-04-24T16:08:24.253Z</updated>
+    <published>2018-04-24T16:33:08.000Z</published>
+    <updated>2018-04-24T16:33:08.046Z</updated>
     
     <content type="html"><![CDATA[<p>SpringBoot初始教程之Redis集中式Session管理</p>
-<h1 id="1-介绍"><a href="#1-介绍" class="headerlink" title="1.介绍"></a>1.介绍</h1><p>有关Session的管理方式这里就不再进行讨论，目前无非就是三种单机Session(基于单机内存，无法部署多台机器)、基于Cookie(安全性差)、基于全局的统一Session管理(redis、mysql)等多种方式<br>针对于像淘宝这种超大型网站来说Session如何管理的就无从得知了、但是可以通过yy的方式想象一下，这种大型架构都需要部署多台认证Server，但是一般来说集中式Session无法存储那么多的Session<br>那么就可以通过UID分片的形式来存储，不同UID分布在不同的Server上认证即可(纯属猜测丷)</p>
-<h1 id="2-快速开始"><a href="#2-快速开始" class="headerlink" title="2.快速开始"></a>2.快速开始</h1><p>这里采用的是redis进行集中式Session管理,核心如下依赖</p>
+<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>有关Session的管理方式这里就不再进行讨论，目前无非就是三种单机Session(基于单机内存，无法部署多台机器)、基于Cookie(安全性差)、基于全局的统一Session管理(redis、mysql)等多种方式<br>针对于像淘宝这种超大型网站来说Session如何管理的就无从得知了、但是可以通过yy的方式想象一下，这种大型架构都需要部署多台认证Server，但是一般来说集中式Session无法存储那么多的Session<br>那么就可以通过UID分片的形式来存储，不同UID分布在不同的Server上认证即可(纯属猜测丷)</p>
+<h1 id="快速开始"><a href="#快速开始" class="headerlink" title="快速开始"></a>快速开始</h1><p>这里采用的是redis进行集中式Session管理,核心如下依赖</p>
 <pre><code>&lt;dependency&gt;
     &lt;groupId&gt;org.springframework.session&lt;/groupId&gt;
     &lt;artifactId&gt;spring-session&lt;/artifactId&gt;
@@ -175,13 +914,13 @@ public class IndexController {
         return ResponseEntity.ok(httpSession.getAttribute(&quot;user&quot;));
     }
 }
-</code></pre><h1 id="3-其他扩展"><a href="#3-其他扩展" class="headerlink" title="3. 其他扩展"></a>3. 其他扩展</h1><p>SpringBoot Session集中式管理不仅仅限于redis这种方式，目前内部支持HttpSession with Pivotal GemFire、HttpSession with JDBC、HttpSession with Mongo<br>等多种方式具体可以参考<a href="http://docs.spring.io/spring-session/docs/1.2.2.RELEASE/reference/html5/#httpsession-jdbc" target="_blank" rel="external">http://docs.spring.io/spring-session/docs/1.2.2.RELEASE/reference/html5/#httpsession-jdbc</a> </p>
+</code></pre><h1 id="其他扩展"><a href="#其他扩展" class="headerlink" title="其他扩展"></a>其他扩展</h1><p>SpringBoot Session集中式管理不仅仅限于redis这种方式，目前内部支持HttpSession with Pivotal GemFire、HttpSession with JDBC、HttpSession with Mongo<br>等多种方式具体可以参考<a href="http://docs.spring.io/spring-session/docs/1.2.2.RELEASE/reference/html5/#httpsession-jdbc" target="_blank" rel="external">http://docs.spring.io/spring-session/docs/1.2.2.RELEASE/reference/html5/#httpsession-jdbc</a> </p>
 ]]></content>
     
     <summary type="html">
     
       &lt;p&gt;SpringBoot初始教程之Redis集中式Session管理&lt;/p&gt;
-&lt;h1 id=&quot;1-介绍&quot;&gt;&lt;a href=&quot;#1-介绍&quot; class=&quot;headerlink&quot; title=&quot;1.介绍&quot;&gt;&lt;/a&gt;1.介绍&lt;/h1&gt;&lt;p&gt;有关Session的管理方式这里就不再进行讨
+&lt;h1 id=&quot;介绍&quot;&gt;&lt;a href=&quot;#介绍&quot; class=&quot;headerlink&quot; title=&quot;介绍&quot;&gt;&lt;/a&gt;介绍&lt;/h1&gt;&lt;p&gt;有关Session的管理方式这里就不再进行讨论，目前无非就是
     
     </summary>
     
@@ -200,8 +939,8 @@ public class IndexController {
     <title>19.jar解压后打包</title>
     <link href="http://dennis.pathto.top/2018/04/25/spring-boot-19-package/"/>
     <id>http://dennis.pathto.top/2018/04/25/spring-boot-19-package/</id>
-    <published>2018-04-24T16:08:19.000Z</published>
-    <updated>2018-04-24T16:08:19.060Z</updated>
+    <published>2018-04-24T16:33:03.000Z</published>
+    <updated>2018-04-24T16:33:03.190Z</updated>
     
     <content type="html"><![CDATA[<p>D:\yy\it-portal-web\target\it-portal-web-0.0.1-SNAPSHOT&gt;jar cvfM0 test.jar *</p>
 ]]></content>
@@ -225,11 +964,233 @@ public class IndexController {
   </entry>
   
   <entry>
+    <title>11.时序列数据库OpenTSDB</title>
+    <link href="http://dennis.pathto.top/2018/04/25/hbase-11-opentsdb/"/>
+    <id>http://dennis.pathto.top/2018/04/25/hbase-11-opentsdb/</id>
+    <published>2018-04-24T16:33:03.000Z</published>
+    <updated>2018-04-24T16:33:03.187Z</updated>
+    
+    <content type="html"><![CDATA[<pre><code>在前面的《时序列数据库武斗大会之 TSDB 名录 Part 1》和《时序列数据库武斗大会之TSDB名录 Part 2》中，我们介绍了一些常见的TSDB，并在《时间序列数据库武斗大会之 KairosDB 篇》深入了解了KairosDB。本文将详细介绍TSDB中的OpenTSDB。
+</code></pre><p>OpenTSDB ，可以认为是一个时系列数据（库），它基于HBase存储数据，充分发挥了HBase的分布式列存储特性，支持数百万每秒的读写，它的特点就是容易扩展，灵活的tag机制。</p>
+<p>架构简介<br>这里我们简单看一下它的架构，如下图所示：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://p3nmhc6bw.bkt.clouddn.com/01.png" alt="image" title="">
+                </div>
+                <div class="image-caption">image</div>
+            </figure>
+<p>其最主要的部件就是TSD了，这是接收数据并存储到HBase处理的核心所在。而带有C（collector）标志的Server，则是数据采集源，将数据发给 TSD服务。</p>
+<p>安装 OpenTSDB<br>为了安装 OpenTSDB ，都需要以下条件和软件：</p>
+<ul>
+<li>Linux操作系统</li>
+<li>JRE 1.6 or later</li>
+<li>HBase 0.92 or later</li>
+<li>安装GnuPlot</li>
+</ul>
+<p>如果你还想使用自带的界面，则需要安装GnuPlot 4.2及以后版本，以及gd和gd-devel等。这里我们选择了GnuPlot 5.0.1的版本。</p>
+<p>根据情况执行（没有就装），安装所需软件</p>
+<pre><code>$ sudo yum install -y gd gd-devel libpng libpng-devel
+</code></pre><p>之后安装GnuPlot：</p>
+<pre><code>$ tar zxvf gnuplot-5.0.1.tar.gz
+$ cd gnuplot-5.0.1
+$ ./configure
+$ make
+$ sudo make install
+</code></pre><p>安装HBase<br>首先，确保设置了JAVA_HOME：</p>
+<pre><code>$ echo $JAVA_HOME
+/usr
+</code></pre><p>这个不多说了，非常简单，只需要按照 <a href="https://hbase.apache.org/book.html#quickstart" target="_blank" rel="external">https://hbase.apache.org/book.html#quickstart</a> 这里所说，下载、解压、修改配置文件、启动即可。</p>
+<p>这时候，再设置HBASE_HOME：</p>
+<pre><code>$ echo $HBASE_HOME
+/opt/hbase-1.0.1.1
+</code></pre><p>之后便可启动hbase：</p>
+<pre><code>$ /opt/hbase-1.0.1.1/bin/start-hbase.sh
+starting master, logging to /opt/hbase-1.0.1.1/logs/hbase-vagrant-master-localhost.localdomain.out  
+</code></pre><p>安装 OpenTSDB<br>这个也很简单，如果build失败，那肯定是缺少Make或者Autotools等东西，用包管理器安装即可。</p>
+<pre><code>$ git clone git://github.com/OpenTSDB/opentsdb.git
+$ cd opentsdb
+$ ./build.sh
+</code></pre><p>创建表OpenTSDB所需要的表结构：</p>
+<pre><code>$ env COMPRESSION=NONE ./src/create_table.sh
+2016-01-08 06:17:58,045 WARN [main] util.NativeCodeLoader: Unable to load native-hadoop library for your platform… using builtin-java classes where applicable  
+HBase Shell; enter ‘help‘ for list of supported commands.  
+Type “exit” to leave the HBase Shell  
+Version 1.0.1.1, re1dbf4df30d214fca14908df71d038081577ea46, Sun May 17 12:34:26 PDT 2015
+
+create ‘tsdb-uid’,  
+{NAME =&gt; ‘id’, COMPRESSION =&gt; ‘NONE’, BLOOMFILTER =&gt; ‘ROW’},
+{NAME =&gt; ‘name’, COMPRESSION =&gt; ‘NONE’, BLOOMFILTER =&gt; ‘ROW’}
+0 row(s) in 1.3180 seconds
+
+Hbase::Table – tsdb-uid
+
+create ‘tsdb’,  
+{NAME =&gt; ‘t’, VERSIONS =&gt; 1, COMPRESSION =&gt; ‘NONE’, BLOOMFILTER =&gt; ‘ROW’}
+0 row(s) in 0.2400 seconds
+
+Hbase::Table – tsdb
+
+create ‘tsdb-tree’,  
+{NAME =&gt; ‘t’, VERSIONS =&gt; 1, COMPRESSION =&gt; ‘NONE’, BLOOMFILTER =&gt; ‘ROW’}
+0 row(s) in 0.2160 seconds
+
+Hbase::Table – tsdb-tree
+
+create ‘tsdb-meta’,  
+{NAME =&gt; ‘name’, COMPRESSION =&gt; ‘NONE’, BLOOMFILTER =&gt; ‘ROW’}
+0 row(s) in 0.4480 seconds
+
+Hbase::Table – tsdb-meta  
+</code></pre><p>在habse shell里，可以看到表已经创建成功。</p>
+<pre><code>&gt; list
+TABLE  
+tsdb  
+tsdb-meta  
+tsdb-tree  
+tsdb-uid  
+4 row(s) in 0.0160 seconds  
+</code></pre><p>表创建之后，即可启动tsd服务，只需要运行如下命令：</p>
+<pre><code>$ build/tsdb tsd
+</code></pre><p>如果看到输出：</p>
+<pre><code>2016-01-09 05:51:10,875 INFO [main] TSDMain: Ready to serve on /0.0.0.0:4242  
+</code></pre><p>即可认为启动成功。</p>
+<p>保存数据到OpenTSDB<br>在安装并启动所有服务之后，我们就来尝试发送1条数据吧。</p>
+<p>最简单的保存数据方式就是使用telnet。</p>
+<pre><code>$ telnet localhost 4242
+put sys.cpu.user 1436333416 23 host=web01 user=10001  
+</code></pre><p>这时，从 OpenTSDB 自带界面都可以看到这些数据。 由于sys.cpu.sys的数据只有一条，所以 OpenTSDB 只能看到一个点。</p>
+<p>下图为 OpenTSDB 自带的查询界面，访问<a href="http://localhost:4242即可。" target="_blank" rel="external">http://localhost:4242即可。</a></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://p3nmhc6bw.bkt.clouddn.com/02.png" alt="image" title="">
+                </div>
+                <div class="image-caption">image</div>
+            </figure>
+<p>OpenTSDB中的数据存储结构<br>我们来看看 OpenTSDB 的重要概念uid，先从HBase中存储的数据开始吧，我们来看一下它都有哪些表，以及这些表都是干什么的。</p>
+<p>tsdb：存储数据点</p>
+<pre><code>hbase(main):003:0&gt; scan &apos;tsdb&apos;  
+ROW                           COLUMN+CELL  
+ \x00\x00\x01U\x9C\xAEP\x00\x column=t:q\x80, timestamp=1436350142588, value=\x17                                 
+ 00\x01\x00\x00\x01\x00\x00\x                                                                                     
+ 02\x00\x00\x02                                                                                                   
+1 row(s) in 0.2800 seconds  
+</code></pre><p>可以看出，该表只有一条数据，我们先不管rowid，只来看看列，只有一列，值为0x17，即十进制23，即该metric的值。</p>
+<p>左面的row key则是 OpenTSDB 的特点之一，其规则为：</p>
+<pre><code>metric + timestamp + tagk1 + tagv1… + tagkN + tagvN  
+</code></pre><p>以上属性值均为对应名称的uid。</p>
+<p>我们上面添加的metric为：</p>
+<pre><code>sys.cpu.user 1436333416 23 host=web01 user=10001  
+</code></pre><p>一共涉及到5个uid，即名为sys.cpu.user的metric，以及host和user两个tagk及其值web01和10001。</p>
+<p>上面数据的row key为：</p>
+<pre><code>\x00\x00\x01U\x9C\xAEP\x00\x00\x01\x00\x00\x01\x00\x00\x02\x00\x00\x02
+</code></pre><p>具体这个row key是怎么算出来的，我们来看看tsdb-uid表。</p>
+<p>tsdb-uid：存储name和uid的映射关系</p>
+<p>下面tsdb-uid表的数据，各行之间人为加了空行，为方便显示。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://p3nmhc6bw.bkt.clouddn.com/03.png" alt="image" title="">
+                </div>
+                <div class="image-caption">image</div>
+            </figure>
+<p>tsdb-uid用来保存名字和UID（metric，tagk，tagv）之间互相映射的关系，都是成组出现的，即给定一个name和uid，会保存（name,uid）和（uid,name）两条记录。</p>
+<p>我们一共看到了8行数据。</p>
+<p>前面我们在tsdb表中已经看到，metric数据的row key为<code>\x00\x00\x01U\x9C\xAEP\x00\x00\x01\x00\x00\x01\x00\x00\x02\x00\x00\x02</code>，我们将其分解下，用+号连起来（从name到uid的映射为最后5行）：</p>
+<pre><code>\x00\x00\x01 + U + \x9C\xAE + P + \x00\x00\x01 + \x00\x00\x01 + \x00\x00\x02  + \x00\x00\x02
+sys.cpu.user       1436333416           host    =      web01          user     =    10001  
+</code></pre><p>可以看出，这和我们前面说到的row key的构成方式是吻合的。</p>
+<p>需要着重说明的是时间戳的存储方式</p>
+<p>虽然我们指定的时间是以秒为单位的，但是，<code>row key</code>中用到的却是以一小时为单位的，即：<code>1436333416 – 1436333416 % 3600 = 1436331600</code>。</p>
+<p>1436331600转换为16进制，即<code>0x55 0x9c 0xae 0x50</code>，而0x55即大写字母U，0x50为大写字母P，这就是4个字节的时间戳存储方式。相信下面这张图能帮助各位更好理解这个意思，即一小时只有一个row key，每秒钟的数据都会存为一列，大大提高查询的速度。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://p3nmhc6bw.bkt.clouddn.com/04.png" alt="image" title="">
+                </div>
+                <div class="image-caption">image</div>
+            </figure>
+<p>反过来，从uid到name也一样，比如找uid为\x00\x00\x02的tagk，我们从上面结果可以看到，该row key（\x00\x00\x02）有4列，而column=name:tagk的value就是user，非常简单直观。</p>
+<p>重要：我们看到，上面的metric也好，tagk或者tagv也好，uid只有3个字节，这是 OpenTSDB 的默认配置，三个字节，应该能表示1600多万的不同数据，这对metric名或者tagk来说足够长了，对tagv来说就不一定了，比如tagv是ip地址的话，或者电话号码，那么这个字段就不够长了，这时可以通过修改源代码来重新编译 OpenTSDB 就可以了，同时要注意的是，重编以后，老数据就不能直接使用了，需要导出后重新导入。</p>
+<p>tsdb-meta：元数据表</p>
+<p>我们再看下第三个表tsdb-meta，这是用来存储时间序列索引和元数据的表。这也是一个可选特性，默认是不开启的，可以通过配置文件来启用该特性，这里不做特殊介绍了。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://p3nmhc6bw.bkt.clouddn.com/05.png" alt="image" title="">
+                </div>
+                <div class="image-caption">image</div>
+            </figure>
+<p>tsdb-tree：树形表</p>
+<p>第4个表是tsdb-tree，用来以树状层次关系来表示metric的结构，只有在配置文件开启该特性后，才会使用此表，这里我们不介绍了，可以自己尝试。</p>
+<p>通过HTTP接口保存数据<br>保存数据除了我们前面用到的telnet方式，也可以选择HTTP API或者批量导入工具“` import（ <a href="http://opentsdb.net/docs/build/html/user_guide/cli/import.html" target="_blank" rel="external">http://opentsdb.net/docs/build/html/user_guide/cli/import.html</a> ）</p>
+<p>假设我们有如下数据，保存为文件mysql.json：</p>
+<pre><code>[ { &quot;metric&quot;: &quot;mysql.innodb.rowlocktime&quot;, &quot;timestamp&quot;: 1435716527, &quot;value&quot;: 1234, &quot;tags&quot;: { &quot;host&quot;: &quot;web01&quot;, &quot;dc&quot;: &quot;beijing&quot; } }, { &quot;metric&quot;: &quot;mysql.innodb.rowlocktime&quot;, &quot;timestamp&quot;: 1435716529, &quot;value&quot;: 2345, &quot;tags&quot;: { &quot;host&quot;: &quot;web01&quot;, &quot;dc&quot;: &quot;beijing&quot; } }, { &quot;metric&quot;: &quot;mysql.innodb.rowlocktime&quot;, &quot;timestamp&quot;: 1435716627, &quot;value&quot;: 3456, &quot;tags&quot;: { &quot;host&quot;: &quot;web02&quot;, &quot;dc&quot;: &quot;beijing&quot; } }, { &quot;metric&quot;: &quot;mysql.innodb.rowlocktime&quot;, &quot;timestamp&quot;: 1435716727, &quot;value&quot;: 6789, &quot;tags&quot;: { &quot;host&quot;: &quot;web01&quot;, &quot;dc&quot;: &quot;tianjin&quot; } } ]
+</code></pre><p>之后执行如下命令：</p>
+<pre><code>$ curl -X POST -H “Content-Type: application/json” http://localhost:4242/api/put -d @mysql.json
+</code></pre><p>即可将数据保存到 OpenTSDB 了。</p>
+<p>查询数据<br>看完了如何保存数据，我们再来看看如何查询数据。</p>
+<p>查询数据可以使用query接口，它既可以使用get的query string方式，也可以使用post方式以JSON格式指定查询条件，这里我们以后者为例，对刚才保存的数据进行说明。</p>
+<p>首先，保存如下内容为search.json：</p>
+<pre><code>{ &quot;start&quot;: 1435716527, &quot;queries&quot;: [ { &quot;metric&quot;: &quot;mysql.innodb.rowlocktime&quot;, &quot;aggregator&quot;: &quot;avg&quot;, &quot;tags&quot;: { &quot;host&quot;: &quot;*&quot;, &quot;dc&quot;: &quot;beijing&quot; } } ] }
+</code></pre><p>执行如下命令进行查询：</p>
+<pre><code>$ curl -s -X POST -H &quot;Content-Type: application/json&quot; http://localhost:4242/api/query -d @search.json | jq . [ { &quot;metric&quot;: &quot;mysql.innodb.rowlocktime&quot;, &quot;tags&quot;: { &quot;host&quot;: &quot;web01&quot;, &quot;dc&quot;: &quot;beijing&quot; }, &quot;aggregateTags&quot;: [], &quot;dps&quot;: { &quot;1435716527&quot;: 1234, &quot;1435716529&quot;: 2345 } }, { &quot;metric&quot;: &quot;mysql.innodb.rowlocktime&quot;, &quot;tags&quot;: { &quot;host&quot;: &quot;web02&quot;, &quot;dc&quot;: &quot;beijing&quot; }, &quot;aggregateTags&quot;: [], &quot;dps&quot;: { &quot;1435716627&quot;: 3456 } } ] ```
+可以看出，我们保存了dc=tianjin的数据，但是并没有在此查询中返回，这是因为，我们指定了dc=beijing这一条件。
+</code></pre><p>值得注意的是，tags参数在新版本2.2中，将不被推荐，取而代之的是filters参数。</p>
+<p>总结<br>可以看出来， OpenTSDB 还是非常容易上手的，尤其是单机版，安装也很简单。有HBase作为后盾，查询起来也非常快，很多大公司，类似雅虎等，也都在用此软件。</p>
+<p>但是，大规模用起来，多个TDB以及多存储节点等，应该都需要专业、细心的运维工作了。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;pre&gt;&lt;code&gt;在前面的《时序列数据库武斗大会之 TSDB 名录 Part 1》和《时序列数据库武斗大会之TSDB名录 Part 2》中，我们介绍了一些常见的TSDB，并在《时间序列数据库武斗大会之 KairosDB 篇》深入了解了KairosDB。本文将详细介绍TSDB中
+    
+    </summary>
+    
+      <category term="hbase" scheme="http://dennis.pathto.top/categories/hbase/"/>
+    
+    
+      <category term="bigdata" scheme="http://dennis.pathto.top/tags/bigdata/"/>
+    
+      <category term="hbase" scheme="http://dennis.pathto.top/tags/hbase/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>17.远程debug</title>
+    <link href="http://dennis.pathto.top/2018/04/25/spring-boot-17-remote-debug/"/>
+    <id>http://dennis.pathto.top/2018/04/25/spring-boot-17-remote-debug/</id>
+    <published>2018-04-24T16:33:03.000Z</published>
+    <updated>2018-04-24T16:33:03.188Z</updated>
+    
+    <content type="html"><![CDATA[<pre><code>java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=9999 -jar it-portal-web-0.0.1-SNAPSHOT.jar 
+</code></pre>]]></content>
+    
+    <summary type="html">
+    
+      &lt;pre&gt;&lt;code&gt;java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=9999 -jar it-portal-web-0.0.1-SNAPSHOT.jar 
+&lt;/code&gt;&lt;/pre&gt;
+    
+    </summary>
+    
+      <category term="spring-boot" scheme="http://dennis.pathto.top/categories/spring-boot/"/>
+    
+    
+      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
+    
+      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
+    
+      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
+    
+  </entry>
+  
+  <entry>
     <title>18.springboot根据不同的条件创建bean，动态创建bean，@Conditional注解使用</title>
     <link href="http://dennis.pathto.top/2018/04/25/spring-boot-18-Conditional/"/>
     <id>http://dennis.pathto.top/2018/04/25/spring-boot-18-Conditional/</id>
-    <published>2018-04-24T16:08:14.000Z</published>
-    <updated>2018-04-24T16:08:14.588Z</updated>
+    <published>2018-04-24T16:33:03.000Z</published>
+    <updated>2018-04-24T16:33:03.189Z</updated>
     
     <content type="html"><![CDATA[<p>这个需求应该也比较常见，在不同的条件下创建不同的bean，具体场景很多，能看到这篇的肯定懂我的意思。</p>
 <p>倘若不了解spring4.X新加入的@Conditional注解的话，要实现不同条件创建不同的bean还是比较麻烦的，可能需要硬编码一些东西做if判断。那么现在有个@Conditional注解后，事情就简单多了。用法很简单，直接上代码。</p>
@@ -411,68 +1372,165 @@ public class JudgeEnableDiscoveryClient {
   </entry>
   
   <entry>
-    <title>17.远程debug</title>
-    <link href="http://dennis.pathto.top/2018/04/25/spring-boot-17-remote-debug/"/>
-    <id>http://dennis.pathto.top/2018/04/25/spring-boot-17-remote-debug/</id>
-    <published>2018-04-24T16:08:10.000Z</published>
-    <updated>2018-04-24T16:08:10.116Z</updated>
+    <title>10region迁移</title>
+    <link href="http://dennis.pathto.top/2018/04/25/hbase-10-region-move/"/>
+    <id>http://dennis.pathto.top/2018/04/25/hbase-10-region-move/</id>
+    <published>2018-04-24T16:32:59.000Z</published>
+    <updated>2018-04-24T16:32:59.076Z</updated>
     
-    <content type="html"><![CDATA[<pre><code>java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=9999 -jar it-portal-web-0.0.1-SNAPSHOT.jar 
+    <content type="html"><![CDATA[<p>在生产环境中很有可能有那么几个Region比较大，但是都运行在同一个Regionserver中。<br>这个时候就需要手动将region移动到负载低的Regionserver中。</p>
+<p>步骤：</p>
+<p>1、找到要移动的region，记录红框的id值，这个是唯一的region ID</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://p7bwl40ov.bkt.clouddn.com/region-move.png" alt="image" title="">
+                </div>
+                <div class="image-caption">image</div>
+            </figure>
+<p>2.查看RegionServer列表，并记录ip、端口、startcode<br> 明显读请求不均衡</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://p7bwl40ov.bkt.clouddn.com/611815-20160308115910741-569719683.png" alt="image" title="">
+                </div>
+                <div class="image-caption">image</div>
+            </figure>
+<p>3.我们需要将部分region移动到dn3这台RegionServer上。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://p7bwl40ov.bkt.clouddn.com/611815-20160308115911100-159288506.png" alt="image" title="">
+                </div>
+                <div class="image-caption">image</div>
+            </figure>
+<pre><code>move &apos;c13faf2a69dc62321c203e65470630d2&apos;,&apos;ODDClusterdn23,60020,1523959773330&apos; 
 </code></pre>]]></content>
     
     <summary type="html">
     
-      &lt;pre&gt;&lt;code&gt;java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=9999 -jar it-portal-web-0.0.1-SNAPSHOT.jar 
-&lt;/code&gt;&lt;/pre&gt;
+      &lt;p&gt;在生产环境中很有可能有那么几个Region比较大，但是都运行在同一个Regionserver中。&lt;br&gt;这个时候就需要手动将region移动到负载低的Regionserver中。&lt;/p&gt;
+&lt;p&gt;步骤：&lt;/p&gt;
+&lt;p&gt;1、找到要移动的region，记录红框的id值，这个是唯一
     
     </summary>
     
-      <category term="spring-boot" scheme="http://dennis.pathto.top/categories/spring-boot/"/>
+      <category term="hbase" scheme="http://dennis.pathto.top/categories/hbase/"/>
     
     
-      <category term="java" scheme="http://dennis.pathto.top/tags/java/"/>
+      <category term="bigdata" scheme="http://dennis.pathto.top/tags/bigdata/"/>
     
-      <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
-    
-      <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
+      <category term="hbase" scheme="http://dennis.pathto.top/tags/hbase/"/>
     
   </entry>
   
   <entry>
-    <title>How to Install Oracle Java 8 on Ubuntu 12.04 LTS</title>
-    <link href="http://dennis.pathto.top/2017/11/16/ubuntu-0-ubuntu-install-jdk8/"/>
-    <id>http://dennis.pathto.top/2017/11/16/ubuntu-0-ubuntu-install-jdk8/</id>
-    <published>2017-11-16T15:10:37.000Z</published>
-    <updated>2017-11-16T15:10:37.252Z</updated>
+    <title>1.hbase安装</title>
+    <link href="http://dennis.pathto.top/2018/04/25/hbase-1-install/"/>
+    <id>http://dennis.pathto.top/2018/04/25/hbase-1-install/</id>
+    <published>2018-04-24T16:32:54.000Z</published>
+    <updated>2018-04-24T16:32:54.963Z</updated>
     
-    <content type="html"><![CDATA[<p>Step #1: Install Capability to Manage Repositories<br>python-software-properties allows for easy management of your distribution and independent repositories:</p>
-<pre><code>sudo apt-get install python-software-properties
-</code></pre><p>Step #2: Add the WebUpd8 Team Personal Package Archive (PPA)<br>Add the PPA:</p>
-<pre><code>sudo apt-add-repository ppa:webupd8team/java
-</code></pre><p>Step #3: The Installation<br>As a matter of best practice we’ll update our packages:</p>
-<pre><code>sudo apt-get update
-</code></pre><p>then let’s install Oracle Java 8 with the PPA installer:</p>
-<pre><code>sudo apt-get install oracle-java8-installer
-</code></pre><p>tep #4: Verify Installation<br>Now verify that Java is installed and is of version 1.8.x:</p>
-<pre><code>java -version
-</code></pre><p>Your result should be similar to:</p>
-<pre><code>java version &quot;1.8.0_45&quot;
-Java(TM) SE Runtime Environment (build 1.8.0_45-b14)
-Java HotSpot(TM) 64-Bit Server VM (build 25.45-b02, mixed mode)
+    <content type="html"><![CDATA[<p>前置条件</p>
+<p>安装好hadoop,zookeeper</p>
+<table>
+<thead>
+<tr>
+<th>主机名</th>
+<th>ip</th>
+<th>安装的软件</th>
+<th>进程</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bigdata01</td>
+<td>192.168.100.51</td>
+<td>jdk、hadoop</td>
+<td>namenode ressourcemanager hmaster HRegionServer</td>
+</tr>
+<tr>
+<td>bigdata02</td>
+<td>192.168.100.52</td>
+<td>jdk、hadoop</td>
+<td>datanode secondnamenode HRegionServer</td>
+</tr>
+<tr>
+<td>bigdata03</td>
+<td>192.168.100.53</td>
+<td>jdk、hadoop</td>
+<td>datanade HRegionServer</td>
+</tr>
+</tbody>
+</table>
+<p>配置hbase</p>
+<p>在 hbase-env.sh中添加</p>
+<pre><code>export JAVA_HOME=/usr/local/jdk1.8.0_144
+export HBASE_CLASSPATH=/usr/local/hadoop/etc/hadoop
+export HBASE_LOG_DIR=${HBASE_HOME}/logs
+export HBASE_MANAGES_ZK=false
+</code></pre><p>配置hbase-site.xml</p>
+<pre><code>&lt;configuration&gt;
+  &lt;property&gt;
+    &lt;name&gt;hbase.rootdir&lt;/name&gt;
+    &lt;value&gt;hdfs://bigdata01:9000/hbase&lt;/value&gt;
+  &lt;/property&gt;
+  &lt;property&gt;
+      &lt;name&gt;hbase.cluster.distributed&lt;/name&gt;
+      &lt;value&gt;true&lt;/value&gt;
+  &lt;/property&gt;
+  &lt;property&gt;
+        &lt;name&gt;hbase.zookeeper.quorum&lt;/name&gt;
+        &lt;value&gt;bigdata01,bigdata02,bigdata03&lt;/value&gt;
+  &lt;/property&gt;
+    &lt;property&gt;
+      &lt;name&gt;hbase.master&lt;/name&gt;
+      &lt;value&gt;hdfs://bigdata01:60000&lt;/value&gt;
+  &lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;hbase.zookeeper.property.dataDir&lt;/name&gt;
+    &lt;value&gt;/usr/local/zookeeper/datas&lt;/value&gt;
+  &lt;/property&gt;
+  &lt;property&gt;
+    &lt;name&gt;hbase.zookeeper.property.clientPort&lt;/name&gt;
+     &lt;value&gt;2181&lt;/value&gt;
+&lt;/property&gt;
+&lt;/configuration&gt;
+</code></pre><p>配置 regionservers </p>
+<pre><code>bigdata01
+bigdata02
+bigdata03
+</code></pre><p>在bigdata01中启动hbase集群</p>
+<pre><code>hbase-start.sh
+</code></pre><p>打开webui界面</p>
+<pre><code>http://bigdata01:16010/master-status
 </code></pre>]]></content>
     
     <summary type="html">
     
-      &lt;p&gt;Step #1: Install Capability to Manage Repositories&lt;br&gt;python-software-properties allows for easy management of your distribution and inde
+      &lt;p&gt;前置条件&lt;/p&gt;
+&lt;p&gt;安装好hadoop,zookeeper&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;主机名&lt;/th&gt;
+&lt;th&gt;ip&lt;/th&gt;
+&lt;th&gt;安装的软件&lt;/th&gt;
+&lt;th&gt;进程&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+
     
     </summary>
     
-      <category term="ubuntu" scheme="http://dennis.pathto.top/categories/ubuntu/"/>
+      <category term="hbase" scheme="http://dennis.pathto.top/categories/hbase/"/>
     
     
-      <category term="linux" scheme="http://dennis.pathto.top/tags/linux/"/>
+      <category term="bigdata" scheme="http://dennis.pathto.top/tags/bigdata/"/>
     
-      <category term="ubuntu" scheme="http://dennis.pathto.top/tags/ubuntu/"/>
+      <category term="hbase" scheme="http://dennis.pathto.top/tags/hbase/"/>
     
   </entry>
   
@@ -648,6 +1706,44 @@ import org.spring
       <category term="spring" scheme="http://dennis.pathto.top/tags/spring/"/>
     
       <category term="spring-boot" scheme="http://dennis.pathto.top/tags/spring-boot/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to Install Oracle Java 8 on Ubuntu 12.04 LTS</title>
+    <link href="http://dennis.pathto.top/2017/11/16/ubuntu-0-ubuntu-install-jdk8/"/>
+    <id>http://dennis.pathto.top/2017/11/16/ubuntu-0-ubuntu-install-jdk8/</id>
+    <published>2017-11-16T15:10:37.000Z</published>
+    <updated>2017-11-16T15:10:37.252Z</updated>
+    
+    <content type="html"><![CDATA[<p>Step #1: Install Capability to Manage Repositories<br>python-software-properties allows for easy management of your distribution and independent repositories:</p>
+<pre><code>sudo apt-get install python-software-properties
+</code></pre><p>Step #2: Add the WebUpd8 Team Personal Package Archive (PPA)<br>Add the PPA:</p>
+<pre><code>sudo apt-add-repository ppa:webupd8team/java
+</code></pre><p>Step #3: The Installation<br>As a matter of best practice we’ll update our packages:</p>
+<pre><code>sudo apt-get update
+</code></pre><p>then let’s install Oracle Java 8 with the PPA installer:</p>
+<pre><code>sudo apt-get install oracle-java8-installer
+</code></pre><p>tep #4: Verify Installation<br>Now verify that Java is installed and is of version 1.8.x:</p>
+<pre><code>java -version
+</code></pre><p>Your result should be similar to:</p>
+<pre><code>java version &quot;1.8.0_45&quot;
+Java(TM) SE Runtime Environment (build 1.8.0_45-b14)
+Java HotSpot(TM) 64-Bit Server VM (build 25.45-b02, mixed mode)
+</code></pre>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Step #1: Install Capability to Manage Repositories&lt;br&gt;python-software-properties allows for easy management of your distribution and inde
+    
+    </summary>
+    
+      <category term="ubuntu" scheme="http://dennis.pathto.top/categories/ubuntu/"/>
+    
+    
+      <category term="linux" scheme="http://dennis.pathto.top/tags/linux/"/>
+    
+      <category term="ubuntu" scheme="http://dennis.pathto.top/tags/ubuntu/"/>
     
   </entry>
   

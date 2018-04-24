@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>5.Hbase Region的拆分和合并 | Dennis&#39;Blog | 本博客内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、大数据，云计算，运维开发、系统监控等相关的研究与知识分享。</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="bigdata,hbase">
+    <meta name="description" content="Split拆分 说明： Split entire table or pass a region to split individual region.  With the  second parameter, you can specify an explicit split key for the region.   Examples: split &amp;apos;tableName&amp;apos; s">
+<meta name="keywords" content="bigdata,hbase">
+<meta property="og:type" content="article">
+<meta property="og:title" content="5.Hbase Region的拆分和合并">
+<meta property="og:url" content="http://dennis.pathto.top/2018/04/25/hbase-5-split-compact/index.html">
+<meta property="og:site_name" content="Dennis&#39;Blog">
+<meta property="og:description" content="Split拆分 说明： Split entire table or pass a region to split individual region.  With the  second parameter, you can specify an explicit split key for the region.   Examples: split &amp;apos;tableName&amp;apos; s">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-04-24T16:33:24.933Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="5.Hbase Region的拆分和合并">
+<meta name="twitter:description" content="Split拆分 说明： Split entire table or pass a region to split individual region.  With the  second parameter, you can specify an explicit split key for the region.   Examples: split &amp;apos;tableName&amp;apos; s">
+    
+        <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/semantic.css" type="text/css" />
+<link rel="stylesheet" href="/css/zyComment.css" type="text/css" />
+<style type="text/css">
+	#cloud-tie-wrapper label {
+	    font-weight: bold;
+	}
+	#cloud-tie-wrapper a {
+		font-family: Microsoft YaHei;
+	}
+	#articleComment {
+		width: "60%";
+		/*height: 1500px;*/
+		overflow: auto;
+	}
+</style>
+
+    <script>window.lazyScripts=[]</script>
+
+
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/zyComment.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+$(function(){
+var post_toc_links = $(".post-toc-link");
+$.each( post_toc_links, function(index,post_toc_link){
+	post_toc_link = $(post_toc_link);
+	var post_toc_number = post_toc_link.find(".post-toc-number");
+	var post_toc_text = post_toc_link.find(".post-toc-text");
+	//console.log(post_toc_number.text()+" "+post_toc_text.text());
+	$(post_toc_link.attr("href")).text(post_toc_number.text()+" "+post_toc_text.text())
+});
+});
+
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+function jsonp(url){
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.insertBefore(script, head.firstChild);
+}
+function add_blog_callBackFun(rs){
+	$("#articleComment").zyComment("setCommentAfter",rs);
+}
+function get_list_blog_commonts_callBackFun(rs){
+	var agoComment = rs;
+	$("#articleComment").zyComment({
+		"width":"355",
+		"height":"33",
+		"agoComment":agoComment,
+		"callback":function(comment){
+			var selfID = comment.selfID;
+			if(typeof selfID == "undefined" ){
+				selfID = 0;
+			}
+			jsonp(host+"/add_blog_jsonp?"+"p_id="+encodeURIComponent("2018/04/25/hbase-5-split-compact/")+ "&username="+encodeURIComponent(comment.name)+"&content="+encodeURIComponent(comment.content)+"&email="+encodeURIComponent(comment.email)+"&c_id_replay="+selfID);
+
+		}
+	});
+}
+jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2018/04/25/hbase-5-split-compact/"));
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Dennis</h5>
+          <a href="mailto:dennis52o1314@163.com" title="dennis52o1314@163.com" class="mail">dennis52o1314@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/599166320" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/2166908462" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                其他
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">5.Hbase Region的拆分和合并</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">5.Hbase Region的拆分和合并</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2018-04-24T16:33:24.000Z" itemprop="datePublished" class="page-time">
+  2018-04-25
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/hbase/">hbase</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+<article id="post-hbase-5-split-compact"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">5.Hbase Region的拆分和合并</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2018-04-25 00:33:24" datetime="2018-04-24T16:33:24.000Z"  itemprop="datePublished">2018-04-25</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/hbase/">hbase</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>Split拆分</p>
+<pre><code>说明：
+Split entire table or pass a region to split individual region.  With the 
+second parameter, you can specify an explicit split key for the region.  
+Examples:
+split &apos;tableName&apos;
+split &apos;namespace:tableName&apos;
+split &apos;regionName&apos; # format: &apos;tableName,startKey,id&apos;
+split &apos;tableName&apos;, &apos;splitKey&apos;
+split &apos;regionName&apos;, &apos;splitKey&apos;
+</code></pre><p>首先执行scan ‘hbase:meta’查看元数据，共有三条记录</p>
+<pre><code>hbase(main):001:0&gt; scan &apos;hbase:meta&apos;
+ROW  COLUMN+CELL 
+ hbase:namespace,,15 column=info:regioninfo, timestamp=1500279250104, value={
+ 00279203600.844a078 ENCODED =&gt; 844a078aa357b6e4bf848b42ce46a713, NAME =&gt; &apos;hb
+ aa357b6e4bf848b42ce ase:namespace,,1500279203600.844a078aa357b6e4bf848b42ce4
+ 46a713. 6a713.&apos;, STARTKEY =&gt; &apos;&apos;, ENDKEY =&gt; &apos;&apos;}  
+ hbase:namespace,,15 column=info:seqnumDuringOpen, timestamp=1500279210909, v
+ 00279203600.844a078 alue=\x00\x00\x00\x00\x00\x00\x00\x02   
+ aa357b6e4bf848b42ce 
+ 46a713. 
+ hbase:namespace,,15 column=info:server, timestamp=1500279210909, value=maste
+ 00279203600.844a078 r:16020 
+ aa357b6e4bf848b42ce 
+ 46a713. 
+ hbase:namespace,,15 column=info:serverstartcode, timestamp=1500279210909, va
+ 00279203600.844a078 lue=1500279162649   
+ aa357b6e4bf848b42ce 
+ 46a713. 
+ test,,1500293557739 column=info:regioninfo, timestamp=1500293644890, value={
+ .e686fd30012f1c4cb6 ENCODED =&gt; e686fd30012f1c4cb6d78a241d911202, NAME =&gt; &apos;te
+ d78a241d911202. st,,1500293557739.e686fd30012f1c4cb6d78a241d911202.&apos;, ST
+ ARTKEY =&gt; &apos;&apos;, ENDKEY =&gt; &apos;&apos;} 
+ test,,1500293557739 column=info:seqnumDuringOpen, timestamp=1500293644890, v
+ .e686fd30012f1c4cb6 alue=\x00\x00\x00\x00\x00\x00\x00\x02   
+ d78a241d911202. 
+ test,,1500293557739 column=info:server, timestamp=1500293644890, value=slave
+ .e686fd30012f1c4cb6 1:16020 
+ d78a241d911202. 
+ test,,1500293557739 column=info:serverstartcode, timestamp=1500293644890, va
+ .e686fd30012f1c4cb6 lue=1500279205588   
+ d78a241d911202. 
+ test1,,150028521182 column=info:regioninfo, timestamp=1500288301234, value={
+ 0.ee4ccd1877cf2d579 ENCODED =&gt; ee4ccd1877cf2d5793b41f62a1552257, NAME =&gt; &apos;te
+ 3b41f62a1552257.st1,,1500285211820.ee4ccd1877cf2d5793b41f62a1552257.&apos;, S
+ TARTKEY =&gt; &apos;&apos;, ENDKEY =&gt; &apos;&apos;}
+ test1,,150028521182 column=info:seqnumDuringOpen, timestamp=1500288301234, v
+ 0.ee4ccd1877cf2d579 alue=\x00\x00\x00\x00\x00\x00\x00\x03   
+ 3b41f62a1552257.
+ test1,,150028521182 column=info:server, timestamp=1500288301234, value=maste
+ 0.ee4ccd1877cf2d579 r:16020 
+ 3b41f62a1552257.
+ test1,,150028521182 column=info:serverstartcode, timestamp=1500288301234, va
+ 0.ee4ccd1877cf2d579 lue=1500279162649   
+ 3b41f62a1552257.
+3 row(s) in 2.0130 seconds
+</code></pre><p>然后执行 split ‘test’</p>
+<pre><code>hbase(main):003:0&gt; split &apos;test&apos;
+0 row(s) in 1.4880 seconds
+</code></pre><p>执行scan ‘hbase:meta’查看元数据，结果为5条记录证明正在拆分</p>
+<p>再次执行scan ‘hbase:meta’查看元数据，共有四条记录，证明拆分完成</p>
+<p>merge_region合并</p>
+<p>说明：</p>
+<pre><code>hbase(main):001:0&gt; help &apos;merge_region&apos;
+Merge two regions. Passing &apos;true&apos; as the optional third parameter will force
+a merge (&apos;force&apos; merges regardless else merge will fail unless passed
+adjacent regions. &apos;force&apos; is for expert use only).
+
+NOTE: You must pass the encoded region name, not the full region name so
+this command is a little different from other region operations.  The encoded
+region name is the hash suffix on region names: e.g. if the region name were
+TestTable,0094429456,1289497600452.527db22f95c8a9e0116f0cc13c680396. then
+the encoded region name portion is 527db22f95c8a9e0116f0cc13c680396
+
+Examples:
+
+  hbase&gt; merge_region &apos;ENCODED_REGIONNAME&apos;, &apos;ENCODED_REGIONNAME&apos;
+  hbase&gt; merge_region &apos;ENCODED_REGIONNAME&apos;, &apos;ENCODED_REGIONNAME&apos;, true
+</code></pre><p>合并示例</p>
+<pre><code>hbase(main):002:0&gt; merge_region &apos;85ccd1a431c1f9c2736beeb544466616&apos;,&apos;234da87a49b63975c21b5b5f9c076b10&apos;,true
+0 row(s) in 2.1020 seconds
+</code></pre><p>再次执行scan ‘hbase:meta’查看元数据，共有三条记录，证明合并完成</p>
+<p>Region拆分策略<br>Region 概念<br>Region是表获取和分布的基本元素，由每个列族的一个Store组成。对象层级图如下：</p>
+<pre><code>Table       (HBase table)
+
+  Region       (Regions for the table)
+       Store          (Store per ColumnFamily for each Region for the table)
+
+           MemStore        (MemStore for each Store for each Region for the table)
+
+             StoreFile       (StoreFiles for each Store for each Region for the table)
+
+                 Block     (Blocks within a StoreFile within a Store for each Region for the table)
+</code></pre><ul>
+<li>Region 大小</li>
+</ul>
+<p>Region的大小是一个棘手的问题，需要考量如下几个因素。</p>
+<p>Region是HBase中分布式存储和负载均衡的最小单元。不同Region分布到不同RegionServer上，但并不是存储的最小单元。</p>
+<p>Region由一个或者多个Store组成，每个store保存一个columns family，每个Strore又由一个memStore和0至多个StoreFile 组成。memStore存储在内存中， StoreFile存储在HDFS上。<br>HBase通过将region切分在许多机器上实现分布式。也就是说，你如果有16GB的数据，只分了2个region， 你却有20台机器，有18台就浪费了。<br>region数目太多就会造成性能下降，现在比以前好多了。但是对于同样大小的数据，700个region比3000个要好。</p>
+<p>region数目太少就会妨碍可扩展性，降低并行能力。有的时候导致压力不够分散。这就是为什么，你向一个10节点的HBase集群导入200MB的数据，大部分的节点是idle的。</p>
+<p>RegionServer中1个region和10个region索引需要的内存量没有太多的差别。</p>
+<p>最好是使用默认的配置，可以把热的表配小一点(或者受到split热点的region把压力分散到集群中)。如果你的cell的大小比较大(100KB或更大)，就可以把region的大小调到1GB。region的最大大小在hbase配置文件中定义：</p>
+<pre><code>&lt;property&gt;
+   &lt;name&gt;hbase.hregion.max.filesize&lt;/name&gt;
+   &lt;value&gt;10 * 1024 * 1024 * 1024&lt;/value&gt;
+ &lt;/property&gt;
+</code></pre><p>说明：</p>
+<p>当region中的StoreFile大小超过了上面配置的值的时候，该region就会被拆分，具体的拆分策略见下文。</p>
+<p>上面的值也可以针对每个表单独设置，例如在hbase shell中设置：</p>
+<pre><code>create &apos;t&apos;,&apos;f&apos;
+disable &apos;t&apos;
+alter &apos;t&apos;, METHOD =&gt; &apos;table_att&apos;, MAX_FILESIZE =&gt; &apos;134217728&apos;
+enable &apos;t&apos;
+</code></pre><p>Region 拆分策略<br>Region的分割操作是不可见的，因为Master不会参与其中。RegionServer拆分region的步骤是，先将该region下线，然后拆分，将其子region加入到META元信息中，再将他们加入到原本的RegionServer中，最后汇报Master。</p>
+<p>执行split的线程是CompactSplitThread。</p>
+<p>自定义拆分策略<br>可以通过设置RegionSplitPolicy的实现类来指定拆分策略，RegionSplitPolicy类的实现类有：</p>
+<pre><code>ConstantSizeRegionSplitPolicy
+    IncreasingToUpperBoundRegionSplitPolicy
+        DelimitedKeyPrefixRegionSplitPolicy
+        KeyPrefixRegionSplitPolicy
+</code></pre><p>对于split，并不是设置了hbase.hregion.max.filesize（默认10G）为很大就保证不split了，需要有以下的算法：</p>
+<p>IncreasingToUpperBoundRegionSplitPolicy，0.94.0默认region split策略。根据公式min(r^2*flushSize，maxFileSize)确定split的maxFileSize，其中r为在线region个数，maxFileSize由hbase.hregion.max.filesize指定。</p>
+<p>ConstantSizeRegionSplitPolicy，仅仅当region大小超过常量值（hbase.hregion.max.filesize大小）时，才进行拆分。</p>
+<p>DelimitedKeyPrefixRegionSplitPolicy，保证以分隔符前面的前缀为splitPoint，保证相同RowKey前缀的数据在一个Region中</p>
+<p>KeyPrefixRegionSplitPolicy，保证具有相同前缀的row在一个region中（要求设计中前缀具有同样长度）。指定rowkey前缀位数划分region，通过读取table的prefix_split_key_policy.prefix_length属性，该属性为数字类型，表示前缀长度，在进行split时，按此长度对splitPoint进行截取。此种策略比较适合固定前缀的rowkey。当table中没有设置该属性，或其属性不为Integer类型时，指定此策略效果等同与使用IncreasingToUpperBoundRegionSplitPolicy。</p>
+<p>IncreasingToUpperBoundRegionSplitPolicy</p>
+<p>这是0.94.0默认region split策略。根据根据公式min(r^2*flushSize，maxFileSize)确定split的maxFileSize，这里假设flushSize为128M：</p>
+<pre><code>第一次拆分大小为：min(10G，1*1*128M)=128M 
+第二次拆分大小为：min(10G，3*3*128M)=1152M 
+第三次拆分大小为：min(10G，5*5*128M)=3200M 
+第四次拆分大小为：min(10G，7*7*128M)=6272M 
+第五次拆分大小为：min(10G，9*9*128M)=10G 
+第五次拆分大小为：min(10G，11*11*128M)=10G 
+可以看到，只有在第四次之后的拆分大小才为10G
+</code></pre><p>配置拆分策略<br>你可以在hbase配置文件中定义全局的拆分策略，设置hbase.regionserver.region.split.policy的值即可，也可以在创建和修改表时候指定：</p>
+<p>// 更新现有表的split策略</p>
+<pre><code>HBaseAdmin admin = new HBaseAdmin( conf);
+HTable hTable = new HTable( conf, &quot;test&quot; );
+HTableDescriptor htd = hTable.getTableDescriptor();
+HTableDescriptor newHtd = new HTableDescriptor(htd);
+newHtd.setValue(HTableDescriptor. SPLIT_POLICY, KeyPrefixRegionSplitPolicy.class .getName());// 指定策略
+newHtd.setValue(&quot;prefix_split_key_policy.prefix_length&quot;, &quot;2&quot;);
+newHtd.setValue(&quot;MEMSTORE_FLUSHSIZE&quot;, &quot;5242880&quot;); // 5M
+admin.disableTable( &quot;test&quot;);
+admin.modifyTable(Bytes. toBytes(&quot;test&quot;), newHtd);
+admin.enableTable( &quot;test&quot;);
+</code></pre><p>说明：</p>
+<p>上面的不同策略可以在不同的业务场景下使用，特别是第三种和第四种一般关注和使用的比较少。<br>如果想关闭自动拆分改为手动拆分，建议同时修改hbase.hregion.max.filesize和hbase.regionserver.region.split.policy值。</p>
+<p>编程实现table和Region的拆分合并<br>1、拆分</p>
+<pre><code>public static Configuration conf = null;
+public static Connection conn = null;
+
+/**
+ * 运行时创建静态程序块
+ */
+static {
+    try {
+        // 新型API创建连接
+        conf = HBaseConfiguration.create();
+        conn = ConnectionFactory.createConnection(conf);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+
+}
+
+public static void main(String[] args) throws Exception {
+    findRegions();
+    splitTable();
+}
+
+/**
+ * 查询区域
+ * @throws IOException
+ */
+public static void findRegions() throws IOException{
+    Admin admin = conn.getAdmin();
+    List&lt;HRegionInfo&gt; list = admin.getTableRegions(TableName.valueOf(&quot;test&quot;));
+    System.out.println(list.size());
+}
+
+/**
+ * 拆分表
+ * @throws IOException
+ */
+public static void splitTable() throws IOException{
+    Admin admin = conn.getAdmin();
+    admin.split(TableName.valueOf(&quot;test&quot;));
+    System.out.println(&quot;拆分表成功&quot;);
+}
+</code></pre><p>2、部分结果</p>
+<pre><code>2017-07-17 23:04:58,623 INFO  [main-SendThread(slave2:2181)] zookeeper.ClientCnxn: Session establishment complete on server slave2/192.168.1.153:2181, sessionid = 0x15d502879ab0004, negotiated timeout = 90000
+2017-07-17 23:04:59,790 INFO  [main-EventThread] zookeeper.ClientCnxn: EventThread shut down
+2017-07-17 23:04:59,792 INFO  [main] zookeeper.ZooKeeper: Session: 0x15d502879ab0004 closed
+1
+2017-07-17 23:04:59,817 INFO  [main] zookeeper.RecoverableZooKeeper: Process identifier=hbase-admin-on-hconnection-0x397fbdb connecting to ZooKeeper ensemble=slave1:2181,slave2:2181
+2017-07-17 23:04:59,818 INFO  [main] zookeeper.ZooKeeper: Initiating client connection, connectString=slave1:2181,slave2:2181 sessionTimeout=90000 watcher=hbase-admin-on-hconnection-0x397fbdb0x0, quorum=slave1:2181,slave2:2181, baseZNode=/hbase
+2017-07-17 23:04:59,824 INFO  [main-SendThread(slave2:2181)] zookeeper.ClientCnxn: Opening socket connection to server slave2/192.168.1.153:2181. Will not attempt to authenticate using SASL (unknown error)
+2017-07-17 23:04:59,827 INFO  [main-SendThread(slave2:2181)] zookeeper.ClientCnxn: Socket connection established to slave2/192.168.1.153:2181, initiating session
+2017-07-17 23:04:59,871 INFO  [main-SendThread(slave2:2181)] zookeeper.ClientCnxn: Session establishment complete on server slave2/192.168.1.153:2181, sessionid = 0x15d502879ab0005, negotiated timeout = 90000
+2017-07-17 23:05:00,008 INFO  [main] zookeeper.ZooKeeper: Session: 0x15d502879ab0005 closed
+</code></pre><p>拆分成功<br>2017-07-17 23:05:00,009 INFO  [main-EventThread] zookeeper.ClientCnxn: EventThread shut down<br>3、执行echo “scan ‘hbase:meta’” | hbase shell查看元数据，共有四条记录，证明拆分完成</p>
+<p>4、拆分区域添加如下代码</p>
+<pre><code>/**
+ * 拆分区域
+ * @throws IOException
+ */
+public static void splitRegion() throws IOException{
+    Admin admin = conn.getAdmin();
+    admin.splitRegion(converBytes(&quot;855cd5b9660a1dd68757ef8344902ab2&quot;));
+    System.out.println(&quot;拆分区域成功&quot;);
+}
+</code></pre><p>5、合并区域添加如下代码</p>
+<pre><code>/**
+ * 合并区域
+ * @throws IOException
+ */
+public static void splitMerge_region() throws IOException{
+    Admin admin = conn.getAdmin();
+    admin.mergeRegions(converBytes(&quot;855cd5b9660a1dd68757ef8344902ab2&quot;), converBytes(&quot;ed234e41da5b3ea3fdffec840e8eb29c&quot;), true);
+    System.out.println(&quot;合并区域成功&quot;);
+}
+</code></pre>
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2018-04-24T16:33:24.933Z" itemprop="dateUpdated">2018-04-25 00:33:24</time>
+</span><br>
+
+
+        
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2018/04/25/hbase-5-split-compact/" target="_blank" rel="external">http://dennis.pathto.top/2018/04/25/hbase-5-split-compact/</a>
+        
+    </div>
+    <footer>
+        <a href="http://dennis.pathto.top">
+            <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
+            Dennis
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/bigdata/">bigdata</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hbase/">hbase</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2018/04/25/hbase-5-split-compact/&title=《5.Hbase Region的拆分和合并》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2018/04/25/hbase-5-split-compact/&title=《5.Hbase Region的拆分和合并》 — Dennis'Blog&source=本博客内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、大数据，云计算，运维开发、系统监控等相关的研究与知识分享。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2018/04/25/hbase-5-split-compact/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《5.Hbase Region的拆分和合并》 — Dennis'Blog&url=http://dennis.pathto.top/2018/04/25/hbase-5-split-compact/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2018/04/25/hbase-5-split-compact/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2018/04/25/hbase-6-0-98-commod/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">hbase-6-0.98-commod</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2018/04/25/hbase-4-namespace/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">4.HBase常用操作之namespace</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper">
+     <div id="articleComment" style="padding-left:5%;padding-right:5%;" ></div>
+    <!--<iframe height="900px" id="page_content_iframe" frameborder="0" marginheight="0" onload="dyniframesize('page_content_iframe');" width="100%" scrolling="auto" src="https://dennis-dzqapp.rhcloud.com/list_blog_commonts?p_id=2018/04/25/hbase-5-split-compact/" style="display: block;"></iframe>-->
+    </div>
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" data-alipay="http://otwbalpjp.bkt.clouddn.com/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Dennis &copy; 2015 - 2018</span>
+            <span>
+                
+                Power by <a href="http://dennis.pathto.top/" target="_blank">dennis.pathto.top</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2018/04/25/hbase-5-split-compact/&title=《5.Hbase Region的拆分和合并》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2018/04/25/hbase-5-split-compact/&title=《5.Hbase Region的拆分和合并》 — Dennis'Blog&source=本博客内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、大数据，云计算，运维开发、系统监控等相关的研究与知识分享。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2018/04/25/hbase-5-split-compact/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《5.Hbase Region的拆分和合并》 — Dennis'Blog&url=http://dennis.pathto.top/2018/04/25/hbase-5-split-compact/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2018/04/25/hbase-5-split-compact/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACKklEQVR42u3aMXLDMAwEQP//007rRtQBpDwxuaoyHkXWprgAIF6v+Hp/XJ+fjO/M7x9/suzCwMD4WcZ7eCUvl5PyK383DAyMcxjjKLyKxXFc3nzxMDmrMY2BgYExDtmkEMyfgIGBgbE2cHNw0qxiYGBgjBlJM5lEZ28A99VeHAMD4wcZM43l0z8/cr6BgYHxU4z5YX0yeqvGcfmtMDAwtmbkAVctFpPI7rEv78TAwNia0Vu5WDtoq0b5suUwDAyMf8/IvywfgeXPqT7tkoeBgbE1Izka7B0Y9JrYXpmIgYFxAqN6QJiH4PzBZ/45BgbGCYxk/WtZx5y8VtCfYmBgnMBI1rCSAm5mcJYUnTeBjoGBsTUjbyZ7O1p5ybhqvQMDA2M/RrIkkSxM5McD1Xgtb4tgYGBsx5gJyuq6xkwzXPg3gIGBsR0jbynzQVivMs0b6ZvSEAMDYztGHpfV5Yz8cHRxgYiBgbEpo1e0VRvRedLNPRgYGAcw8gHZfCHYi+ybIMbAwDiAUV1r6I34e89JwhcDA+MERjVGq6HZWyMrFI4YGBjHMB5pL+OiMF84w8DAOIfxLl7Vrxn/bhLx0Z8GAwNja0Yv7HoF4nwJWB3kYWBg7MSYPwDoRXm1BMTAwMColm7VwVx1hNdsZTEwMDDiGV71SDKH3XTkGBgYGMPSMC/m8oPMwnMwMDAOYCRNbBK7M9GcF4sYGBinMfLWcebAsvrSM+UjBgbGRow/IS0ZBi3p4JUAAAAASUVORK5CYII=" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="/js/main.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '我消失了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '我回来了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

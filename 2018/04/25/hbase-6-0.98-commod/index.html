@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>6.hbase0.98命令 | Dennis&#39;Blog | 本博客内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、大数据，云计算，运维开发、系统监控等相关的研究与知识分享。</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="bigdata,hbase">
+    <meta name="description" content="hbase0.98版本和habse1.x版本是不一样的，在hbase0.98版本中，如果表还没有见 ERROR: Failed 1 action: user: 1 time, servers with issues: null location,   Here is some help for this command: Put a cell &amp;apos;value&amp;apos; at specif">
+<meta name="keywords" content="bigdata,hbase">
+<meta property="og:type" content="article">
+<meta property="og:title" content="6.hbase0.98命令">
+<meta property="og:url" content="http://dennis.pathto.top/2018/04/25/hbase-6-0.98-commod/index.html">
+<meta property="og:site_name" content="Dennis&#39;Blog">
+<meta property="og:description" content="hbase0.98版本和habse1.x版本是不一样的，在hbase0.98版本中，如果表还没有见 ERROR: Failed 1 action: user: 1 time, servers with issues: null location,   Here is some help for this command: Put a cell &amp;apos;value&amp;apos; at specif">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-04-24T16:33:29.026Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="6.hbase0.98命令">
+<meta name="twitter:description" content="hbase0.98版本和habse1.x版本是不一样的，在hbase0.98版本中，如果表还没有见 ERROR: Failed 1 action: user: 1 time, servers with issues: null location,   Here is some help for this command: Put a cell &amp;apos;value&amp;apos; at specif">
+    
+        <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/semantic.css" type="text/css" />
+<link rel="stylesheet" href="/css/zyComment.css" type="text/css" />
+<style type="text/css">
+	#cloud-tie-wrapper label {
+	    font-weight: bold;
+	}
+	#cloud-tie-wrapper a {
+		font-family: Microsoft YaHei;
+	}
+	#articleComment {
+		width: "60%";
+		/*height: 1500px;*/
+		overflow: auto;
+	}
+</style>
+
+    <script>window.lazyScripts=[]</script>
+
+
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/zyComment.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+$(function(){
+var post_toc_links = $(".post-toc-link");
+$.each( post_toc_links, function(index,post_toc_link){
+	post_toc_link = $(post_toc_link);
+	var post_toc_number = post_toc_link.find(".post-toc-number");
+	var post_toc_text = post_toc_link.find(".post-toc-text");
+	//console.log(post_toc_number.text()+" "+post_toc_text.text());
+	$(post_toc_link.attr("href")).text(post_toc_number.text()+" "+post_toc_text.text())
+});
+});
+
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+function jsonp(url){
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.insertBefore(script, head.firstChild);
+}
+function add_blog_callBackFun(rs){
+	$("#articleComment").zyComment("setCommentAfter",rs);
+}
+function get_list_blog_commonts_callBackFun(rs){
+	var agoComment = rs;
+	$("#articleComment").zyComment({
+		"width":"355",
+		"height":"33",
+		"agoComment":agoComment,
+		"callback":function(comment){
+			var selfID = comment.selfID;
+			if(typeof selfID == "undefined" ){
+				selfID = 0;
+			}
+			jsonp(host+"/add_blog_jsonp?"+"p_id="+encodeURIComponent("2018/04/25/hbase-6-0.98-commod/")+ "&username="+encodeURIComponent(comment.name)+"&content="+encodeURIComponent(comment.content)+"&email="+encodeURIComponent(comment.email)+"&c_id_replay="+selfID);
+
+		}
+	});
+}
+jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2018/04/25/hbase-6-0.98-commod/"));
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Dennis</h5>
+          <a href="mailto:dennis52o1314@163.com" title="dennis52o1314@163.com" class="mail">dennis52o1314@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/599166320" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/2166908462" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                其他
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">6.hbase0.98命令</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">6.hbase0.98命令</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2018-04-24T16:33:29.000Z" itemprop="datePublished" class="page-time">
+  2018-04-25
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/hbase/">hbase</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#语法：create-NAME-gt-VERSIONS-gt"><span class="post-toc-number">1.</span> <span class="post-toc-text">语法：create , {NAME => , VERSIONS => }</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#例如：创建表t1，有两个family-name：f1，f2，且版本数均为2"><span class="post-toc-number">2.</span> <span class="post-toc-text">例如：创建表t1，有两个family name：f1，f2，且版本数均为2</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#语法：describe"><span class="post-toc-number">3.</span> <span class="post-toc-text">语法：describe </span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#例如：查看表t1的结构"><span class="post-toc-number">4.</span> <span class="post-toc-text">例如：查看表t1的结构</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#语法：alter-‘t1’-NAME-gt-‘f1’-NAME-gt-‘f2’-METHOD-gt-‘delete’"><span class="post-toc-number">5.</span> <span class="post-toc-text">语法：alter ‘t1’, {NAME => ‘f1’}, {NAME => ‘f2’, METHOD => ‘delete’}</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#例如：修改表test1的cf的TTL为180天"><span class="post-toc-number">6.</span> <span class="post-toc-text">例如：修改表test1的cf的TTL为180天</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#语法-grant-参数后面用逗号分隔"><span class="post-toc-number">7.</span> <span class="post-toc-text">语法 : grant      参数后面用逗号分隔</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#权限用五个字母表示：-“RWXCA”"><span class="post-toc-number">8.</span> <span class="post-toc-text">权限用五个字母表示： “RWXCA”.</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#READ-‘R’-WRITE-‘W’-EXEC-‘X’-CREATE-‘C’-ADMIN-‘A’"><span class="post-toc-number">9.</span> <span class="post-toc-text">READ(‘R’), WRITE(‘W’), EXEC(‘X’), CREATE(‘C’), ADMIN(‘A’)</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#例如，给用户‘test’分配对表t1有读写的权限，"><span class="post-toc-number">10.</span> <span class="post-toc-text">例如，给用户‘test’分配对表t1有读写的权限，</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#语法：user-permission"><span class="post-toc-number">11.</span> <span class="post-toc-text">语法：user_permission </span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#例如，查看表t1的权限列表"><span class="post-toc-number">12.</span> <span class="post-toc-text">例如，查看表t1的权限列表</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#与分配权限类似，语法：revoke"><span class="post-toc-number">13.</span> <span class="post-toc-text">与分配权限类似，语法：revoke    </span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#例如，收回test用户在表t1上的权限"><span class="post-toc-number">14.</span> <span class="post-toc-text">例如，收回test用户在表t1上的权限</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#语法：put"><span class="post-toc-number">15.</span> <span class="post-toc-text">语法：put ,,,,</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#例如：给表t1的添加一行记录：rowkey是rowkey001，family-name：f1，column-name：col1，value：value01，timestamp：系统默认"><span class="post-toc-number">16.</span> <span class="post-toc-text">例如：给表t1的添加一行记录：rowkey是rowkey001，family name：f1，column name：col1，value：value01，timestamp：系统默认</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#语法：get-…"><span class="post-toc-number">17.</span> <span class="post-toc-text">语法：get ,,[,….]</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#例如：查询表t1，rowkey001中的f1下的col1的值"><span class="post-toc-number">18.</span> <span class="post-toc-text">例如：查询表t1，rowkey001中的f1下的col1的值</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#或者："><span class="post-toc-number">19.</span> <span class="post-toc-text">或者：</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#查询表t1，rowke002中的f1下的所有列值"><span class="post-toc-number">20.</span> <span class="post-toc-text">查询表t1，rowke002中的f1下的所有列值</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#语法：scan-COLUMNS-gt-…-LIMIT-gt-num"><span class="post-toc-number">21.</span> <span class="post-toc-text">语法：scan , {COLUMNS => [ ,…. ], LIMIT => num}</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#另外，还可以添加STARTROW、TIMERANGE和FITLER等高级功能"><span class="post-toc-number">22.</span> <span class="post-toc-text">另外，还可以添加STARTROW、TIMERANGE和FITLER等高级功能</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#例如：扫描表t1的前5条数据"><span class="post-toc-number">23.</span> <span class="post-toc-text">例如：扫描表t1的前5条数据</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#语法：count-INTERVAL-gt-intervalNum-CACHE-gt-cacheNum"><span class="post-toc-number">24.</span> <span class="post-toc-text">语法：count , {INTERVAL => intervalNum, CACHE => cacheNum}</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#INTERVAL设置多少行显示一次及对应的rowkey，默认1000；CACHE每次去取的缓存区大小，默认是10，调整该参数可提高查询速度"><span class="post-toc-number">25.</span> <span class="post-toc-text">INTERVAL设置多少行显示一次及对应的rowkey，默认1000；CACHE每次去取的缓存区大小，默认是10，调整该参数可提高查询速度</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#例如，查询表t1中的行数，每100条显示一次，缓存区为500"><span class="post-toc-number">26.</span> <span class="post-toc-text">例如，查询表t1中的行数，每100条显示一次，缓存区为500</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#语法：delete-必须指定列名"><span class="post-toc-number">27.</span> <span class="post-toc-text">语法：delete , ,   , ,必须指定列名</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#例如：删除表t1，rowkey001中的f1-col1的数据"><span class="post-toc-number">28.</span> <span class="post-toc-text">例如：删除表t1，rowkey001中的f1:col1的数据</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#语法：deleteall-，可以不指定列名，删除整行数据"><span class="post-toc-number">29.</span> <span class="post-toc-text">语法：deleteall , ,   , ，可以不指定列名，删除整行数据</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#例如：删除表t1，rowk001的数据"><span class="post-toc-number">30.</span> <span class="post-toc-text">例如：删除表t1，rowk001的数据</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#语法：-truncate"><span class="post-toc-number">31.</span> <span class="post-toc-text">语法： truncate </span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#其具体过程是：disable-table-gt-drop-table-gt-create-table"><span class="post-toc-number">32.</span> <span class="post-toc-text">其具体过程是：disable table -> drop table -> create table</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#例如：删除表t1的所有数据"><span class="post-toc-number">33.</span> <span class="post-toc-text">例如：删除表t1的所有数据</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#语法：move-‘encodeRegionName’-‘ServerName’"><span class="post-toc-number">34.</span> <span class="post-toc-text">语法：move ‘encodeRegionName’, ‘ServerName’</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#encodeRegionName指的regioName后面的编码，ServerName指的是master-status的Region-Servers列表"><span class="post-toc-number">35.</span> <span class="post-toc-text">encodeRegionName指的regioName后面的编码，ServerName指的是master-status的Region Servers列表</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#示例"><span class="post-toc-number">36.</span> <span class="post-toc-text">示例</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#语法：balance-switch-true-false"><span class="post-toc-number">37.</span> <span class="post-toc-text">语法：balance_switch true|false</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#语法：split-‘regionName’-‘splitKey’"><span class="post-toc-number">38.</span> <span class="post-toc-text">语法：split ‘regionName’, ‘splitKey’</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#同步hdfs配置"><span class="post-toc-number">39.</span> <span class="post-toc-text">同步hdfs配置</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#同步hbase配置"><span class="post-toc-number">40.</span> <span class="post-toc-text">同步hbase配置</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#graceful重启"><span class="post-toc-number">41.</span> <span class="post-toc-text">graceful重启</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-hbase-6-0.98-commod"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">6.hbase0.98命令</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2018-04-25 00:33:29" datetime="2018-04-24T16:33:29.000Z"  itemprop="datePublished">2018-04-25</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/hbase/">hbase</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>hbase0.98版本和habse1.x版本是不一样的，在hbase0.98版本中，如果表还没有见</p>
+<pre><code>ERROR: Failed 1 action: user: 1 time, servers with issues: null location, 
+
+Here is some help for this command:
+Put a cell &apos;value&apos; at specified table/row/column and optionally
+timestamp coordinates.  To put a cell value into table &apos;ns1:t1&apos; or &apos;t1&apos;
+at row &apos;r1&apos; under column &apos;c1&apos; marked with the time &apos;ts1&apos;, do:
+
+  hbase&gt; put &apos;ns1:t1&apos;, &apos;r1&apos;, &apos;c1&apos;, &apos;value&apos;
+  hbase&gt; put &apos;t1&apos;, &apos;r1&apos;, &apos;c1&apos;, &apos;value&apos;
+  hbase&gt; put &apos;t1&apos;, &apos;r1&apos;, &apos;c1&apos;, &apos;value&apos;, ts1
+  hbase&gt; put &apos;t1&apos;, &apos;r1&apos;, &apos;c1&apos;, &apos;value&apos;, {ATTRIBUTES=&gt;{&apos;mykey&apos;=&gt;&apos;myvalue&apos;}}
+  hbase&gt; put &apos;t1&apos;, &apos;r1&apos;, &apos;c1&apos;, &apos;value&apos;, ts1, {ATTRIBUTES=&gt;{&apos;mykey&apos;=&gt;&apos;myvalue&apos;}}
+  hbase&gt; put &apos;t1&apos;, &apos;r1&apos;, &apos;c1&apos;, &apos;value&apos;, ts1, {VISIBILITY=&gt;&apos;PRIVATE|SECRET&apos;}
+
+The same commands also can be run on a table reference. Suppose you had a reference
+t to table &apos;t1&apos;, the corresponding command would be:
+
+  hbase&gt; t.put &apos;r1&apos;, &apos;c1&apos;, &apos;value&apos;, ts1, {ATTRIBUTES=&gt;{&apos;mykey&apos;=&gt;&apos;myvalue&apos;}}
+</code></pre><p>进入hbase shell console<br>$HBASE_HOME/bin/hbase shell<br>如果有kerberos认证，需要事先使用相应的keytab进行一下认证（使用kinit命令），认证成功之后再使用hbase shell进入可以使用whoami命令可查看当前用户<br>hbase(main)&gt; whoami<br>表的管理<br>1）查看有哪些表<br>hbase(main)&gt; list<br>2）创建表</p>
+<h1 id="语法：create-NAME-gt-VERSIONS-gt"><a href="#语法：create-NAME-gt-VERSIONS-gt" class="headerlink" title="语法：create , {NAME =&gt; , VERSIONS =&gt; }"></a>语法：create <table>, {NAME =&gt; <family>, VERSIONS =&gt; <versions>}</versions></family></table></h1><h1 id="例如：创建表t1，有两个family-name：f1，f2，且版本数均为2"><a href="#例如：创建表t1，有两个family-name：f1，f2，且版本数均为2" class="headerlink" title="例如：创建表t1，有两个family name：f1，f2，且版本数均为2"></a>例如：创建表t1，有两个family name：f1，f2，且版本数均为2</h1><p>hbase(main)&gt; create ‘t1’,{NAME =&gt; ‘f1’, VERSIONS =&gt; 2},{NAME =&gt; ‘f2’, VERSIONS =&gt; 2}<br>3）删除表<br>分两步：首先disable，然后drop<br>例如：删除表t1</p>
+<p>hbase(main)&gt; disable ‘t1’<br>hbase(main)&gt; drop ‘t1’<br>4）查看表的结构</p>
+<h1 id="语法：describe"><a href="#语法：describe" class="headerlink" title="语法：describe "></a>语法：describe <table></table></h1><h1 id="例如：查看表t1的结构"><a href="#例如：查看表t1的结构" class="headerlink" title="例如：查看表t1的结构"></a>例如：查看表t1的结构</h1><p>hbase(main)&gt; describe ‘t1’<br>5）修改表结构<br>修改表结构必须先disable</p>
+<h1 id="语法：alter-‘t1’-NAME-gt-‘f1’-NAME-gt-‘f2’-METHOD-gt-‘delete’"><a href="#语法：alter-‘t1’-NAME-gt-‘f1’-NAME-gt-‘f2’-METHOD-gt-‘delete’" class="headerlink" title="语法：alter ‘t1’, {NAME =&gt; ‘f1’}, {NAME =&gt; ‘f2’, METHOD =&gt; ‘delete’}"></a>语法：alter ‘t1’, {NAME =&gt; ‘f1’}, {NAME =&gt; ‘f2’, METHOD =&gt; ‘delete’}</h1><h1 id="例如：修改表test1的cf的TTL为180天"><a href="#例如：修改表test1的cf的TTL为180天" class="headerlink" title="例如：修改表test1的cf的TTL为180天"></a>例如：修改表test1的cf的TTL为180天</h1><p>hbase(main)&gt; disable ‘test1’<br>hbase(main)&gt; alter ‘test1’,{NAME=&gt;’body’,TTL=&gt;’15552000’},{NAME=&gt;’meta’, TTL=&gt;’15552000’}<br>hbase(main)&gt; enable ‘test1’<br>权限管理<br>1）分配权限</p>
+<h1 id="语法-grant-参数后面用逗号分隔"><a href="#语法-grant-参数后面用逗号分隔" class="headerlink" title="语法 : grant      参数后面用逗号分隔"></a>语法 : grant <user> <permissions> <table> <column family=""> <column qualifier=""> 参数后面用逗号分隔</column></column></table></permissions></user></h1><h1 id="权限用五个字母表示：-“RWXCA”"><a href="#权限用五个字母表示：-“RWXCA”" class="headerlink" title="权限用五个字母表示： “RWXCA”."></a>权限用五个字母表示： “RWXCA”.</h1><h1 id="READ-‘R’-WRITE-‘W’-EXEC-‘X’-CREATE-‘C’-ADMIN-‘A’"><a href="#READ-‘R’-WRITE-‘W’-EXEC-‘X’-CREATE-‘C’-ADMIN-‘A’" class="headerlink" title="READ(‘R’), WRITE(‘W’), EXEC(‘X’), CREATE(‘C’), ADMIN(‘A’)"></a>READ(‘R’), WRITE(‘W’), EXEC(‘X’), CREATE(‘C’), ADMIN(‘A’)</h1><h1 id="例如，给用户‘test’分配对表t1有读写的权限，"><a href="#例如，给用户‘test’分配对表t1有读写的权限，" class="headerlink" title="例如，给用户‘test’分配对表t1有读写的权限，"></a>例如，给用户‘test’分配对表t1有读写的权限，</h1><p>hbase(main)&gt; grant ‘test’,’RW’,’t1’<br>2）查看权限</p>
+<h1 id="语法：user-permission"><a href="#语法：user-permission" class="headerlink" title="语法：user_permission "></a>语法：user_permission <table></table></h1><h1 id="例如，查看表t1的权限列表"><a href="#例如，查看表t1的权限列表" class="headerlink" title="例如，查看表t1的权限列表"></a>例如，查看表t1的权限列表</h1><p>hbase(main)&gt; user_permission ‘t1’<br>3）收回权限</p>
+<h1 id="与分配权限类似，语法：revoke"><a href="#与分配权限类似，语法：revoke" class="headerlink" title="与分配权限类似，语法：revoke    "></a>与分配权限类似，语法：revoke <user> <table> <column family=""> <column qualifier=""></column></column></table></user></h1><h1 id="例如，收回test用户在表t1上的权限"><a href="#例如，收回test用户在表t1上的权限" class="headerlink" title="例如，收回test用户在表t1上的权限"></a>例如，收回test用户在表t1上的权限</h1><p>hbase(main)&gt; revoke ‘test’,’t1’<br>表数据的增删改查<br>1）添加数据</p>
+<h1 id="语法：put"><a href="#语法：put" class="headerlink" title="语法：put ,,,,"></a>语法：put <table>,<rowkey>,<family:column>,<value>,<timestamp></timestamp></value></family:column></rowkey></table></h1><h1 id="例如：给表t1的添加一行记录：rowkey是rowkey001，family-name：f1，column-name：col1，value：value01，timestamp：系统默认"><a href="#例如：给表t1的添加一行记录：rowkey是rowkey001，family-name：f1，column-name：col1，value：value01，timestamp：系统默认" class="headerlink" title="例如：给表t1的添加一行记录：rowkey是rowkey001，family name：f1，column name：col1，value：value01，timestamp：系统默认"></a>例如：给表t1的添加一行记录：rowkey是rowkey001，family name：f1，column name：col1，value：value01，timestamp：系统默认</h1><p>hbase(main)&gt; put ‘t1’,’rowkey001’,’f1:col1’,’value01’<br>用法比较单一。<br>2）查询数据<br>a）查询某行记录</p>
+<h1 id="语法：get-…"><a href="#语法：get-…" class="headerlink" title="语法：get ,,[,….]"></a>语法：get <table>,<rowkey>,[<family:column>,….]</family:column></rowkey></table></h1><h1 id="例如：查询表t1，rowkey001中的f1下的col1的值"><a href="#例如：查询表t1，rowkey001中的f1下的col1的值" class="headerlink" title="例如：查询表t1，rowkey001中的f1下的col1的值"></a>例如：查询表t1，rowkey001中的f1下的col1的值</h1><p>hbase(main)&gt; get ‘t1’,’rowkey001’, ‘f1:col1’</p>
+<h1 id="或者："><a href="#或者：" class="headerlink" title="或者："></a>或者：</h1><p>hbase(main)&gt; get ‘t1’,’rowkey001’, {COLUMN=&gt;’f1:col1’}</p>
+<h1 id="查询表t1，rowke002中的f1下的所有列值"><a href="#查询表t1，rowke002中的f1下的所有列值" class="headerlink" title="查询表t1，rowke002中的f1下的所有列值"></a>查询表t1，rowke002中的f1下的所有列值</h1><p>hbase(main)&gt; get ‘t1’,’rowkey001’<br>b）扫描表</p>
+<h1 id="语法：scan-COLUMNS-gt-…-LIMIT-gt-num"><a href="#语法：scan-COLUMNS-gt-…-LIMIT-gt-num" class="headerlink" title="语法：scan , {COLUMNS =&gt; [ ,…. ], LIMIT =&gt; num}"></a>语法：scan <table>, {COLUMNS =&gt; [ <family:column>,…. ], LIMIT =&gt; num}</family:column></table></h1><h1 id="另外，还可以添加STARTROW、TIMERANGE和FITLER等高级功能"><a href="#另外，还可以添加STARTROW、TIMERANGE和FITLER等高级功能" class="headerlink" title="另外，还可以添加STARTROW、TIMERANGE和FITLER等高级功能"></a>另外，还可以添加STARTROW、TIMERANGE和FITLER等高级功能</h1><h1 id="例如：扫描表t1的前5条数据"><a href="#例如：扫描表t1的前5条数据" class="headerlink" title="例如：扫描表t1的前5条数据"></a>例如：扫描表t1的前5条数据</h1><p>hbase(main)&gt; scan ‘t1’,{LIMIT=&gt;5}<br>c）查询表中的数据行数</p>
+<h1 id="语法：count-INTERVAL-gt-intervalNum-CACHE-gt-cacheNum"><a href="#语法：count-INTERVAL-gt-intervalNum-CACHE-gt-cacheNum" class="headerlink" title="语法：count , {INTERVAL =&gt; intervalNum, CACHE =&gt; cacheNum}"></a>语法：count <table>, {INTERVAL =&gt; intervalNum, CACHE =&gt; cacheNum}</table></h1><h1 id="INTERVAL设置多少行显示一次及对应的rowkey，默认1000；CACHE每次去取的缓存区大小，默认是10，调整该参数可提高查询速度"><a href="#INTERVAL设置多少行显示一次及对应的rowkey，默认1000；CACHE每次去取的缓存区大小，默认是10，调整该参数可提高查询速度" class="headerlink" title="INTERVAL设置多少行显示一次及对应的rowkey，默认1000；CACHE每次去取的缓存区大小，默认是10，调整该参数可提高查询速度"></a>INTERVAL设置多少行显示一次及对应的rowkey，默认1000；CACHE每次去取的缓存区大小，默认是10，调整该参数可提高查询速度</h1><h1 id="例如，查询表t1中的行数，每100条显示一次，缓存区为500"><a href="#例如，查询表t1中的行数，每100条显示一次，缓存区为500" class="headerlink" title="例如，查询表t1中的行数，每100条显示一次，缓存区为500"></a>例如，查询表t1中的行数，每100条显示一次，缓存区为500</h1><p>hbase(main)&gt; count ‘t1’, {INTERVAL =&gt; 100, CACHE =&gt; 500}<br>3）删除数据<br>a )删除行中的某个列值</p>
+<h1 id="语法：delete-必须指定列名"><a href="#语法：delete-必须指定列名" class="headerlink" title="语法：delete , ,   , ,必须指定列名"></a>语法：delete <table>, <rowkey>,  <family:column> , <timestamp>,必须指定列名</timestamp></family:column></rowkey></table></h1><h1 id="例如：删除表t1，rowkey001中的f1-col1的数据"><a href="#例如：删除表t1，rowkey001中的f1-col1的数据" class="headerlink" title="例如：删除表t1，rowkey001中的f1:col1的数据"></a>例如：删除表t1，rowkey001中的f1:col1的数据</h1><p>hbase(main)&gt; delete ‘t1’,’rowkey001’,’f1:col1’<br>注：将删除改行f1:col1列所有版本的数据<br>b )删除行</p>
+<h1 id="语法：deleteall-，可以不指定列名，删除整行数据"><a href="#语法：deleteall-，可以不指定列名，删除整行数据" class="headerlink" title="语法：deleteall , ,   , ，可以不指定列名，删除整行数据"></a>语法：deleteall <table>, <rowkey>,  <family:column> , <timestamp>，可以不指定列名，删除整行数据</timestamp></family:column></rowkey></table></h1><h1 id="例如：删除表t1，rowk001的数据"><a href="#例如：删除表t1，rowk001的数据" class="headerlink" title="例如：删除表t1，rowk001的数据"></a>例如：删除表t1，rowk001的数据</h1><p>hbase(main)&gt; deleteall ‘t1’,’rowkey001’<br>c）删除表中的所有数据</p>
+<h1 id="语法：-truncate"><a href="#语法：-truncate" class="headerlink" title="语法： truncate "></a>语法： truncate <table></table></h1><h1 id="其具体过程是：disable-table-gt-drop-table-gt-create-table"><a href="#其具体过程是：disable-table-gt-drop-table-gt-create-table" class="headerlink" title="其具体过程是：disable table -&gt; drop table -&gt; create table"></a>其具体过程是：disable table -&gt; drop table -&gt; create table</h1><h1 id="例如：删除表t1的所有数据"><a href="#例如：删除表t1的所有数据" class="headerlink" title="例如：删除表t1的所有数据"></a>例如：删除表t1的所有数据</h1><p>hbase(main)&gt; truncate ‘t1’<br>Region管理<br>1）移动region</p>
+<h1 id="语法：move-‘encodeRegionName’-‘ServerName’"><a href="#语法：move-‘encodeRegionName’-‘ServerName’" class="headerlink" title="语法：move ‘encodeRegionName’, ‘ServerName’"></a>语法：move ‘encodeRegionName’, ‘ServerName’</h1><h1 id="encodeRegionName指的regioName后面的编码，ServerName指的是master-status的Region-Servers列表"><a href="#encodeRegionName指的regioName后面的编码，ServerName指的是master-status的Region-Servers列表" class="headerlink" title="encodeRegionName指的regioName后面的编码，ServerName指的是master-status的Region Servers列表"></a>encodeRegionName指的regioName后面的编码，ServerName指的是master-status的Region Servers列表</h1><h1 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h1><p>hbase(main)&gt;move ‘4343995a58be8e5bbc739af1e91cd72d’, ‘db-41.xxx.xxx.org,60020,1390274516739’<br>2）开启/关闭region</p>
+<h1 id="语法：balance-switch-true-false"><a href="#语法：balance-switch-true-false" class="headerlink" title="语法：balance_switch true|false"></a>语法：balance_switch true|false</h1><p>hbase(main)&gt; balance_switch<br>3）手动split</p>
+<h1 id="语法：split-‘regionName’-‘splitKey’"><a href="#语法：split-‘regionName’-‘splitKey’" class="headerlink" title="语法：split ‘regionName’, ‘splitKey’"></a>语法：split ‘regionName’, ‘splitKey’</h1><p>4）手动触发major compaction</p>
+<p>#语法：</p>
+<p>#Compact all regions in a table:</p>
+<p>#hbase&gt; major_compact ‘t1’</p>
+<p>#Compact an entire region:</p>
+<p>#hbase&gt; major_compact ‘r1’</p>
+<p>#Compact a single column family within a region:</p>
+<p>#hbase&gt; major_compact ‘r1’, ‘c1’</p>
+<p>#Compact a single column family within a table:</p>
+<p>#hbase&gt; major_compact ‘t1’, ‘c1’<br>配置管理及节点重启<br>1）修改hdfs配置<br>hdfs配置位置：/etc/hadoop/conf</p>
+<h1 id="同步hdfs配置"><a href="#同步hdfs配置" class="headerlink" title="同步hdfs配置"></a>同步hdfs配置</h1><p>cat /home/hadoop/slaves|xargs -i -t scp /etc/hadoop/conf/hdfs-site.xml hadoop@{}:/etc/hadoop/conf/hdfs-site.xml</p>
+<p>#关闭：<br>cat /home/hadoop/slaves|xargs -i -t ssh hadoop@{} “sudo /home/hadoop/cdh4/hadoop-2.0.0-cdh4.2.1/sbin/hadoop-daemon.sh –config /etc/hadoop/conf stop datanode”</p>
+<p>#启动：<br>cat /home/hadoop/slaves|xargs -i -t ssh hadoop@{} “sudo /home/hadoop/cdh4/hadoop-2.0.0-cdh4.2.1/sbin/hadoop-daemon.sh –config /etc/hadoop/conf start datanode”<br>2）修改hbase配置<br>hbase配置位置：</p>
+<h1 id="同步hbase配置"><a href="#同步hbase配置" class="headerlink" title="同步hbase配置"></a>同步hbase配置</h1><p>cat /home/hadoop/hbase/conf/regionservers|xargs -i -t scp /home/hadoop/hbase/conf/hbase-site.xml hadoop@{}:/home/hadoop/hbase/conf/hbase-site.xml</p>
+<h1 id="graceful重启"><a href="#graceful重启" class="headerlink" title="graceful重启"></a>graceful重启</h1><p>cd ~/hbase<br>bin/graceful_stop.sh –restart –reload –debug inspurXXX.xxx.xxx.org</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2018-04-24T16:33:29.026Z" itemprop="dateUpdated">2018-04-25 00:33:29</time>
+</span><br>
+
+
+        
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2018/04/25/hbase-6-0.98-commod/" target="_blank" rel="external">http://dennis.pathto.top/2018/04/25/hbase-6-0.98-commod/</a>
+        
+    </div>
+    <footer>
+        <a href="http://dennis.pathto.top">
+            <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
+            Dennis
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/bigdata/">bigdata</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hbase/">hbase</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2018/04/25/hbase-6-0.98-commod/&title=《6.hbase0.98命令》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2018/04/25/hbase-6-0.98-commod/&title=《6.hbase0.98命令》 — Dennis'Blog&source=本博客内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、大数据，云计算，运维开发、系统监控等相关的研究与知识分享。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2018/04/25/hbase-6-0.98-commod/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《6.hbase0.98命令》 — Dennis'Blog&url=http://dennis.pathto.top/2018/04/25/hbase-6-0.98-commod/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2018/04/25/hbase-6-0.98-commod/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2018/04/25/hbase-7-operation/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">7.hbase运维</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2018/04/25/hbase-6-0-98-commod/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">hbase-6-0.98-commod</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper">
+     <div id="articleComment" style="padding-left:5%;padding-right:5%;" ></div>
+    <!--<iframe height="900px" id="page_content_iframe" frameborder="0" marginheight="0" onload="dyniframesize('page_content_iframe');" width="100%" scrolling="auto" src="https://dennis-dzqapp.rhcloud.com/list_blog_commonts?p_id=2018/04/25/hbase-6-0.98-commod/" style="display: block;"></iframe>-->
+    </div>
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" data-alipay="http://otwbalpjp.bkt.clouddn.com/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Dennis &copy; 2015 - 2018</span>
+            <span>
+                
+                Power by <a href="http://dennis.pathto.top/" target="_blank">dennis.pathto.top</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2018/04/25/hbase-6-0.98-commod/&title=《6.hbase0.98命令》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2018/04/25/hbase-6-0.98-commod/&title=《6.hbase0.98命令》 — Dennis'Blog&source=本博客内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、大数据，云计算，运维开发、系统监控等相关的研究与知识分享。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2018/04/25/hbase-6-0.98-commod/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《6.hbase0.98命令》 — Dennis'Blog&url=http://dennis.pathto.top/2018/04/25/hbase-6-0.98-commod/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2018/04/25/hbase-6-0.98-commod/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACH0lEQVR42u3aQXbDIAwFwNz/0u62iwZ/CdI8w7DqSxzDsFCFxOsVjysY7578/fm7N48/WTYwMDAey6gubrzcmTfn3/4xIwYGxgGMcSjshcucOj8vBgYGRpLA5c9XE00MDAyMKmMcRscJ5bvE8QsBFwMD44GMPPCNF5ccZfOt+chZHAMD44GMfCn///dH+hsYGBiPYlzFUZ0+OZRe0wMDA2NvRh7g1l6qGB9fe+vBwMDYm5FMnwfK+ULbzIEZAwPjBEahED/dBqiW1aK5MDAwtmNUxb0LFquCbzlvxcDA2JQxD84Lc/MhHgMD4wRGPlnz1Ytap9F2Y2BgbM1oFraKE1dTwF5DFAMDYz9GsvResb5ahqtuwU25DQMDY1NG9WCZl+HmC3k3ARoDA+MARpLq5aTxBvVC+c0nGBgYBzCSgtpMy7N6gWzxZQsMDIwtGDPls1WthakEEQMDY2tGr02YhNR8U/KD8c0zGBgYhzF6pbepS6itN0c7hIGBcQAjL6jlLYGZ1DMqumFgYBzA6F2bmAmXve3AwMA4jZEX3fKAWG189gp/GBgYezOu4sjLbb3QXE06MTAwTmAsi9mtFkL10FtNUjEwMHZi9MptefnsE4U8DAyMMxnVA2e+xPy3C46yGBgYGEFAXFVEy0M8BgYGRvLMKmS1jbrg/wYGBsajGHmSl5fD8ssc1TYABgbGaYxVlySqzcu8PZD/CgMDYzvGD1Vi2xnITnk1AAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="/js/main.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '我消失了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '我回来了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

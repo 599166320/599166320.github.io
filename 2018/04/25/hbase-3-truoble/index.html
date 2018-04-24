@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>3.hbase问题 | Dennis&#39;Blog | 本博客内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、大数据，云计算，运维开发、系统监控等相关的研究与知识分享。</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="bigdata,hbase">
+    <meta name="description" content="Waiting for region servers count to settle2018-04-24 19:15:09,579 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 107">
+<meta name="keywords" content="bigdata,hbase">
+<meta property="og:type" content="article">
+<meta property="og:title" content="3.hbase问题">
+<meta property="og:url" content="http://dennis.pathto.top/2018/04/25/hbase-3-truoble/index.html">
+<meta property="og:site_name" content="Dennis&#39;Blog">
+<meta property="og:description" content="Waiting for region servers count to settle2018-04-24 19:15:09,579 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 107">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-04-24T16:33:16.761Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="3.hbase问题">
+<meta name="twitter:description" content="Waiting for region servers count to settle2018-04-24 19:15:09,579 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 107">
+    
+        <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/semantic.css" type="text/css" />
+<link rel="stylesheet" href="/css/zyComment.css" type="text/css" />
+<style type="text/css">
+	#cloud-tie-wrapper label {
+	    font-weight: bold;
+	}
+	#cloud-tie-wrapper a {
+		font-family: Microsoft YaHei;
+	}
+	#articleComment {
+		width: "60%";
+		/*height: 1500px;*/
+		overflow: auto;
+	}
+</style>
+
+    <script>window.lazyScripts=[]</script>
+
+
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/zyComment.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+$(function(){
+var post_toc_links = $(".post-toc-link");
+$.each( post_toc_links, function(index,post_toc_link){
+	post_toc_link = $(post_toc_link);
+	var post_toc_number = post_toc_link.find(".post-toc-number");
+	var post_toc_text = post_toc_link.find(".post-toc-text");
+	//console.log(post_toc_number.text()+" "+post_toc_text.text());
+	$(post_toc_link.attr("href")).text(post_toc_number.text()+" "+post_toc_text.text())
+});
+});
+
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+function jsonp(url){
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.insertBefore(script, head.firstChild);
+}
+function add_blog_callBackFun(rs){
+	$("#articleComment").zyComment("setCommentAfter",rs);
+}
+function get_list_blog_commonts_callBackFun(rs){
+	var agoComment = rs;
+	$("#articleComment").zyComment({
+		"width":"355",
+		"height":"33",
+		"agoComment":agoComment,
+		"callback":function(comment){
+			var selfID = comment.selfID;
+			if(typeof selfID == "undefined" ){
+				selfID = 0;
+			}
+			jsonp(host+"/add_blog_jsonp?"+"p_id="+encodeURIComponent("2018/04/25/hbase-3-truoble/")+ "&username="+encodeURIComponent(comment.name)+"&content="+encodeURIComponent(comment.content)+"&email="+encodeURIComponent(comment.email)+"&c_id_replay="+selfID);
+
+		}
+	});
+}
+jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2018/04/25/hbase-3-truoble/"));
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Dennis</h5>
+          <a href="mailto:dennis52o1314@163.com" title="dennis52o1314@163.com" class="mail">dennis52o1314@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/599166320" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/2166908462" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                其他
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">3.hbase问题</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">3.hbase问题</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2018-04-24T16:33:16.000Z" itemprop="datePublished" class="page-time">
+  2018-04-25
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/hbase/">hbase</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Waiting-for-region-servers-count-to-settle"><span class="post-toc-number">1.</span> <span class="post-toc-text">Waiting for region servers count to settle</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-hbase-3-truoble"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">3.hbase问题</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2018-04-25 00:33:16" datetime="2018-04-24T16:33:16.000Z"  itemprop="datePublished">2018-04-25</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/hbase/">hbase</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="Waiting-for-region-servers-count-to-settle"><a href="#Waiting-for-region-servers-count-to-settle" class="headerlink" title="Waiting for region servers count to settle"></a>Waiting for region servers count to settle</h2><pre><code>2018-04-24 19:15:09,579 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 10730 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:11,096 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 12247 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:12,613 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 13763 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:14,130 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 15281 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:15,657 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 16808 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:17,183 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 18334 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:18,712 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 19863 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:20,241 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 21392 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:21,770 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 22920 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:23,298 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 24449 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:24,842 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 25993 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:26,375 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 27526 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:27,906 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 29057 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:29,433 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 30584 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:30,960 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 32111 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:32,488 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 33639 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:34,015 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 35166 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:35,545 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 36696 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+2018-04-24 19:15:37,074 INFO  [master:bigdata01:60000] master.ServerManager: Waiting for region servers count to settle; currently checked in 3, slept for 38225 ms, expecting minimum of 4, maximum of 2147483647, timeout of 4500 ms, interval of 1500 ms.
+</code></pre><p>出现上面的问题重启regionserver就可以解决了.</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2018-04-24T16:33:16.761Z" itemprop="dateUpdated">2018-04-25 00:33:16</time>
+</span><br>
+
+
+        
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2018/04/25/hbase-3-truoble/" target="_blank" rel="external">http://dennis.pathto.top/2018/04/25/hbase-3-truoble/</a>
+        
+    </div>
+    <footer>
+        <a href="http://dennis.pathto.top">
+            <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
+            Dennis
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/bigdata/">bigdata</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hbase/">hbase</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2018/04/25/hbase-3-truoble/&title=《3.hbase问题》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2018/04/25/hbase-3-truoble/&title=《3.hbase问题》 — Dennis'Blog&source=本博客内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、大数据，云计算，运维开发、系统监控等相关的研究与知识分享。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2018/04/25/hbase-3-truoble/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《3.hbase问题》 — Dennis'Blog&url=http://dennis.pathto.top/2018/04/25/hbase-3-truoble/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2018/04/25/hbase-3-truoble/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2018/04/25/hbase-4-namespace/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">4.HBase常用操作之namespace</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2018/04/25/spring-boot-21-start-stop-daemon/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">21.start-stop-daemon问题</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper">
+     <div id="articleComment" style="padding-left:5%;padding-right:5%;" ></div>
+    <!--<iframe height="900px" id="page_content_iframe" frameborder="0" marginheight="0" onload="dyniframesize('page_content_iframe');" width="100%" scrolling="auto" src="https://dennis-dzqapp.rhcloud.com/list_blog_commonts?p_id=2018/04/25/hbase-3-truoble/" style="display: block;"></iframe>-->
+    </div>
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" data-alipay="http://otwbalpjp.bkt.clouddn.com/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Dennis &copy; 2015 - 2018</span>
+            <span>
+                
+                Power by <a href="http://dennis.pathto.top/" target="_blank">dennis.pathto.top</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2018/04/25/hbase-3-truoble/&title=《3.hbase问题》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2018/04/25/hbase-3-truoble/&title=《3.hbase问题》 — Dennis'Blog&source=本博客内容涵盖Java后端技术、Spring Boot、Spring Cloud、微服务架构、大数据，云计算，运维开发、系统监控等相关的研究与知识分享。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2018/04/25/hbase-3-truoble/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《3.hbase问题》 — Dennis'Blog&url=http://dennis.pathto.top/2018/04/25/hbase-3-truoble/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2018/04/25/hbase-3-truoble/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACLUlEQVR42u3aQW7kMAwEwPz/07PXBTZ2uilvAEvlU+B4RiofOKTIr6/4+txe90/+ff/qm+/vPHZhYGC8lpFssd3cv/9dwSevDwMD4wRGsomrhfNPtQE3D9MYGBgYyWJXz9+H0acSSgwMDIxZCZpvN3kdGBgYGEkROzsOy7/zl2pxDAyMFzLyrfz+3/+lv4GBgfEqxqe88hTw/v7KHr7ZFQYGxtaM9vg+GYzIS+IZ+/JJDAyMTRlt0ThrFbTUBFx8DAMDYwtGftzfHpYlxersxX0TcDEwMLZmJOHvHpY/0yad0dEbBgbG8Yx2yWeP4eoxCwwMjO0Y7dbboJkkiLNBDQwMjDMZ7fFZnhSuBOu8kMbAwNiV0Y5QJI2E9SZBuy4GBgZGOzCRp5j5WvW0CAYGxnaMWWOgHfxaHxe7vIOBgXEMY6U0nY1W5AVzMWyBgYFxDOOpkYs84VtKEDEwMI5k5AVqnjLmr6xNJTEwMPZm5EEzuZ+3LWet02LGDQMDY1PGbNN5GrfeBP3hFWBgYBzAyNPEWVBuG5N1IMbAwDiA0R7rt8ExSQrzYjj63cDAwNiC8Smv5K2sH9vlbYb6FwMDA+OFjFmwGzYa41Gz9gcAAwPjBEYeZNdDdt4qyMM6BgbGOYxZ6tYet7XHcEXox8DAwCjTu/xwbRbi6wUwMDAOY7RjGW35mjcvlwIuBgbGCxkrAxazVHKlDYCBgXEao03skuC7ngg+W/piYGC8lvEHZbXHZVvG/ZAAAAAASUVORK5CYII=" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="/js/main.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '我消失了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '我回来了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>
