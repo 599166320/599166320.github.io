@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>20.SpringBoot初始教程之Redis集中式Session管理 | Dennis&#39;Blog | 我不用讨人喜欢，只做一个迷人的混蛋</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="java,spring,spring-boot">
+    <meta name="description" content="SpringBoot初始教程之Redis集中式Session管理 1.介绍有关Session的管理方式这里就不再进行讨论，目前无非就是三种单机Session(基于单机内存，无法部署多台机器)、基于Cookie(安全性差)、基于全局的统一Session管理(redis、mysql)等多种方式针对于像淘宝这种超大型网站来说Session如何管理的就无从得知了、但是可以通过yy的方式想象一下，这种大型架">
+<meta name="keywords" content="java,spring,spring-boot">
+<meta property="og:type" content="article">
+<meta property="og:title" content="20.SpringBoot初始教程之Redis集中式Session管理">
+<meta property="og:url" content="http://dennis.pathto.top/2018/04/25/spring-boot-20-Redis-session/index.html">
+<meta property="og:site_name" content="Dennis&#39;Blog">
+<meta property="og:description" content="SpringBoot初始教程之Redis集中式Session管理 1.介绍有关Session的管理方式这里就不再进行讨论，目前无非就是三种单机Session(基于单机内存，无法部署多台机器)、基于Cookie(安全性差)、基于全局的统一Session管理(redis、mysql)等多种方式针对于像淘宝这种超大型网站来说Session如何管理的就无从得知了、但是可以通过yy的方式想象一下，这种大型架">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-04-24T16:08:24.253Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="20.SpringBoot初始教程之Redis集中式Session管理">
+<meta name="twitter:description" content="SpringBoot初始教程之Redis集中式Session管理 1.介绍有关Session的管理方式这里就不再进行讨论，目前无非就是三种单机Session(基于单机内存，无法部署多台机器)、基于Cookie(安全性差)、基于全局的统一Session管理(redis、mysql)等多种方式针对于像淘宝这种超大型网站来说Session如何管理的就无从得知了、但是可以通过yy的方式想象一下，这种大型架">
+    
+        <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+
+<link rel="stylesheet" href="/css/semantic.css" type="text/css" />
+<link rel="stylesheet" href="/css/zyComment.css" type="text/css" />
+<style type="text/css">
+	#cloud-tie-wrapper label {
+	    font-weight: bold;
+	}
+	#cloud-tie-wrapper a {
+		font-family: Microsoft YaHei;
+	}
+	#articleComment {
+		width: "60%";
+		/*height: 1500px;*/
+		overflow: auto;
+	}
+</style>
+
+    <script>window.lazyScripts=[]</script>
+
+
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/zyComment.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+$(function(){
+var post_toc_links = $(".post-toc-link");
+$.each( post_toc_links, function(index,post_toc_link){
+	post_toc_link = $(post_toc_link);
+	var post_toc_number = post_toc_link.find(".post-toc-number");
+	var post_toc_text = post_toc_link.find(".post-toc-text");
+	//console.log(post_toc_number.text()+" "+post_toc_text.text());
+	$(post_toc_link.attr("href")).text(post_toc_number.text()+" "+post_toc_text.text())
+});
+});
+
+var host = "http://dennis.pathto.top";//document.location.protocol+"//"+window.location.host;
+function jsonp(url){
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.insertBefore(script, head.firstChild);
+}
+function add_blog_callBackFun(rs){
+	$("#articleComment").zyComment("setCommentAfter",rs);
+}
+function get_list_blog_commonts_callBackFun(rs){
+	var agoComment = rs;
+	$("#articleComment").zyComment({
+		"width":"355",
+		"height":"33",
+		"agoComment":agoComment,
+		"callback":function(comment){
+			var selfID = comment.selfID;
+			if(typeof selfID == "undefined" ){
+				selfID = 0;
+			}
+			jsonp(host+"/add_blog_jsonp?"+"p_id="+encodeURIComponent("2018/04/25/spring-boot-20-Redis-session/")+ "&username="+encodeURIComponent(comment.name)+"&content="+encodeURIComponent(comment.content)+"&email="+encodeURIComponent(comment.email)+"&c_id_replay="+selfID);
+
+		}
+	});
+}
+jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2018/04/25/spring-boot-20-Redis-session/"));
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Dennis</h5>
+          <a href="mailto:dennis52o1314@163.com" title="dennis52o1314@163.com" class="mail">dennis52o1314@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/599166320" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://www.weibo.com/2166908462" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom"  >
+                <i class="icon icon-lg icon-link"></i>
+                其他
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">20.SpringBoot初始教程之Redis集中式Session管理</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">20.SpringBoot初始教程之Redis集中式Session管理</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2018-04-24T16:08:24.000Z" itemprop="datePublished" class="page-time">
+  2018-04-25
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-boot/">spring-boot</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#1-介绍"><span class="post-toc-number">1.</span> <span class="post-toc-text">1.介绍</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#2-快速开始"><span class="post-toc-number">2.</span> <span class="post-toc-text">2.快速开始</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#application-yaml配置"><span class="post-toc-number">3.</span> <span class="post-toc-text">application.yaml配置</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#3-其他扩展"><span class="post-toc-number">4.</span> <span class="post-toc-text">3. 其他扩展</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-spring-boot-20-Redis-session"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">20.SpringBoot初始教程之Redis集中式Session管理</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2018-04-25 00:08:24" datetime="2018-04-24T16:08:24.000Z"  itemprop="datePublished">2018-04-25</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/spring-boot/">spring-boot</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>SpringBoot初始教程之Redis集中式Session管理</p>
+<h1 id="1-介绍"><a href="#1-介绍" class="headerlink" title="1.介绍"></a>1.介绍</h1><p>有关Session的管理方式这里就不再进行讨论，目前无非就是三种单机Session(基于单机内存，无法部署多台机器)、基于Cookie(安全性差)、基于全局的统一Session管理(redis、mysql)等多种方式<br>针对于像淘宝这种超大型网站来说Session如何管理的就无从得知了、但是可以通过yy的方式想象一下，这种大型架构都需要部署多台认证Server，但是一般来说集中式Session无法存储那么多的Session<br>那么就可以通过UID分片的形式来存储，不同UID分布在不同的Server上认证即可(纯属猜测丷)</p>
+<h1 id="2-快速开始"><a href="#2-快速开始" class="headerlink" title="2.快速开始"></a>2.快速开始</h1><p>这里采用的是redis进行集中式Session管理,核心如下依赖</p>
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.session&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-session&lt;/artifactId&gt;
+    &lt;version&gt;1.2.2.RELEASE&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-redis&lt;/artifactId&gt;
+&lt;/dependency&gt;
+</code></pre><p>完整pom.xml</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+   &lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
+            xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+            xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+       &lt;parent&gt;
+           &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+           &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+           &lt;version&gt;1.4.1.RELEASE&lt;/version&gt;
+       &lt;/parent&gt;
+       &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+       &lt;artifactId&gt;springboot-4&lt;/artifactId&gt;
+       &lt;dependencies&gt;
+           &lt;dependency&gt;
+               &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+               &lt;artifactId&gt;spring-boot-starter-freemarker&lt;/artifactId&gt;
+           &lt;/dependency&gt;
+           &lt;dependency&gt;
+               &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+               &lt;artifactId&gt;spring-boot-starter&lt;/artifactId&gt;
+           &lt;/dependency&gt;
+           &lt;dependency&gt;
+               &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+               &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+           &lt;/dependency&gt;
+           &lt;dependency&gt;
+               &lt;groupId&gt;org.springframework.session&lt;/groupId&gt;
+               &lt;artifactId&gt;spring-session&lt;/artifactId&gt;
+               &lt;version&gt;1.2.2.RELEASE&lt;/version&gt;
+           &lt;/dependency&gt;
+           &lt;dependency&gt;
+               &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+               &lt;artifactId&gt;spring-boot-starter-redis&lt;/artifactId&gt;
+           &lt;/dependency&gt;
+           &lt;dependency&gt;
+               &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+               &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
+               &lt;scope&gt;test&lt;/scope&gt;
+           &lt;/dependency&gt;
+       &lt;/dependencies&gt;
+       &lt;build&gt;
+           &lt;plugins&gt;
+               &lt;plugin&gt;
+                   &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                   &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+                   &lt;version&gt;1.4.1.RELEASE&lt;/version&gt;
+               &lt;/plugin&gt;
+           &lt;/plugins&gt;
+       &lt;/build&gt;
+
+   &lt;/project&gt;
+</code></pre><h1 id="application-yaml配置"><a href="#application-yaml配置" class="headerlink" title="application.yaml配置"></a>application.yaml配置</h1><p>这块主要是通过application.yaml去配置redis的链接信息</p>
+<pre><code>server:
+  port: 8080
+spring:
+  redis:
+    database: 1
+    host: localhost
+    pool:
+      max-active: 20
+</code></pre><p>开启@EnableRedisHttpSession<br>通过加上@EnableRedisHttpSession注解，开启redis集中式session管理，所有的session都存放到了redis中</p>
+<pre><code>@SpringBootApplication
+@EnableRedisHttpSession
+public class AppApplication {
+    public static void main(String[] args) throws Exception {
+        SpringApplication.run(AppApplication.class, args);
+    }
+}
+</code></pre><p>通过源码可知、可以通过设置maxInactiveIntervalInSeconds来设定session的统一过期时间，</p>
+<pre><code>@Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
+@Target({ java.lang.annotation.ElementType.TYPE })
+@Documented
+@Import(RedisHttpSessionConfiguration.class)
+@Configuration
+public @interface EnableRedisHttpSession {
+    int maxInactiveIntervalInSeconds() default 1800;
+
+    String redisNamespace() default &quot;&quot;;
+
+
+    RedisFlushMode redisFlushMode() default RedisFlushMode.ON_SAVE;
+}
+</code></pre><p>通过redis集中式管理session这种方式在使用上面对客户端是透明的，无需自己操作redis，在使用HttpSession对象的时候直接使用即可</p>
+<pre><code>@RestController
+public class IndexController {
+    @GetMapping(&quot;/index&quot;)
+    public ResponseEntity index(HttpSession httpSession) {
+        httpSession.setAttribute(&quot;user&quot;, &quot;helloword&quot;);
+        return ResponseEntity.ok(&quot;ok&quot;);
+    }
+
+    @GetMapping(&quot;/helloword&quot;)
+    public ResponseEntity hello(HttpSession httpSession) {
+        return ResponseEntity.ok(httpSession.getAttribute(&quot;user&quot;));
+    }
+}
+</code></pre><h1 id="3-其他扩展"><a href="#3-其他扩展" class="headerlink" title="3. 其他扩展"></a>3. 其他扩展</h1><p>SpringBoot Session集中式管理不仅仅限于redis这种方式，目前内部支持HttpSession with Pivotal GemFire、HttpSession with JDBC、HttpSession with Mongo<br>等多种方式具体可以参考<a href="http://docs.spring.io/spring-session/docs/1.2.2.RELEASE/reference/html5/#httpsession-jdbc" target="_blank" rel="external">http://docs.spring.io/spring-session/docs/1.2.2.RELEASE/reference/html5/#httpsession-jdbc</a> </p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2018-04-24T16:08:24.253Z" itemprop="dateUpdated">2018-04-25 00:08:24</time>
+</span><br>
+
+
+        
+        这里可以给我留言，请翻到下面踩一个脚印吧~~<a href="/2018/04/25/spring-boot-20-Redis-session/" target="_blank" rel="external">http://dennis.pathto.top/2018/04/25/spring-boot-20-Redis-session/</a>
+        
+    </div>
+    <footer>
+        <a href="http://dennis.pathto.top">
+            <img src="http://otwbalpjp.bkt.clouddn.com/avatar.jpg" alt="Dennis">
+            Dennis
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/">spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring-boot/">spring-boot</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2018/04/25/spring-boot-20-Redis-session/&title=《20.SpringBoot初始教程之Redis集中式Session管理》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2018/04/25/spring-boot-20-Redis-session/&title=《20.SpringBoot初始教程之Redis集中式Session管理》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2018/04/25/spring-boot-20-Redis-session/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《20.SpringBoot初始教程之Redis集中式Session管理》 — Dennis'Blog&url=http://dennis.pathto.top/2018/04/25/spring-boot-20-Redis-session/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2018/04/25/spring-boot-20-Redis-session/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2018/04/25/spring-boot-21-start-stop-daemon/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">21.start-stop-daemon问题</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2018/04/25/spring-boot-19-package/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">19.jar解压后打包</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper">
+     <div id="articleComment" style="padding-left:5%;padding-right:5%;" ></div>
+    <!--<iframe height="900px" id="page_content_iframe" frameborder="0" marginheight="0" onload="dyniframesize('page_content_iframe');" width="100%" scrolling="auto" src="https://dennis-dzqapp.rhcloud.com/list_blog_commonts?p_id=2018/04/25/spring-boot-20-Redis-session/" style="display: block;"></iframe>-->
+    </div>
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="http://otwbalpjp.bkt.clouddn.com/wechat.jpg" data-alipay="http://otwbalpjp.bkt.clouddn.com/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Dennis &copy; 2015 - 2018</span>
+            <span>
+                
+                Power by <a href="http://dennis.pathto.top/" target="_blank">dennis.pathto.top</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://dennis.pathto.top/2018/04/25/spring-boot-20-Redis-session/&title=《20.SpringBoot初始教程之Redis集中式Session管理》 — Dennis'Blog&pic=http://otwbalpjp.bkt.clouddn.com/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://dennis.pathto.top/2018/04/25/spring-boot-20-Redis-session/&title=《20.SpringBoot初始教程之Redis集中式Session管理》 — Dennis'Blog&source=我不用讨人喜欢，只做一个迷人的混蛋" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://dennis.pathto.top/2018/04/25/spring-boot-20-Redis-session/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《20.SpringBoot初始教程之Redis集中式Session管理》 — Dennis'Blog&url=http://dennis.pathto.top/2018/04/25/spring-boot-20-Redis-session/&via=http://dennis.pathto.top" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://dennis.pathto.top/2018/04/25/spring-boot-20-Redis-session/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACvElEQVR42u3a0Y7bMAwEwPz/T7evBQorS1K85IDJk9GkssYHSPRSr1f8+fPw+ffb/38/uU7ucu2Dh4eHd2nqT7d8GuFpzPMdk8eXPILHO+Lh4eGt8c6TPt8sWZnz30w2CTw8PLzv550X8TPszYIebCR4eHh4v4VXLYgnBXpyjYeHh/cpXh7UJiVvsqDnU88fKB4eHt7P8KqBwjdcr/T38PDw8MZd9Wo7qho3VA8ilGeLh4eHt8CrNqiSiKEa5vaaZPk88fDw8O7ykgMB89f+POTNG13nx4eHh4e3zZu0rPJotTdmeZfLa3Y8PDy8Fm8y0flo1Xba6PAWHh4e3iVeXsJWm/d5dJvEGb1gAg8PD2+PVy2ac3A1kK2W4FF/Dw8PD2+BlwcHvcMBefDRe5SPM8TDw8Nb4PWW/mSh75XCE+SbSAIPDw/vEi+PSieHqBYPBxyv8fDw8LZ5Gy3/+YYxCYvx8PDw9ni9Blgvoq2u2NWo91p/Dw8PDy/gVdv5yb/n061uA4WUBQ8PD+8qL19q82+TzWC+2eRRLx4eHt4G7+7hqrzN39ta8tIcDw8Pb4NXbUdVjwJUj15VR37zezw8PLwFXtKwj1pNC+HCrfgYDw8Pb493/jopkZPwonp0oLclvHljwMPDwxvzclh1sa4GCsmjaXb58PDw8H6El4cIvZZYLxDJR8bDw8P7FK/Xts+bWPMtAQ8PD+9TvGqxmxfQ1SMFi10+PDw8vDGv+Xo/jlarRfz5wT3+AfDw8PAWeNXpJltIUnAnYUR+lwuNNDw8PLwir/qqn9+mt51Uw443s8LDw8Nb4yUFbiHhKE76tffBw8PD+xpevkDnsPk28FhS4+Hh4X0NrzpOlZGnChfOlOHh4eEVeUkYkR9XrR41GLWvzv8XDw8Pb4FXfaPvLdCTQwD5yBcCCzw8PLwT7y85xw0B0VRRaQAAAABJRU5ErkJggg==" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="/js/main.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '我消失了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '我回来了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>
