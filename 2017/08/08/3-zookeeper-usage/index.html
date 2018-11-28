@@ -28,16 +28,16 @@
 <meta property="og:site_name" content="Dennis&#39;Blog">
 <meta property="og:description" content="zookeeper特性1、 Zookeeper：一个leader，多个follower组成的集群 2、全局数据一致：每个server保存一份相同的数据副本，client无论连接到哪个server，数据都是一致的 3、分布式读写，更新请求转发，由leader实施 4、更新请求顺序进行，来自同一个client的更新请求按其发送顺序依次执行 5、数据更新原子性，一次数据更新要么成功，要么失败 6、实时性">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://oudkfzemb.bkt.clouddn.com/zk-struct.jpg">
-<meta property="og:image" content="http://oudkfzemb.bkt.clouddn.com/zk-cli.jpg">
-<meta property="og:image" content="http://oudkfzemb.bkt.clouddn.com/table.jpg">
-<meta property="og:image" content="http://oudkfzemb.bkt.clouddn.com/listener.jpg">
-<meta property="og:image" content="http://oudkfzemb.bkt.clouddn.com/ha.jpg">
+<meta property="og:image" content="http://zk.pathto.top/zk-struct.jpg">
+<meta property="og:image" content="http://zk.pathto.top/zk-cli.jpg">
+<meta property="og:image" content="http://zk.pathto.top/table.jpg">
+<meta property="og:image" content="http://zk.pathto.top/listener.jpg">
+<meta property="og:image" content="http://zk.pathto.top/ha.jpg">
 <meta property="og:updated_time" content="2017-08-08T17:07:06.563Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="3.zookeeper-使用">
 <meta name="twitter:description" content="zookeeper特性1、 Zookeeper：一个leader，多个follower组成的集群 2、全局数据一致：每个server保存一份相同的数据副本，client无论连接到哪个server，数据都是一致的 3、分布式读写，更新请求转发，由leader实施 4、更新请求顺序进行，来自同一个client的更新请求按其发送顺序依次执行 5、数据更新原子性，一次数据更新要么成功，要么失败 6、实时性">
-<meta name="twitter:image" content="http://oudkfzemb.bkt.clouddn.com/zk-struct.jpg">
+<meta name="twitter:image" content="http://zk.pathto.top/zk-struct.jpg">
     
         <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
     
@@ -279,7 +279,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/08/08/3-zook
 <h1 id="数据结构的图"><a href="#数据结构的图" class="headerlink" title="数据结构的图"></a>数据结构的图</h1><figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="http://oudkfzemb.bkt.clouddn.com/zk-struct.jpg" alt="" title="">
+                    <img src="http://zk.pathto.top/zk-struct.jpg" alt="" title="">
                 </div>
                 <div class="image-caption"></div>
             </figure>
@@ -301,7 +301,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/08/08/3-zook
 <figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="http://oudkfzemb.bkt.clouddn.com/zk-cli.jpg" alt="" title="">
+                    <img src="http://zk.pathto.top/zk-cli.jpg" alt="" title="">
                 </div>
                 <div class="image-caption"></div>
             </figure>
@@ -323,7 +323,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/08/08/3-zook
 </code></pre><h1 id="zookeeper-api应用"><a href="#zookeeper-api应用" class="headerlink" title="zookeeper-api应用"></a>zookeeper-api应用</h1><h2 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h2><p>org.apache.zookeeper.Zookeeper是客户端入口主类，负责建立与server的会话<br>它提供了表 1 所示几类主要方法：<br><figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="http://oudkfzemb.bkt.clouddn.com/table.jpg" alt="" title="">
+                    <img src="http://zk.pathto.top/table.jpg" alt="" title="">
                 </div>
                 <div class="image-caption"></div>
             </figure></p>
@@ -376,7 +376,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/08/08/3-zook
 </code></pre><h2 id="Zookeeper的监听器工作机制"><a href="#Zookeeper的监听器工作机制" class="headerlink" title="Zookeeper的监听器工作机制"></a>Zookeeper的监听器工作机制</h2><figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="http://oudkfzemb.bkt.clouddn.com/listener.jpg" alt="" title="">
+                    <img src="http://zk.pathto.top/listener.jpg" alt="" title="">
                 </div>
                 <div class="image-caption"></div>
             </figure>
@@ -390,7 +390,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/08/08/3-zook
 <figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="http://oudkfzemb.bkt.clouddn.com/ha.jpg" alt="" title="">
+                    <img src="http://zk.pathto.top/ha.jpg" alt="" title="">
                 </div>
                 <div class="image-caption"></div>
             </figure>

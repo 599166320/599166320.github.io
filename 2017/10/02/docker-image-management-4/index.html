@@ -28,16 +28,16 @@
 <meta property="og:site_name" content="Dennis&#39;Blog">
 <meta property="og:description" content="镜像的概念镜像是一个包含程序运行必要依赖环境和代码的只读文件，它采用分层的文件系统，将每一次改变以读写层的形式增加到原来的只读文件上。镜像是容器运行的基石。 下图展示的是Docker镜像的系统结构。其中，镜像的最底层必须是一个称为启动文件系统(bootfs)的镜像，用户不会与这一层直接打交道。bootfs的上层镜像就是我们熟知的根镜像。  镜像的本质是磁盘上一系列文件的集合。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://ox4lrc1z7.bkt.clouddn.com/4docker-image-struct-hierarchy%20.png">
-<meta property="og:image" content="http://ox4lrc1z7.bkt.clouddn.com/5docker-image-file-relationship.png">
-<meta property="og:image" content="http://ox4lrc1z7.bkt.clouddn.com/3docker-image-sruct.png">
-<meta property="og:image" content="http://ox4lrc1z7.bkt.clouddn.com/6docker-daocloud-main.png">
-<meta property="og:image" content="http://ox4lrc1z7.bkt.clouddn.com/7docker-get-image.png">
+<meta property="og:image" content="http://docker.pathto.top/4docker-image-struct-hierarchy%20.png">
+<meta property="og:image" content="http://docker.pathto.top/5docker-image-file-relationship.png">
+<meta property="og:image" content="http://docker.pathto.top/3docker-image-sruct.png">
+<meta property="og:image" content="http://docker.pathto.top/6docker-daocloud-main.png">
+<meta property="og:image" content="http://docker.pathto.top/7docker-get-image.png">
 <meta property="og:updated_time" content="2017-10-02T16:07:57.717Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="4.镜像管理">
 <meta name="twitter:description" content="镜像的概念镜像是一个包含程序运行必要依赖环境和代码的只读文件，它采用分层的文件系统，将每一次改变以读写层的形式增加到原来的只读文件上。镜像是容器运行的基石。 下图展示的是Docker镜像的系统结构。其中，镜像的最底层必须是一个称为启动文件系统(bootfs)的镜像，用户不会与这一层直接打交道。bootfs的上层镜像就是我们熟知的根镜像。  镜像的本质是磁盘上一系列文件的集合。">
-<meta name="twitter:image" content="http://ox4lrc1z7.bkt.clouddn.com/4docker-image-struct-hierarchy%20.png">
+<meta name="twitter:image" content="http://docker.pathto.top/4docker-image-struct-hierarchy%20.png">
     
         <link rel="alternate" type="application/atom+xml" title="Dennis&#39;Blog" href="/atom.xml">
     
@@ -268,12 +268,12 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/10/02/docker
         <div class="post-content" id="post-content" itemprop="postContent">
             <h1 id="镜像的概念"><a href="#镜像的概念" class="headerlink" title="镜像的概念"></a>镜像的概念</h1><p>镜像是一个包含程序运行必要依赖环境和代码的只读文件，它采用分层的文件系统，将每一次改变以读写层的形式增加到原来的只读文件上。镜像是容器运行的基石。</p>
 <p>下图展示的是Docker镜像的系统结构。其中，镜像的最底层必须是一个称为启动文件系统(bootfs)的镜像，用户不会与这一层直接打交道。bootfs的上层镜像就是我们熟知的根镜像。</p>
-<p><img src="http://ox4lrc1z7.bkt.clouddn.com/4docker-image-struct-hierarchy%20.png" alt="image"></p>
+<p><img src="http://docker.pathto.top/4docker-image-struct-hierarchy%20.png" alt="image"></p>
 <p>镜像的本质是磁盘上一系列文件的集合。</p>
 <figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="http://ox4lrc1z7.bkt.clouddn.com/5docker-image-file-relationship.png" alt="image" title="">
+                    <img src="http://docker.pathto.top/5docker-image-file-relationship.png" alt="image" title="">
                 </div>
                 <div class="image-caption">image</div>
             </figure>
@@ -281,7 +281,7 @@ jsonp(host+"/get_list_blog_commonts?p_id="+encodeURIComponent("2017/10/02/docker
 <figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="http://ox4lrc1z7.bkt.clouddn.com/3docker-image-sruct.png" alt="image" title="">
+                    <img src="http://docker.pathto.top/3docker-image-sruct.png" alt="image" title="">
                 </div>
                 <div class="image-caption">image</div>
             </figure>
@@ -452,11 +452,11 @@ centos              centos6             5dedbd63518e        2 weeks ago         
 </ul>
 <h1 id="列出所有容器的ID"><a href="#列出所有容器的ID" class="headerlink" title="列出所有容器的ID"></a>列出所有容器的ID</h1><pre><code>docker ps -a -q
 </code></pre><h1 id="从dockerhub获取docker"><a href="#从dockerhub获取docker" class="headerlink" title="从dockerhub获取docker"></a>从dockerhub获取docker</h1><h2 id="浏览器打开网页"><a href="#浏览器打开网页" class="headerlink" title="浏览器打开网页"></a>浏览器打开网页</h2><p><a href="http://hub.daocloud.io/" target="_blank" rel="external">http://hub.daocloud.io/</a></p>
-<p><img src="http://ox4lrc1z7.bkt.clouddn.com/6docker-daocloud-main.png" alt="image"></p>
+<p><img src="http://docker.pathto.top/6docker-daocloud-main.png" alt="image"></p>
 <figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="http://ox4lrc1z7.bkt.clouddn.com/7docker-get-image.png" alt="image" title="">
+                    <img src="http://docker.pathto.top/7docker-get-image.png" alt="image" title="">
                 </div>
                 <div class="image-caption">image</div>
             </figure>
